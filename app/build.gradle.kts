@@ -41,7 +41,13 @@ android {
 
 dependencies {
 
-    // dotsIndicator
+    // Retrofit 라이브러리
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+// Gson 변환기 라이브러리
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // dotsIndicator onBoarding dot
     implementation("com.tbuonomo:dotsindicator:5.0")
 
     // navigation

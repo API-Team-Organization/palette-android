@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.signin.LoginFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="90dp"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:src="@drawable/logo"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Palette"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="에 로그인하기."
+                    android:textColor="@color/black"
+                    android:textSize="24sp"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="로그인할 이메일과 비밀번호를 입력해주세요!"
+                android:textSize="14sp"
+                android:textColor="@color/darkGray"
+                android:layout_marginTop="4dp"/>
+
+            <EditText
+                android:id="@+id/loginEmailEdit"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/bac_edit_text"
+                android:hint="이메일"
+                android:textColorHint="@color/semiDarkGray"
+                android:layout_marginTop="40dp"
+                android:inputType="textEmailAddress"
+                android:paddingStart="8dp"/>
+            <TextView
+                android:id="@+id/emailFailedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이메일을 다시 입력해주세요"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:visibility="gone"/>
+            <EditText
+                android:id="@+id/loginPasswordEdit"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/bac_edit_text"
+                android:hint="비밀번호"
+                android:textColorHint="@color/semiDarkGray"
+                android:layout_marginTop="20dp"
+                android:inputType="textPassword"
+                android:paddingStart="8dp"/>
+            <TextView
+                android:id="@+id/passwordFailedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="비밀번호를 다시 입력해주세요"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="50dp"
+            android:text="로그인"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bac_button"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
