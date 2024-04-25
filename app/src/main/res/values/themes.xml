@@ -5,9 +5,9 @@
         <item name="colorPrimary">@color/primaryColor</item>
 
         <item name="android:colorBackground">@color/white</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 
     <style name="Theme.Palette" parent="Base.Theme.Palette" />
-
 
 </resources>
