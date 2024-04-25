@@ -23,6 +23,10 @@ class StartFragment : Fragment() {
             findNavController().navigate(R.id.action_startFragment_to_loginFragment)
         }
 
+        binding.startButton.setOnClickListener {
+            findNavController().navigate(R.id.action_startFragment_to_joinEmailFragment)
+        }
+
         return binding.root
     }
 }

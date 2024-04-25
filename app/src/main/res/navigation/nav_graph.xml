@@ -34,7 +34,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
 
-
+        <action
+            android:id="@+id/action_startFragment_to_joinEmailFragment"
+            app:destination="@id/joinEmailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -44,5 +50,81 @@
         android:name="com.example.palette.ui.signin.LoginFragment">
     </fragment>
 
+    <fragment
+        android:id="@+id/joinEmailFragment"
+        tools:layout="@layout/fragment_join_email"
+        android:label="joinEmailFragment"
+        android:name="com.example.palette.ui.signup.JoinEmailFragment">
+        <action
+            android:id="@+id/action_joinEmailFragment_to_joinCheckNumFragment"
+            app:destination="@id/joinCheckNumFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/joinCheckNumFragment"
+        tools:layout="@layout/fragment_join_check_num"
+        android:label="joinCheckNumFragment"
+        android:name="com.example.palette.ui.signup.JoinCheckNumFragment">
+        <action
+            android:id="@+id/action_joinCheckNumFragment_to_joinPasswordFragment"
+            app:destination="@id/joinPasswordFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/joinPasswordFragment"
+        tools:layout="@layout/fragment_join_password"
+        android:label="joinPasswordFragment"
+        android:name="com.example.palette.ui.signup.JoinPasswordFragment">
+        <action
+            android:id="@+id/action_joinPasswordFragment_to_joinBirthFragment"
+            app:destination="@id/joinBirthFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/joinBirthFragment"
+        tools:layout="@layout/fragment_join_birth"
+        android:label="joinBirthFragment"
+        android:name="com.example.palette.ui.signup.JoinBirthFragment">
+        <action
+            android:id="@+id/action_joinBirthFragment_to_joinNameFragment"
+            app:destination="@id/joinNameFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/joinNameFragment"
+        tools:layout="@layout/fragment_join_name"
+        android:label="joinNameFragment"
+        android:name="com.example.palette.ui.signup.JoinNameFragment">
+        <action
+            android:id="@+id/action_joinNameFragment_to_joinCompleteFragment"
+            app:destination="@id/joinCompleteFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/joinCompleteFragment"
+        tools:layout="@layout/fragment_join_complete"
+        android:label="joinCompleteFragment"
+        android:name="com.example.palette.ui.signup.JoinCompleteFragment">
+    </fragment>
 
 </navigation>
