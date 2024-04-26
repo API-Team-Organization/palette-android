@@ -57,6 +57,7 @@
                 android:layout_height="55dp"
                 android:background="@drawable/bac_edit_text"
                 android:hint="인증코드"
+                android:maxLength="6"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="20dp"
                 android:inputType="number"
