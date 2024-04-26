@@ -1,5 +1,6 @@
 package com.example.palette.ui.signup
 
+import android.app.DatePickerDialog
 import android.content.res.Resources
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.NumberPicker
+import android.widget.Spinner
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinBirthBinding

@@ -29,12 +29,12 @@
                 android:textColor="@color/black"/>
 
             <TextView
+                android:id="@+id/good"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="좋아요!"
                 android:fontFamily="@font/pretendard_extrabold"
                 android:textSize="25sp"
-                android:textColor="@color/primaryColor"
                 android:layout_marginTop="30dp"/>
 
             <LinearLayout

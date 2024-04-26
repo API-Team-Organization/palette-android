@@ -10,4 +10,11 @@
 
     <style name="Theme.Palette" parent="Base.Theme.Palette" />
 
+<!--    <style name="PaletteDatePicker" >-->
+<!--        &lt;!&ndash; Text color &ndash;&gt;-->
+<!--        <item name="android:textColorPrimary">@color/black</item>-->
+<!--        &lt;!&ndash; Divider color &ndash;&gt;-->
+<!--        <item name="colorControlNormal">@color/primaryColor</item>-->
+<!--    </style>-->
+
 </resources>
