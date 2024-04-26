@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:background="@drawable/bac_edit_text"
-                android:text=""
+                android:fontFamily="@font/suit_semibold"
                 android:textColor="@color/black"
                 android:layout_marginTop="40dp"
                 android:inputType="textEmailAddress"

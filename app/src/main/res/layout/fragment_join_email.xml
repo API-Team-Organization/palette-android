@@ -45,6 +45,8 @@
                 android:layout_height="55dp"
                 android:background="@drawable/bac_edit_text"
                 android:hint="이메일"
+                android:fontFamily="@font/suit_semibold"
+                android:textColor="@color/black"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="40dp"
                 android:inputType="textEmailAddress"

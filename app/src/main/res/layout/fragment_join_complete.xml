@@ -37,13 +37,36 @@
                 android:textColor="@color/primaryColor"
                 android:layout_marginTop="30dp"/>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="이제 Palette를 이용하실 수 있어요"
-                android:fontFamily="@font/pretendard_semibold"
-                android:textSize="17sp"
-                android:textColor="@color/black"/>
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이제 "
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:textSize="17sp"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Palette"
+                    android:fontFamily="@font/suit_extrabold"
+                    android:textSize="17sp"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="를 이용하실 수 있어요."
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:textSize="17sp"
+                    android:textColor="@color/black"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
