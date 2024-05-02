@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="우와 개쩐당!"
+                android:text="우와 대단해요"
                 android:textColor="@color/black"
                 android:textSize="24sp"/>
 
@@ -48,7 +48,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ai 활용하면 개꿀임 ㄹㅇㅋㅋ"
+                android:text="Ai 활용하면 편리하게 가능해요"
                 android:textColor="@color/black"
                 android:textSize="16sp"/>
         </LinearLayout>
