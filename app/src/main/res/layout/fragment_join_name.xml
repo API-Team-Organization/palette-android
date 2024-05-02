@@ -40,11 +40,13 @@
                 android:layout_marginStart="1dp"/>
 
             <EditText
-                android:id="@+id/etJoinEmail"
+                android:id="@+id/etJoinName"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:background="@drawable/bac_edit_text"
                 android:hint="이름"
+                android:text="박준현"
+                android:fontFamily="@font/pretendard_semibold"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="40dp"
                 android:inputType="textEmailAddress"
