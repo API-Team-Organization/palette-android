@@ -48,6 +48,14 @@
         tools:layout="@layout/fragment_login"
         android:label="loginFragment"
         android:name="com.example.palette.ui.signin.LoginFragment">
+
+        <action
+            android:id="@+id/action_loginFragment_to_MainFragment"
+            app:destination="@id/MainFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -125,6 +133,13 @@
         tools:layout="@layout/fragment_join_complete"
         android:label="joinCompleteFragment"
         android:name="com.example.palette.ui.signup.JoinCompleteFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/MainFragment"
+        tools:layout="@layout/fragment_main"
+        android:label="MainFragment"
+        android:name="com.example.palette.ui.service.MainFragment">
     </fragment>
 
 </navigation>
