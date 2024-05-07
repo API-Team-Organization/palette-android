@@ -125,6 +125,21 @@
         tools:layout="@layout/fragment_join_complete"
         android:label="joinCompleteFragment"
         android:name="com.example.palette.ui.signup.JoinCompleteFragment">
+        <action
+            android:id="@+id/action_joinCompleteFragment_to_createMediaFragment"
+            app:destination="@id/createMediaFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/createMediaFragment"
+        tools:layout="@layout/fragment_create_media"
+        android:label="createMediaFragment"
+        android:name="com.example.palette.ui.service.create.CreateMediaFragment">
+
     </fragment>
 
 </navigation>
