@@ -43,7 +43,7 @@
                 android:id="@+id/etJoinEmail"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_edit_text"
+                android:background="@drawable/bac_object"
                 android:hint="이메일"
                 android:text="palette@gmail.com"
                 android:fontFamily="@font/suit_semibold"
