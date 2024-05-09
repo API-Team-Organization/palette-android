@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="@drawable/bac_edit_text"
+    android:background="@drawable/bac_object"
     android:orientation="horizontal"
     android:layout_marginTop="15dp"
     xmlns:tools="http://schemas.android.com/tools">
@@ -35,12 +35,15 @@
             android:id="@+id/tv_poster_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="나 : (대충 오렌지 주스 홍보 설.."
+            tools:text="나 : (버블파이터버블파이터버블파이터버블파이터)"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_semibold"
             android:textColor="@color/darkGray"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="25dp"/>
 
     </LinearLayout>
 </LinearLayout>

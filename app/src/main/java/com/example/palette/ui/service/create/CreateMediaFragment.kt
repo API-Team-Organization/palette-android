@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.viewmodel.WorkAdapter
@@ -30,15 +30,15 @@ class CreateMediaFragment : Fragment() {
         val itemList = ArrayList<WorkItem>()
 
         // 임시로 넣어놓은 itemList
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
-        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (대충 오렌지 주스 홍보 설.."))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
+        itemList.add(WorkItem(R.drawable.logo, "오렌지 주스 포스터", "나 : (버블파이터버블파이터버블파이터버블파이터)"))
 
         val workAdapter = WorkAdapter(itemList)
 
@@ -53,6 +53,10 @@ class CreateMediaFragment : Fragment() {
         }
 
         workAdapter.notifyDataSetChanged()
+
+        binding.llStartNewWork.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_createPosterFragment)
+        }
 
         return binding.root
     }

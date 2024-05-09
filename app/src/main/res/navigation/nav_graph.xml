@@ -146,14 +146,21 @@
         tools:layout="@layout/fragment_main"
         android:label="mainFragment"
         android:name="com.example.palette.ui.service.MainFragment">
+        <action
+            android:id="@+id/action_mainFragment_to_createPosterFragment"
+            app:destination="@id/createPosterFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
-<!--    <fragment-->
-<!--        android:id="@+id/createMediaFragment"-->
-<!--        tools:layout="@layout/fragment_create_media"-->
-<!--        android:label="createMediaFragment"-->
-<!--        android:name="com.example.palette.ui.service.create.CreateMediaFragment">-->
+    <fragment
+        android:id="@+id/createPosterFragment"
+        tools:layout="@layout/fragment_create_poster"
+        android:label="createPosterFragment"
+        android:name="com.example.palette.ui.service.create.CreatePosterFragment">
 
-<!--    </fragment>-->
+    </fragment>
 
 </navigation>

@@ -39,9 +39,10 @@
                 android:layout_marginBottom="25dp"/>
 
             <LinearLayout
+                android:id="@+id/ll_start_new_work"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:background="@drawable/bac_edit_text"
+                android:background="@drawable/bac_object"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -106,7 +107,7 @@
                 android:id="@+id/work_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
-                tools:listitem="@layout/work_recycler_view" />
+                tools:listitem="@layout/item_work_recycler" />
 
 <!--            <TextView-->
 <!--                android:layout_width="wrap_content"-->
