@@ -45,13 +45,7 @@
                 android:text="Ai를 활용해 쉽게 만들어보세요!"
                 android:textSize="16sp"
                 android:textColor="@color/black"/>
-            
-            
-            
         </LinearLayout>
-
-
-
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/startButton"
