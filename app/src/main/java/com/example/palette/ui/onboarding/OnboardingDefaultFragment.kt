@@ -26,20 +26,20 @@ class OnboardingDefaultFragment : Fragment() {
         binding.dotsIndicator.setViewPager(binding.registerViewpager)
 
 
-        binding.onBoardingButton.setOnClickListener {
-
-            when(binding.registerViewpager.currentItem) {
-                0 -> {
-                    binding.registerViewpager.setCurrentItem(binding.registerViewpager.currentItem+1, true)
-                }
-                1 -> {
-                    binding.registerViewpager.setCurrentItem(binding.registerViewpager.currentItem+1, true)
-                }
-                2 -> {
-                    findNavController().navigate(R.id.action_onboardingDefaultFragment_to_startFragment)
-                }
-            }
-        }
+//        binding.onBoardingButton.setOnClickListener {
+//
+//            when(binding.registerViewpager.currentItem) {
+//                0 -> {
+//                    binding.registerViewpager.setCurrentItem(binding.registerViewpager.currentItem+1, true)
+//                }
+//                1 -> {
+//                    binding.registerViewpager.setCurrentItem(binding.registerViewpager.currentItem+1, true)
+//                }
+//                2 -> {
+//                    findNavController().navigate(R.id.action_onboardingDefaultFragment_to_startFragment)
+//                }
+//            }
+//        }
 
         return binding.root
     }

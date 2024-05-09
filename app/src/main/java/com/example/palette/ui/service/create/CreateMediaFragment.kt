@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.palette.R
-import com.example.palette.databinding.FragmentCreateMediaBinding
 import com.example.palette.viewmodel.WorkAdapter
 import com.example.palette.viewmodel.WorkItem
+import com.example.palette.R
+import com.example.palette.databinding.FragmentCreateMediaBinding
 
 class CreateMediaFragment : Fragment() {
     private lateinit var binding : FragmentCreateMediaBinding
