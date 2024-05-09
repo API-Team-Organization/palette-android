@@ -126,8 +126,8 @@
         android:label="joinCompleteFragment"
         android:name="com.example.palette.ui.signup.JoinCompleteFragment">
         <action
-            android:id="@+id/action_joinCompleteFragment_to_createMediaFragment"
-            app:destination="@id/createMediaFragment"
+            android:id="@+id/action_joinCompleteFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -135,11 +135,19 @@
     </fragment>
 
     <fragment
-        android:id="@+id/createMediaFragment"
-        tools:layout="@layout/fragment_create_media"
-        android:label="createMediaFragment"
-        android:name="com.example.palette.ui.service.create.CreateMediaFragment">
+        android:id="@+id/loginFragment"
+        tools:layout="@layout/fragment_login"
+        android:label="loginFragment"
+        android:name="com.example.palette.ui.signin.LoginFragment">
 
     </fragment>
+
+<!--    <fragment-->
+<!--        android:id="@+id/createMediaFragment"-->
+<!--        tools:layout="@layout/fragment_create_media"-->
+<!--        android:label="createMediaFragment"-->
+<!--        android:name="com.example.palette.ui.service.create.CreateMediaFragment">-->
+
+<!--    </fragment>-->
 
 </navigation>

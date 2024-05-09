@@ -30,7 +30,7 @@ class JoinCompleteFragment : Fragment() {
         good.paint.shader = textShader
 
         binding.btnStart.setOnClickListener {
-            findNavController().navigate(R.id.action_joinCompleteFragment_to_createMediaFragment)
+            findNavController().navigate(R.id.action_joinCompleteFragment_to_loginFragment)
         }
 
         return binding.root
