@@ -31,14 +31,14 @@ class LoginFragment : Fragment() {
                     loginFailed(loginEmailEdit)
                     binding.emailFailedText.visibility = View.VISIBLE
                     passwordFailedText.visibility = View.GONE
-                    loginPasswordEdit.background = ContextCompat.getDrawable(loginPasswordEdit.context, R.drawable.bac_edit_text)
+                    loginPasswordEdit.background = ContextCompat.getDrawable(loginPasswordEdit.context, R.drawable.bac_object)
                     return@setOnClickListener
                 }
                 if (loginPasswordEdit.text.isEmpty()) {
                     loginFailed(loginPasswordEdit)
                     binding.passwordFailedText.visibility = View.VISIBLE
                     emailFailedText.visibility = View.GONE
-                    loginEmailEdit.background = ContextCompat.getDrawable(loginEmailEdit.context, R.drawable.bac_edit_text)
+                    loginEmailEdit.background = ContextCompat.getDrawable(loginEmailEdit.context, R.drawable.bac_object)
                     return@setOnClickListener
                 }
                 login()
@@ -49,9 +49,9 @@ class LoginFragment : Fragment() {
     private fun login() {
         with(binding) {
             emailFailedText.visibility = View.GONE
-            loginEmailEdit.background = ContextCompat.getDrawable(binding.loginEmailEdit.context, R.drawable.bac_edit_text)
+            loginEmailEdit.background = ContextCompat.getDrawable(binding.loginEmailEdit.context, R.drawable.bac_object)
             passwordFailedText.visibility = View.GONE
-            loginPasswordEdit.background = ContextCompat.getDrawable(binding.loginPasswordEdit.context, R.drawable.bac_edit_text)
+            loginPasswordEdit.background = ContextCompat.getDrawable(binding.loginPasswordEdit.context, R.drawable.bac_object)
         }
 
         // 서버랑 통신해서 이메일 존재여부, 비밀번호 일치 등 확인 후, 로그인 성공 Toast

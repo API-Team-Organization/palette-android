@@ -5,10 +5,130 @@
     android:layout_height="match_parent"
     tools:context=".ui.service.settings.SettingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="settingFragment" />
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="45dp"
+            android:layout_marginStart="5dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Palette"
+                android:textSize="30sp"
+                android:fontFamily="@font/suit_extrabold"
+                android:textColor="@color/black"
+                android:layout_marginEnd="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="설정"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:fontFamily="@font/pretendard_bold"/>
+        </LinearLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:columnCount="2">
+
+            <LinearLayout
+                android:id="@+id/profile"
+                android:layout_rowSpan="2"
+                android:layout_rowWeight="2"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bac_object"
+                android:layout_margin="5dp">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_account"
+                    android:layout_margin="20dp"/>
+                
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/appInformation"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bac_object"
+                android:layout_margin="5dp">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_info"
+                    android:layout_margin="20dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/appNotification"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bac_object"
+                android:layout_margin="5dp">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_notification"
+                    android:layout_margin="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/appPremium"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_columnSpan="2"
+                android:orientation="vertical"
+                android:background="@drawable/bac_object"
+                android:layout_margin="5dp">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_premium"
+                    android:layout_margin="20dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/logout"
+                android:layout_rowSpan="2"
+                android:layout_rowWeight="2"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bac_object"
+                android:layout_margin="5dp">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_logout"
+                    android:layout_margin="20dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/storageManage"
+                android:layout_rowSpan="2"
+                android:layout_rowWeight="2"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bac_object"
+                android:layout_margin="5dp">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_batabase"
+                    android:layout_margin="20dp"/>
+            </LinearLayout>
+        </GridLayout>
+    </LinearLayout>
 
 </FrameLayout>

@@ -38,20 +38,23 @@
                 android:layout_height="wrap_content"
                 android:text="우와 대단해요"
                 android:textColor="@color/black"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:fontFamily="@font/pretendard_bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="나만의 홍보물 제작하거라"
                 android:textColor="@color/black"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendard_medium"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ai 활용하면 편리하게 가능해요"
                 android:textColor="@color/black"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendard_medium"/>
         </LinearLayout>
 
     </LinearLayout>
