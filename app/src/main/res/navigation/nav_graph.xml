@@ -44,13 +44,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/loginFragment"
-        tools:layout="@layout/fragment_login"
-        android:label="loginFragment"
-        android:name="com.example.palette.ui.signin.LoginFragment">
-    </fragment>
-
-    <fragment
         android:id="@+id/joinEmailFragment"
         tools:layout="@layout/fragment_join_email"
         android:label="joinEmailFragment"
