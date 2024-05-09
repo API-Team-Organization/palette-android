@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentLoginBinding
+import com.example.palette.ui.util.shortToast
 
 class LoginFragment : Fragment() {
     private lateinit var binding : FragmentLoginBinding
@@ -19,58 +20,52 @@ class LoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-
+    ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
-
-        with(binding) {
-            loginButton.setOnClickListener {
-                if (loginEmailEdit.text.isNullOrBlank()) {
-                    loginFailed(loginEmailEdit, 0)
-                    passwordFailedText.visibility = View.GONE
-                    loginPasswordEdit.setBackgroundDrawable(ContextCompat.getDrawable(loginPasswordEdit.context, R.drawable.bac_edit_text))
-                }
-                else if (loginPasswordEdit.text.isNullOrBlank()) {
-                    loginFailed(loginPasswordEdit, 1)
-                    emailFailedText.visibility = View.GONE
-                    loginEmailEdit.setBackgroundDrawable(ContextCompat.getDrawable(loginEmailEdit.context, R.drawable.bac_edit_text))
-
-                }
-                else {
-                    login()
-                }
-            }
-
-        }
-
+        initView()
         return binding.root
     }
 
+    private fun initView() {
+        with(binding) {
+            loginButton.setOnClickListener {
+                if (loginEmailEdit.text.isEmpty()) {
+                    loginFailed(loginEmailEdit)
+                    binding.emailFailedText.visibility = View.VISIBLE
+                    passwordFailedText.visibility = View.GONE
+                    loginPasswordEdit.background = ContextCompat.getDrawable(loginPasswordEdit.context, R.drawable.bac_edit_text)
+                    return@setOnClickListener
+                }
+                if (loginPasswordEdit.text.isEmpty()) {
+                    loginFailed(loginPasswordEdit)
+                    binding.passwordFailedText.visibility = View.VISIBLE
+                    emailFailedText.visibility = View.GONE
+                    loginEmailEdit.background = ContextCompat.getDrawable(loginEmailEdit.context, R.drawable.bac_edit_text)
+                    return@setOnClickListener
+                }
+                login()
+            }
+        }
+    }
 
     private fun login() {
-        binding.emailFailedText.visibility = View.GONE
-        binding.loginEmailEdit.setBackgroundDrawable(ContextCompat.getDrawable(binding.loginEmailEdit.context, R.drawable.bac_edit_text))
-        binding.passwordFailedText.visibility = View.GONE
-        binding.loginPasswordEdit.setBackgroundDrawable(ContextCompat.getDrawable(binding.loginPasswordEdit.context, R.drawable.bac_edit_text))
+        with(binding) {
+            emailFailedText.visibility = View.GONE
+            loginEmailEdit.background = ContextCompat.getDrawable(binding.loginEmailEdit.context, R.drawable.bac_edit_text)
+            passwordFailedText.visibility = View.GONE
+            loginPasswordEdit.background = ContextCompat.getDrawable(binding.loginPasswordEdit.context, R.drawable.bac_edit_text)
+        }
 
         // 서버랑 통신해서 이메일 존재여부, 비밀번호 일치 등 확인 후, 로그인 성공 Toast
         if (true) {
             findNavController().navigate(R.id.action_loginFragment_to_MainFragment)
-            Toast.makeText(activity, "로그인 성공", Toast.LENGTH_SHORT).show()
+            shortToast("로그인 성공")
         }
     }
 
-    private fun loginFailed(loginText: EditText, flag : Int) {
-        if (flag == 0) {
-            binding.emailFailedText.visibility = View.VISIBLE
-        }
-        else {
-            binding.passwordFailedText.visibility = View.VISIBLE
-        }
-        loginText.setBackgroundDrawable(ContextCompat.getDrawable(loginText.context, R.drawable.bac_edit_text_failed))
+    private fun loginFailed(loginText: EditText) {
+        loginText.background = ContextCompat.getDrawable(loginText.context, R.drawable.bac_edit_text_failed)
         loginText.requestFocus()
         loginText.selectAll()
     }
-
 }

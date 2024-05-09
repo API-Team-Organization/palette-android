@@ -9,12 +9,8 @@ import com.example.palette.databinding.FragmentOnboardingDefaultBinding
 class RegisterPagerAdapter(fm: FragmentManager, binding: FragmentOnboardingDefaultBinding) : FragmentPagerAdapter(fm,
     BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     var position = 0
-    private val binding = binding
-    companion object {
-        var buttonText = "다음"
-    }
+
     override fun getItem(position: Int): Fragment {
-        binding.onBoardingButton.text = buttonText
 
         this.position = position
         Log.d("RegisterPagerAdapter", "getItem position is ${position}")
