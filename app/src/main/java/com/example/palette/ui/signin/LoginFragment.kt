@@ -5,9 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.EditText
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
@@ -58,7 +56,7 @@ class LoginFragment : Fragment() {
 
         // 서버랑 통신해서 이메일 존재여부, 비밀번호 일치 등 확인 후, 로그인 성공 Toast
         if (true) {
-            findNavController().navigate(R.id.action_loginFragment_to_MainFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
             shortToast("로그인 성공")
         }
     }

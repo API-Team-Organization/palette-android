@@ -1,5 +1,6 @@
 package com.example.palette.ui.service.create
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,9 +13,12 @@ import com.example.palette.viewmodel.WorkAdapter
 import com.example.palette.viewmodel.WorkItem
 import com.example.palette.R
 import com.example.palette.databinding.FragmentCreateMediaBinding
+import com.example.palette.ui.util.shortToast
 
 class CreateMediaFragment : Fragment() {
     private lateinit var binding : FragmentCreateMediaBinding
+    @SuppressLint("NotifyDataSetChanged")
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,7 +48,7 @@ class CreateMediaFragment : Fragment() {
         workAdapter.itemClickListener = object : WorkAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val item = itemList[position]
-                Toast.makeText(context, "${item.title} 클릭함", Toast.LENGTH_SHORT).show()
+                shortToast("${item.title} 클릭함")
             }
         }
 
