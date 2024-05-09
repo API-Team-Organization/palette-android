@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.R
 import com.example.palette.databinding.FragmentCreateMediaBinding
-import com.example.palette.databinding.FragmentJoinEmailBinding
 import com.example.palette.viewmodel.WorkAdapter
 import com.example.palette.viewmodel.WorkItem
 
