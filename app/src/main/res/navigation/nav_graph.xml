@@ -10,7 +10,6 @@
         tools:layout="@layout/fragment_onboarding_default"
         android:label="onboardingDefaultFragment"
         android:name="com.example.palette.ui.onboarding.OnboardingDefaultFragment">
-
         <action
             android:id="@+id/action_onboardingDefaultFragment_to_startFragment"
             app:destination="@id/startFragment"
@@ -132,6 +131,13 @@
         tools:layout="@layout/fragment_login"
         android:label="loginFragment"
         android:name="com.example.palette.ui.login.LoginFragment">
+        <action
+            android:id="@+id/action_loginFragment_to_joinEmailFragment"
+            app:destination="@id/joinEmailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
 

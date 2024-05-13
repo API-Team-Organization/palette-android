@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentLoginBinding
@@ -21,7 +22,6 @@ class Onboarding3Fragment : Fragment() {
         binding.onBoarding3Button.setOnClickListener {
             findNavController().navigate(R.id.action_onboardingDefaultFragment_to_startFragment)
         }
-
 
         return binding.root
     }
