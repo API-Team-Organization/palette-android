@@ -1,4 +1,4 @@
-package com.example.palette.ui.signup
+package com.example.palette.ui.register
 
 import android.graphics.Color
 import android.graphics.LinearGradient

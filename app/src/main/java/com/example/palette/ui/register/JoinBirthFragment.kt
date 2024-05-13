@@ -1,19 +1,13 @@
-package com.example.palette.ui.signup
+package com.example.palette.ui.register
 
-import android.app.DatePickerDialog
-import android.content.res.Resources
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
-import android.widget.NumberPicker
-import android.widget.Spinner
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinBirthBinding
-import com.example.palette.databinding.FragmentJoinPasswordBinding
 import java.util.Calendar
 
 class JoinBirthFragment : Fragment() {
@@ -22,7 +16,7 @@ class JoinBirthFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentJoinBirthBinding.inflate(inflater, container, false)
 

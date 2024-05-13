@@ -1,4 +1,4 @@
-package com.example.palette.ui.signup
+package com.example.palette.ui.register
 
 import android.os.Bundle
 import android.text.Editable
@@ -10,9 +10,6 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinCheckNumBinding
-import com.example.palette.databinding.FragmentJoinEmailBinding
-import com.example.palette.databinding.FragmentStartBinding
-import kotlin.math.log
 
 class JoinCheckNumFragment : Fragment() {
     private lateinit var binding : FragmentJoinCheckNumBinding

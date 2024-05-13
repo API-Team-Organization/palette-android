@@ -1,4 +1,4 @@
-package com.example.palette.viewmodel
+package com.example.palette.ui.main.work.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +10,7 @@ import com.example.palette.R
 
 class WorkAdapter(val itemList: ArrayList<WorkItem>): RecyclerView.Adapter<WorkAdapter.WorkViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.work_recycler_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_work_recycler, parent, false)
         return WorkViewHolder(view)
     }
 

@@ -1,4 +1,4 @@
-package com.example.palette.ui.service.create
+package com.example.palette.ui.main.create
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -6,11 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.palette.viewmodel.WorkAdapter
-import com.example.palette.viewmodel.WorkItem
+import com.example.palette.ui.main.work.adapter.WorkAdapter
+import com.example.palette.ui.main.work.adapter.WorkItem
 import com.example.palette.R
 import com.example.palette.databinding.FragmentCreateMediaBinding
 import com.example.palette.ui.util.shortToast

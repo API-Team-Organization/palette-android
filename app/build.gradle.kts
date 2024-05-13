@@ -41,10 +41,13 @@ android {
 
 dependencies {
 
+    //coroutine 코루틴
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+
     // Retrofit 라이브러리
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
-// Gson 변환기 라이브러리
+    // Gson 변환기 라이브러리
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // dotsIndicator onBoarding dot
