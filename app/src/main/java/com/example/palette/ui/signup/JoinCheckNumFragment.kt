@@ -7,11 +7,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinCheckNumBinding
 import com.example.palette.databinding.FragmentJoinEmailBinding
 import com.example.palette.databinding.FragmentStartBinding
+import com.example.palette.ui.util.shortToast
 import kotlin.math.log
 
 class JoinCheckNumFragment : Fragment() {
@@ -29,6 +31,8 @@ class JoinCheckNumFragment : Fragment() {
         binding.btnCheckNum.setOnClickListener {
             if (true) { // 인증번호가 맞다면
                 findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinPasswordFragment)
+            } else { // 맞지 않다면
+                shortToast("인증번호가 다릅니다.")
             }
 
         }

@@ -6,11 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinBirthBinding
 import com.example.palette.databinding.FragmentJoinNameBinding
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.regex.Pattern
 
 class JoinNameFragment : Fragment() {
@@ -31,20 +34,32 @@ class JoinNameFragment : Fragment() {
     }
 
     private fun checkName() {
-        val name = binding.etJoinName.text.toString()
+        with(binding) {
+            val name = etJoinName.text.toString()
 
-        if (name.isEmpty()) {
-            Toast.makeText(requireContext(), "이름 값이 비어있습니다", Toast.LENGTH_SHORT).show()
-        } else {
-            val isNameValid = nameRegularExpression(name)
-            Log.d("isNameValid", "${nameRegularExpression(name)}")
-
-            if (isNameValid) {
-                findNavController().navigate(R.id.action_joinNameFragment_to_joinCompleteFragment)
+            if (name.isEmpty()) {
+                checkNameFailed(etJoinName)
+                failedNameEmpty.visibility = View.VISIBLE
+                failedNameFormat.visibility = View.GONE
             } else {
-                Toast.makeText(requireContext(), "이름의 형식이 잘못되었습니다", Toast.LENGTH_SHORT).show()
+                val isNameValid = nameRegularExpression(name)
+                Log.d("isNameValid", "${nameRegularExpression(name)}")
+
+                if (isNameValid) {
+                    findNavController().navigate(R.id.action_joinNameFragment_to_joinCompleteFragment)
+                } else {
+                    checkNameFailed(etJoinName)
+                    failedNameFormat.visibility = View.VISIBLE
+                    failedNameEmpty.visibility = View.GONE
+                }
             }
         }
+    }
+
+    private fun checkNameFailed(name: EditText) {
+        name.background = ContextCompat.getDrawable(name.context, R.drawable.bac_edit_text_failed)
+        name.requestFocus()
+        name.selectAll()
     }
 
     private fun nameRegularExpression(name: String): Boolean {
