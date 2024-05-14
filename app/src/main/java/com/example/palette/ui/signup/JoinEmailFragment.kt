@@ -23,32 +23,36 @@ class JoinEmailFragment : Fragment() {
         binding = FragmentJoinEmailBinding.inflate(inflater, container, false)
 
         binding.btnCheckNum.setOnClickListener {
-            val email = binding.etJoinEmail.text.toString().trim()
-
-            if (email.isEmpty()) {
-                Toast.makeText(requireContext(), "이메일 값이 비어있습니다", Toast.LENGTH_SHORT).show()
-            } else {
-                val isEmailValid = checkEmailFormat(email)
-                Log.d("isEmailValid", "${checkEmailFormat(email)}")
-
-                if (isEmailValid) {
-                    val bundle = Bundle()
-                    bundle.putString("email", email)
-
-                    val passBundleBFragment = JoinCheckNumFragment()
-                    passBundleBFragment.arguments = bundle
-
-                    findNavController().navigate(R.id.action_joinEmailFragment_to_joinCheckNumFragment, bundle)
-                } else {
-                    Toast.makeText(requireContext(), "이메일 형식이 잘못되었습니다", Toast.LENGTH_SHORT).show()
-                }
-            }
+            checkEmail()
         }
 
         return binding.root
     }
 
-    private fun checkEmailFormat(email: String): Boolean {
+    private fun checkEmail() {
+        val email = binding.etJoinEmail.text.toString().trim()
+
+        if (email.isEmpty()) {
+            Toast.makeText(requireContext(), "이메일 값이 비어있습니다", Toast.LENGTH_SHORT).show()
+        } else {
+            val isEmailValid = emailRegularExpression(email)
+            Log.d("isEmailValid", "${emailRegularExpression(email)}")
+
+            if (isEmailValid) {
+                val bundle = Bundle()
+                bundle.putString("email", email)
+
+                val passBundleBFragment = JoinCheckNumFragment()
+                passBundleBFragment.arguments = bundle
+
+                findNavController().navigate(R.id.action_joinEmailFragment_to_joinCheckNumFragment, bundle)
+            } else {
+                Toast.makeText(requireContext(), "이메일 형식이 잘못되었습니다", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun emailRegularExpression(email: String): Boolean {
         val emailPattern = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}\$"
         val pattern = Pattern.compile(emailPattern)
         val matcher = pattern.matcher(email)

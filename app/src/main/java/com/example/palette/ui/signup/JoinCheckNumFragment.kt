@@ -24,8 +24,20 @@ class JoinCheckNumFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentJoinCheckNumBinding.inflate(inflater, container, false)
 
+        showEmail()
+
+        binding.btnCheckNum.setOnClickListener {
+            if (true) { // 인증번호가 맞다면
+                findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinPasswordFragment)
+            }
+
+        }
+
+        return binding.root
+    }
+
+    private fun showEmail() {
         var result = arguments?.getString("email")
-        Log.d("ddddasdf", "$result")
 
         result?.let {
             binding.nEtJoinEmail.apply {
@@ -33,15 +45,5 @@ class JoinCheckNumFragment : Fragment() {
                 isEnabled = false
             }
         }
-
-        binding.btnCheckNum.setOnClickListener {
-            if (true) { // 인증번호가 맞다면
-                //작업 수행
-                findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinPasswordFragment)
-            }
-
-        }
-
-        return binding.root
     }
 }

@@ -24,31 +24,35 @@ class JoinPasswordFragment : Fragment() {
         binding = FragmentJoinPasswordBinding.inflate(inflater, container, false)
 
         binding.btnNext.setOnClickListener {
-            val password = binding.etPassword.text.toString()
-            val checkPassword = binding.etCheckPassword.text.toString()
-
-            if (password.isEmpty()) {
-                Toast.makeText(requireContext(), "비밀번호 값이 비어있습니다", Toast.LENGTH_SHORT).show()
-            } else if (checkPassword.isEmpty()) {
-                Toast.makeText(requireContext(), "비밀번호 확인 값이 비어있습니다", Toast.LENGTH_SHORT).show()
-            } else if (password!=checkPassword){
-                Toast.makeText(requireContext(), "비밀번호 확인 값이 다릅니다.", Toast.LENGTH_SHORT).show()
-            } else {
-                val isPasswordValid = checkPasswordFormat(password)
-                Log.d("isPasswordValid", "${checkPasswordFormat(password)}")
-
-                if (isPasswordValid) {
-                    findNavController().navigate(R.id.action_joinPasswordFragment_to_joinBirthFragment)
-                } else {
-                    Toast.makeText(requireContext(), "비밀번호 형식이 잘못되었습니다", Toast.LENGTH_SHORT).show()
-                }
-            }
+            checkPassword()
         }
 
         return binding.root
     }
 
-    private fun checkPasswordFormat(password: String): Boolean {
+    private fun checkPassword() {
+        val password = binding.etPassword.text.toString()
+        val checkPassword = binding.etCheckPassword.text.toString()
+
+        if (password.isEmpty()) {
+            Toast.makeText(requireContext(), "비밀번호 값이 비어있습니다", Toast.LENGTH_SHORT).show()
+        } else if (checkPassword.isEmpty()) {
+            Toast.makeText(requireContext(), "비밀번호 확인 값이 비어있습니다", Toast.LENGTH_SHORT).show()
+        } else if (password!=checkPassword){
+            Toast.makeText(requireContext(), "비밀번호 확인 값이 다릅니다.", Toast.LENGTH_SHORT).show()
+        } else {
+            val isPasswordValid = passwordRegularExpression(password)
+            Log.d("isPasswordValid", "${passwordRegularExpression(password)}")
+
+            if (isPasswordValid) {
+                findNavController().navigate(R.id.action_joinPasswordFragment_to_joinBirthFragment)
+            } else {
+                Toast.makeText(requireContext(), "비밀번호 형식이 잘못되었습니다", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun passwordRegularExpression(password: String): Boolean {
         val passwordPattern = "^.*(?=^.{8,15}\$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#\$%^&+=]).*\$"
         val pattern = Pattern.compile(passwordPattern)
         val matcher = pattern.matcher(password)

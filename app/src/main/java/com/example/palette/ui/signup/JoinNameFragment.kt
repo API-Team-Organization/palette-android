@@ -24,26 +24,30 @@ class JoinNameFragment : Fragment() {
         binding = FragmentJoinNameBinding.inflate(inflater, container, false)
 
         binding.btnComplete.setOnClickListener {
-            val name = binding.etJoinName.text.toString()
-
-            if (name.isEmpty()) {
-                Toast.makeText(requireContext(), "이름 값이 비어있습니다", Toast.LENGTH_SHORT).show()
-            } else {
-                val isNameValid = checkNameFormat(name)
-                Log.d("isNameValid", "${checkNameFormat(name)}")
-
-                if (isNameValid) {
-                    findNavController().navigate(R.id.action_joinNameFragment_to_joinCompleteFragment)
-                } else {
-                    Toast.makeText(requireContext(), "이름의 형식이 잘못되었습니다", Toast.LENGTH_SHORT).show()
-                }
-            }
+            checkName()
         }
 
         return binding.root
     }
 
-    private fun checkNameFormat(name: String): Boolean {
+    private fun checkName() {
+        val name = binding.etJoinName.text.toString()
+
+        if (name.isEmpty()) {
+            Toast.makeText(requireContext(), "이름 값이 비어있습니다", Toast.LENGTH_SHORT).show()
+        } else {
+            val isNameValid = nameRegularExpression(name)
+            Log.d("isNameValid", "${nameRegularExpression(name)}")
+
+            if (isNameValid) {
+                findNavController().navigate(R.id.action_joinNameFragment_to_joinCompleteFragment)
+            } else {
+                Toast.makeText(requireContext(), "이름의 형식이 잘못되었습니다", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun nameRegularExpression(name: String): Boolean {
         val namePattern = "^[가-힣]*\$"
         val pattern = Pattern.compile(namePattern)
         val matcher = pattern.matcher(name)
