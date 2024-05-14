@@ -31,30 +31,46 @@
             android:layout_height="0dp"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_weight="2">
+            android:layout_weight="2"
+            android:layout_marginBottom="120dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="우와 개쩐당!"
+                android:text="우와 대단해요"
                 android:textColor="@color/black"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:fontFamily="@font/pretendard_bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="나만의 홍보물 제작하거라"
                 android:textColor="@color/black"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendard_medium"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ai 활용하면 개꿀임 ㄹㅇㅋㅋ"
+                android:text="Ai 활용하면 편리하게 가능해요"
                 android:textColor="@color/black"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendard_medium"/>
         </LinearLayout>
 
-
-
     </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/onBoarding3Button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
+        android:text="시작하기"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="@drawable/bac_button"
+        android:layout_gravity="bottom|center"
+        android:layout_marginVertical="40dp"/>
 
 </FrameLayout>

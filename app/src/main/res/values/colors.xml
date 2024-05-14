@@ -5,4 +5,9 @@
 
     <color name="primaryColor">#FF4762F5</color>
     <color name="blue">#FF555FE8</color>
+    <color name="red">#FFFF0000</color>
+
+    <color name="darkGray">#7E7E7E</color>
+    <color name="lightGray">#D6D6D6</color>
+    <color name="semiDarkGray">#B2B2B2</color>
 </resources>
