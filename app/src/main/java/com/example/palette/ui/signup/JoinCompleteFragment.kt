@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinCompleteBinding
@@ -32,6 +34,23 @@ class JoinCompleteFragment : Fragment() {
         binding.btnStart.setOnClickListener {
             findNavController().navigate(R.id.action_joinCompleteFragment_to_loginFragment)
         }
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                AlertDialog.Builder(requireContext()).apply {
+                    setTitle("팔레트")
+                    setMessage("앱을 종료하시겠습니까?")
+                    setPositiveButton("예") { _, _ ->
+                        requireActivity().finish()
+                    }
+                    setNegativeButton("아니요", null)
+                    create()
+                    show()
+                }
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         return binding.root
     }
