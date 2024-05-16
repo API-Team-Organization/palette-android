@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.service.settings.SettingFragment">
+    tools:context=".ui.main.settings.SettingFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="15dp"
-            android:columnCount="2">
+            android:columnCount="2"
+            android:rowCount="5">
 
             <LinearLayout
                 android:id="@+id/profile"
@@ -47,13 +48,60 @@
                 android:orientation="vertical"
                 android:background="@drawable/bac_object"
                 android:layout_margin="5dp">
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_account"
-                    android:layout_margin="20dp"/>
-                
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center|top"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="14dp">
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/ic_account"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="프로필"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/pretendard_bold"/>
+                </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="bottom"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginBottom="14dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Palette"
+                            android:fontFamily="@font/suit_bold"
+                            android:textColor="@color/darkGray"
+                            android:textSize="16sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="사용자의"
+                            android:textSize="16sp"
+                            android:textColor="@color/darkGray"
+                            android:fontFamily="@font/pretendard_medium"/>
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="프로필을 설정합니다."
+                        android:textSize="16sp"
+                        android:textColor="@color/darkGray"
+                        android:fontFamily="@font/pretendard_medium"/>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -63,11 +111,24 @@
                 android:orientation="vertical"
                 android:background="@drawable/bac_object"
                 android:layout_margin="5dp">
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_info"
-                    android:layout_margin="20dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start|top"
+                    android:layout_margin="14dp">
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_info"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="앱 정보"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/pretendard_bold"/>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -77,12 +138,24 @@
                 android:orientation="vertical"
                 android:background="@drawable/bac_object"
                 android:layout_margin="5dp">
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_notification"
-                    android:layout_margin="20dp"/>
-
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start|top"
+                    android:layout_margin="14dp">
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_notification"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="앱 알림"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/pretendard_bold"/>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -93,42 +166,124 @@
                 android:orientation="vertical"
                 android:background="@drawable/bac_object"
                 android:layout_margin="5dp">
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_premium"
-                    android:layout_margin="20dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="14dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+                        <ImageView
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:src="@drawable/ic_premium"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="내"
+                            android:textSize="24sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/pretendard_bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" Palette "
+                            android:textSize="24sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/pretendard_bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="요금제"
+                            android:textSize="24sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/pretendard_bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="5dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Palette "
+                            android:textSize="16sp"
+                            android:textColor="@color/darkGray"
+                            android:layout_marginStart="20dp"
+                            android:fontFamily="@font/suit_bold"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="서비스의 구독을 관리합니다."
+                            android:textSize="16sp"
+                            android:textColor="@color/darkGray"
+                            android:fontFamily="@font/pretendard_medium"/>
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/logout"
-                android:layout_rowSpan="2"
-                android:layout_rowWeight="2"
+                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
                 android:background="@drawable/bac_object"
                 android:layout_margin="5dp">
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_logout"
-                    android:layout_margin="20dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start|top"
+                    android:layout_weight="5"
+                    android:layout_margin="14dp">
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_logout"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="로그아웃"
+                        android:textSize="24sp"
+                        android:textColor="@color/red"
+                        android:fontFamily="@font/pretendard_bold"/>
+                </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/storageManage"
-                android:layout_rowSpan="2"
-                android:layout_rowWeight="2"
+                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:orientation="vertical"
                 android:background="@drawable/bac_object"
                 android:layout_margin="5dp">
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_batabase"
-                    android:layout_margin="20dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start|top"
+                    android:layout_weight="5"
+                    android:layout_margin="14dp">
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_batabase"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="저장공간 관리"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/pretendard_bold"/>
+                </LinearLayout>
             </LinearLayout>
-        </GridLayout>
-    </LinearLayout>
 
+        </GridLayout>
+
+    </LinearLayout>
 </FrameLayout>
