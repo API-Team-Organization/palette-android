@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="이메일로 전송된 인증코드를 입력해주세요!"
+                android:text="이메일로 전송된 인증번호를 입력해주세요!"
                 android:fontFamily="@font/pretendard_bold"
                 android:textSize="15sp"
                 android:textColor="@color/darkGray"
@@ -56,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:background="@drawable/bac_object"
-                android:hint="인증코드"
+                android:hint="인증번호"
                 android:text="123456"
                 android:maxLength="6"
                 android:textColorHint="@color/semiDarkGray"
