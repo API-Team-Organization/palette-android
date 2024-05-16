@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -18,8 +17,6 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"/>
     </fragment>
-
-    <!--            app:popUpTo="true" 얘는 이전으로 가는거 되는 애인듯-->
 
     <fragment
         android:id="@+id/startFragment"
@@ -151,6 +148,8 @@
             app:destination="@id/createPosterFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="true"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
@@ -159,8 +158,5 @@
         android:id="@+id/createPosterFragment"
         tools:layout="@layout/fragment_create_poster"
         android:label="createPosterFragment"
-        android:name="com.example.palette.ui.service.create.CreatePosterFragment">
-
-    </fragment>
-
+        android:name="com.example.palette.ui.service.create.CreatePosterFragment"/>
 </navigation>

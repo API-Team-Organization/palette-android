@@ -8,11 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinEmailBinding
 import com.example.palette.databinding.FragmentJoinPasswordBinding
+import com.example.palette.ui.util.shortToast
 import java.util.regex.Pattern
 
 class JoinPasswordFragment : Fragment() {

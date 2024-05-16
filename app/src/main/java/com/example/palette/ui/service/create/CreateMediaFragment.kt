@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,6 +59,22 @@ class CreateMediaFragment : Fragment() {
             findNavController().navigate(R.id.action_mainFragment_to_createPosterFragment)
         }
 
+        handleOnBackPressed()
+
         return binding.root
+    }
+
+    private fun handleOnBackPressed() {
+        var backPressedTime: Long = 0
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() > backPressedTime + 2000) {
+                    backPressedTime = System.currentTimeMillis()
+                    shortToast("한 번 더 누르면 종료돼요!")
+                } else if (System.currentTimeMillis() <= backPressedTime + 2000) {
+                    requireActivity().finish()
+                }
+            }
+        })
     }
 }
