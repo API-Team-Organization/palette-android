@@ -20,6 +20,16 @@ class JoinBirthFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentJoinBirthBinding.inflate(inflater, container, false)
 
+        datePickerDefaultSettings()
+
+        binding.btnContinue.setOnClickListener {
+            findNavController().navigate(R.id.action_joinBirthFragment_to_joinNameFragment)
+        }
+
+        return binding.root
+    }
+
+    private fun datePickerDefaultSettings() {
         val datePicker = binding.dpSpinner
         datePicker.maxDate = System.currentTimeMillis() - 1000
 
@@ -33,11 +43,5 @@ class JoinBirthFragment : Fragment() {
         ) { view, year, monthOfYear, dayOfMonth ->
             // 날짜가 변경될 때 실행할 작업
         }
-
-        binding.btnContinue.setOnClickListener {
-            findNavController().navigate(R.id.action_joinBirthFragment_to_joinNameFragment)
-        }
-
-        return binding.root
     }
 }
