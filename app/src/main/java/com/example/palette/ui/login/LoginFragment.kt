@@ -93,9 +93,11 @@ class LoginFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = LoginRequestManager.loginRequest(loginRequest)
+                Log.d(TAG, "response.header : ${response.code()}")
+
                 val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
-                Log.d(Constant.TAG, "token is $token")
-                PaletteApplication.prefs.token = token?: ""
+                Log.d(TAG, "token is $token")
+                PaletteApplication.prefs.token = token ?: ""
                 shortToast("로그인 성공")
                 val intent = Intent(activity, ServiceActivity::class.java)
                 requireActivity().startActivity(intent)
@@ -105,8 +107,7 @@ class LoginFragment : Fragment() {
                 shortToast("이메일과 비밀번호를 다시 확인해주세요")
             } catch (e: SocketTimeoutException) {
                 shortToast("네트워크 연결이 불안정합니다. 다시 시도해주세요.")
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 // HTTP 오류가 아닌 다른 예외가 발생한 경우에 대한 처리
                 Log.e("LoginFragment", "loginRequest error", e)
                 shortToast("알 수 없는 에러")
