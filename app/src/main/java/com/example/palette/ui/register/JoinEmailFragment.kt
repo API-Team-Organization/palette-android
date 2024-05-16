@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinEmailBinding
@@ -22,13 +24,23 @@ class JoinEmailFragment : Fragment() {
         binding = FragmentJoinEmailBinding.inflate(inflater, container, false)
 
         binding.btnCheckNum.setOnClickListener {
-            val email = binding.etJoinEmail.text.toString().trim()
+            checkEmail()
+        }
 
+        return binding.root
+    }
+
+    private fun checkEmail() {
+        val email = binding.etJoinEmail.text.toString().trim()
+
+        with(binding) {
             if (email.isEmpty()) {
-                Toast.makeText(requireContext(), "이메일 값이 비어있습니다", Toast.LENGTH_SHORT).show()
+                checkEmailFailed(etJoinEmail)
+                failedEmailEmpty.visibility = View.VISIBLE
+                failedEmailFormat.visibility = View.GONE
             } else {
-                val isEmailValid = checkEmailFormat(email)
-                Log.d("isEmailValid", "${checkEmailFormat(email)}")
+                val isEmailValid = emailRegularExpression(email)
+                Log.d("isEmailValid", "${emailRegularExpression(email)}")
 
                 if (isEmailValid) {
                     val bundle = Bundle()
@@ -39,15 +51,21 @@ class JoinEmailFragment : Fragment() {
 
                     findNavController().navigate(R.id.action_joinEmailFragment_to_joinCheckNumFragment, bundle)
                 } else {
-                    Toast.makeText(requireContext(), "이메일 형식이 잘못되었습니다", Toast.LENGTH_SHORT).show()
+                    checkEmailFailed(etJoinEmail)
+                    failedEmailFormat.visibility = View.VISIBLE
+                    failedEmailEmpty.visibility = View.GONE
                 }
             }
         }
-
-        return binding.root
     }
 
-    private fun checkEmailFormat(email: String): Boolean {
+    private fun checkEmailFailed(email: EditText) {
+        email.background = ContextCompat.getDrawable(email.context, R.drawable.bac_edit_text_failed)
+        email.requestFocus()
+        email.selectAll()
+    }
+
+    private fun emailRegularExpression(email: String): Boolean {
         val emailPattern = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}\$"
         val pattern = Pattern.compile(emailPattern)
         val matcher = pattern.matcher(email)

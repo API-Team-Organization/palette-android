@@ -52,6 +52,28 @@
                 android:layout_marginTop="40dp"
                 android:inputType="textEmailAddress"
                 android:paddingStart="8dp"/>
+
+            <TextView
+                android:id="@+id/failedEmailEmpty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이메일 값이 비어있습니다"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:visibility="gone"
+                android:fontFamily="@font/pretendard_medium" />
+
+            <TextView
+                android:id="@+id/failedEmailFormat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이메일 형식이 잘못되었습니다"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:visibility="gone"
+                android:fontFamily="@font/pretendard_medium" />
             
         </LinearLayout>
 

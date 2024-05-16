@@ -52,6 +52,28 @@
                 android:inputType="textEmailAddress"
                 android:paddingStart="8dp"/>
 
+            <TextView
+                android:id="@+id/failedNameEmpty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이름이 비어있습니다"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:visibility="gone"
+                android:fontFamily="@font/pretendard_medium" />
+
+            <TextView
+                android:id="@+id/failedNameFormat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이름의 형식이 잘못되었습니다"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:visibility="gone"
+                android:fontFamily="@font/pretendard_medium" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
