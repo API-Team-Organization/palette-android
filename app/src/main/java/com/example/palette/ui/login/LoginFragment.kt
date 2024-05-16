@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -24,11 +26,14 @@ import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
 
 class LoginFragment : Fragment() {
     private lateinit var binding : FragmentLoginBinding
     private lateinit var email: String
     private lateinit var pw: String
+
+    private var backPressedTime: Long = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +45,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun initView() {
+        handleOnBackPressed()
         with(binding) {
             loginButton.setOnClickListener {
                 if (loginEmailEdit.text.isEmpty()) {
@@ -97,11 +103,29 @@ class LoginFragment : Fragment() {
 
             } catch (e: HttpException) {
                 shortToast("이메일과 비밀번호를 다시 확인해주세요")
-            } catch (e: Exception) {
+            } catch (e: SocketTimeoutException) {
+                shortToast("네트워크 연결이 불안정합니다. 다시 시도해주세요.")
+            }
+            catch (e: Exception) {
                 // HTTP 오류가 아닌 다른 예외가 발생한 경우에 대한 처리
                 Log.e("LoginFragment", "loginRequest error", e)
                 shortToast("알 수 없는 에러")
             }
         }
+    }
+
+    private fun handleOnBackPressed() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime <= 2000) {
+                    requireActivity().finish()
+                } else {
+                    backPressedTime = System.currentTimeMillis()
+                    shortToast("한 번 더 누르면 종료됩니다.")
+                }
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 }
