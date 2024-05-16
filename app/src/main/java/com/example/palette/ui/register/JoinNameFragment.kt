@@ -1,4 +1,4 @@
-package com.example.palette.ui.signup
+package com.example.palette.ui.register
 
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
-import com.example.palette.databinding.FragmentJoinBirthBinding
 import com.example.palette.databinding.FragmentJoinNameBinding
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.regex.Pattern

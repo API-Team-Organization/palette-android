@@ -1,24 +1,22 @@
-package com.example.palette.ui.service
+package com.example.palette.ui.main
 
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.ExperimentalAssetLoader
 import app.rive.runtime.kotlin.core.RiveEvent
 import com.example.palette.R
-import com.example.palette.databinding.FragmentMainBinding
-import com.example.palette.ui.service.create.CreateMediaFragment
-import com.example.palette.ui.service.settings.SettingFragment
-import com.example.palette.ui.service.work.WorkFragment
+import com.example.palette.databinding.ActivityServiceBinding
+import com.example.palette.ui.main.create.CreateMediaFragment
+import com.example.palette.ui.main.settings.SettingFragment
+import com.example.palette.ui.main.work.WorkFragment
 
 @OptIn(ExperimentalAssetLoader::class)
-class MainFragment : Fragment() {
-    private val binding by lazy { FragmentMainBinding.inflate(layoutInflater) }
+class ServiceActivity : AppCompatActivity() {
+    private val binding by lazy { ActivityServiceBinding.inflate(layoutInflater) }
     private val riveAnimationView: RiveAnimationView by lazy(LazyThreadSafetyMode.NONE) {
         binding.bottomBar
     }
@@ -42,21 +40,21 @@ class MainFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         changeFragment(CreateMediaFragment())
+
+        // RiveAnimationView에서 click_home 이벤트를 강제로 실행
         riveAnimationView.addEventListener(eventListener)
 
-        return binding.root
+        setContentView(binding.root)
     }
+
 
     private fun changeFragment(fragment: Fragment) {
         Log.d("MainFragment", "changeFragment is running")
-        val fragmentManager = requireActivity().supportFragmentManager // 또는 requireActivity().supportFragmentManager (Fragment 내에서)
+        val fragmentManager = this.supportFragmentManager // 또는 requireActivity().supportFragmentManager (Fragment 내에서)
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(R.id.mainContent, fragment)
 
