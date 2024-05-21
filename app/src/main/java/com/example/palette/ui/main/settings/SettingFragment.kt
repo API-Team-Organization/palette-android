@@ -11,6 +11,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.palette.MainActivity
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
@@ -51,19 +52,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun showProfileInfo() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            Log.d(Constant.TAG, "token : ${PaletteApplication.prefs.token}")
-
-
-            try {
-                val profileInfo = InfoRequestManager.requestProfileInfo(PaletteApplication.prefs.token)
-                Log.d(Constant.TAG, "profileInfo: ${profileInfo}")
-                Log.d(Constant.TAG, "profileInfo: ${profileInfo!!.data}")
-            } catch (e: Exception) {
-                Log.d(Constant.TAG, "Setting profileInfo error : ${e}")
-            }
-
-        }
+        changeFragment(ProfileFragment())
     }
 
     private fun logout() {
@@ -75,4 +64,12 @@ class SettingFragment : Fragment() {
 
         activity?.finish()
     }
+
+    private fun changeFragment(fragment: Fragment) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.mainContent, fragment)
+            .addToBackStack(null) // 백 스택에 프래그먼트 추가
+            .commitAllowingStateLoss()
+    }
+
 }
