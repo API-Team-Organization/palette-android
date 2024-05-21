@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
@@ -15,6 +16,7 @@ import com.example.palette.databinding.ActivityMainBinding
 import com.example.palette.ui.login.LoginFragment
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.onboarding.OnboardingDefaultFragment
+import com.example.palette.ui.util.shortToast
 
 
 class MainActivity : AppCompatActivity() {
@@ -22,10 +24,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
         PaletteApplication.prefs = PreferenceManager(application)
         handleAuth()
+
         initView()
+        handleOnBackPressed()
     }
+    private var backPressedTime: Long = 0L
 
     private fun initView() {
         val pref = getSharedPreferences("isFirst", MODE_PRIVATE)
@@ -64,5 +70,20 @@ class MainActivity : AppCompatActivity() {
         else {
             Log.d(Constant.TAG,"token is Empty")
         }
+    }
+
+    private fun handleOnBackPressed() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime <= 2000) {
+                    finish()
+                } else {
+                    backPressedTime = System.currentTimeMillis()
+                    shortToast("한 번 더 누르면 종료됩니다.")
+                }
+            }
+        }
+
+        this.onBackPressedDispatcher.addCallback(this, callback)
     }
 }

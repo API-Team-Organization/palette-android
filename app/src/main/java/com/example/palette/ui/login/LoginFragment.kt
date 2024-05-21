@@ -45,7 +45,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun initView() {
-        handleOnBackPressed()
         with(binding) {
             loginButton.setOnClickListener {
                 if (loginEmailEdit.text.isEmpty()) {
@@ -113,20 +112,5 @@ class LoginFragment : Fragment() {
                 shortToast("알 수 없는 에러")
             }
         }
-    }
-
-    private fun handleOnBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (System.currentTimeMillis() - backPressedTime <= 2000) {
-                    requireActivity().finish()
-                } else {
-                    backPressedTime = System.currentTimeMillis()
-                    shortToast("한 번 더 누르면 종료됩니다.")
-                }
-            }
-        }
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 }
