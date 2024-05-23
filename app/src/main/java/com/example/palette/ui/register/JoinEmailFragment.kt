@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinEmailBinding
@@ -16,6 +19,7 @@ import java.util.regex.Pattern
 
 class JoinEmailFragment : Fragment() {
     private lateinit var binding : FragmentJoinEmailBinding
+    private val registerViewModel: RegisterViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +52,13 @@ class JoinEmailFragment : Fragment() {
 
                     val passBundleBFragment = JoinCheckNumFragment()
                     passBundleBFragment.arguments = bundle
+
+                    registerViewModel.email.observe(viewLifecycleOwner) {
+                        binding.etJoinEmail.setText(
+                            it
+                        )
+                    }
+                    registerViewModel.setEmail(binding.etJoinEmail.text.toString())
 
                     findNavController().navigate(R.id.action_joinEmailFragment_to_joinCheckNumFragment, bundle)
                 } else {

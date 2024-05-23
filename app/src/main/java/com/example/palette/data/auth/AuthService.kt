@@ -10,4 +10,9 @@ interface AuthService {
     suspend fun login(
         @Body loginRequest: LoginRequest
     ): Response<BaseVoidResponse>
+
+    @POST("/auth/register")
+    suspend fun register(
+        @Body registerRequest: RegisterRequest
+    ): Response<BaseVoidResponse>
 }

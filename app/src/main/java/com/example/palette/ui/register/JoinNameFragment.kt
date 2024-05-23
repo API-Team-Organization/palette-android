@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinNameBinding
@@ -17,6 +18,7 @@ import java.util.regex.Pattern
 
 class JoinNameFragment : Fragment() {
     private lateinit var binding : FragmentJoinNameBinding
+    private val registerViewModel: RegisterViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +47,12 @@ class JoinNameFragment : Fragment() {
                 Log.d("isNameValid", "${nameRegularExpression(name)}")
 
                 if (isNameValid) {
+                    registerViewModel.username.observe(viewLifecycleOwner) {
+                        binding.etJoinName.setText(
+                            it
+                        )
+                    }
+                    registerViewModel.setUsername(binding.etJoinName.text.toString())
                     findNavController().navigate(R.id.action_joinNameFragment_to_joinCompleteFragment)
                 } else {
                     checkNameFailed(etJoinName)

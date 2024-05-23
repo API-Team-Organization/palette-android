@@ -45,7 +45,6 @@
                 android:layout_height="55dp"
                 android:background="@drawable/bac_object"
                 android:hint="이름"
-                android:text="박준현"
                 android:fontFamily="@font/pretendard_semibold"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="40dp"
