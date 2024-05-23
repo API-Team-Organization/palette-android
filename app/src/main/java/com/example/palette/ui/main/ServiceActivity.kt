@@ -1,7 +1,10 @@
 package com.example.palette.ui.main
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import app.rive.runtime.kotlin.RiveAnimationView
@@ -9,6 +12,7 @@ import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.ExperimentalAssetLoader
 import app.rive.runtime.kotlin.core.RiveEvent
 import com.example.palette.R
+import com.example.palette.common.Constant
 import com.example.palette.databinding.ActivityServiceBinding
 import com.example.palette.ui.main.create.CreateMediaFragment
 import com.example.palette.ui.main.settings.SettingFragment
@@ -50,6 +54,20 @@ class ServiceActivity : AppCompatActivity() {
 
         setContentView(binding.root)
     }
+
+    // bottomVisible 메서드 정의
+    fun bottomVisible(isVisible: Boolean) {
+        Log.d(Constant.TAG, "bottomVisible is ${isVisible}")
+        if (isVisible) {
+            // 하단 바를 보이게 하는 로직
+            binding.bottomBar.visibility = View.VISIBLE
+        } else {
+            // 하단 바를 숨기는 로직
+            binding.bottomBar.visibility = View.GONE
+        }
+    }
+
+
 
 
     private fun changeFragment(fragment: Fragment) {

@@ -21,7 +21,7 @@ class CreateMediaFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentCreateMediaBinding.inflate(inflater, container, false)
 
@@ -48,11 +48,19 @@ class CreateMediaFragment : Fragment() {
             override fun onItemClick(position: Int) {
                 val item = itemList[position]
                 shortToast("${item.title} 클릭함")
+                startChatting()
             }
         }
 
         workAdapter.notifyDataSetChanged()
 
         return binding.root
+    }
+
+    private fun startChatting() {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.mainContent, ChattingFragment())
+            .addToBackStack(null) // 백 스택에 프래그먼트 추가
+            .commitAllowingStateLoss()
     }
 }
