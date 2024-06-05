@@ -88,6 +88,7 @@ class JoinCompleteFragment : Fragment() {
 
                         val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
                         Log.d(TAG, "token is $token")
+
                         PaletteApplication.prefs.token = token ?: ""
                         shortToast("회원가입 성공")
 
