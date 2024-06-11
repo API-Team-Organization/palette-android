@@ -8,19 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.common.Constant
 import com.example.palette.common.Constant.TAG
 import com.example.palette.common.HeaderUtil
 import com.example.palette.data.auth.LoginRequest
-import com.example.palette.data.auth.LoginRequestManager
+import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.databinding.FragmentLoginBinding
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
@@ -91,7 +86,7 @@ class LoginFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = LoginRequestManager.loginRequest(loginRequest)
+                val response = AuthRequestManager.loginRequest(loginRequest)
                 Log.d(TAG, "response.header : ${response.code()}")
 
                 val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]

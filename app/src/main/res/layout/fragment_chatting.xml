@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/layout_group_chat"
+            android:id="@+id/chattingAppBarLayout"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:fitsSystemWindows="true"
@@ -21,23 +21,27 @@
 
 
            <androidx.appcompat.widget.Toolbar
-               android:id="@+id/toolbar_gchannel"
+               android:id="@+id/chattingToolbar"
                android:layout_width="match_parent"
                android:layout_height="?attr/actionBarSize"
                android:theme="@style/Widget.AppCompat.Toolbar"
-               app:popupTheme="@style/Theme.AppCompat.Light">
-            </androidx.appcompat.widget.Toolbar>
+               app:popupTheme="@style/Theme.AppCompat.Light"
+               app:navigationIcon="@drawable/ic_back"
+               android:background="@color/white"
+               app:title="새 작업"
+               app:titleTextColor="@color/black"
+               app:titleMarginTop="14dp"/>
 
        </com.google.android.material.appbar.AppBarLayout>
 
        <androidx.recyclerview.widget.RecyclerView
-           android:id="@+id/recycler_gchat"
+           android:id="@+id/chattingRecycler"
            android:layout_width="match_parent"
            android:layout_height="match_parent"
            android:layout_marginBottom="16dp"
            app:layout_constrainedHeight="true"
            app:layout_constraintBottom_toTopOf="@+id/text_gchat_indicator"
-           app:layout_constraintTop_toBottomOf="@+id/layout_group_chat" />
+           app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout" />
 
        <TextView
            android:id="@+id/text_gchat_indicator"
@@ -53,10 +57,10 @@
            android:layout_width="match_parent"
            android:layout_height="1dp"
            android:background="#e0e0e0"
-           app:layout_constraintBottom_toTopOf="@+id/layout_gchat_chatbox" />
+           app:layout_constraintBottom_toTopOf="@+id/chattingTextBox" />
 
        <RelativeLayout
-           android:id="@+id/layout_gchat_chatbox"
+           android:id="@+id/chattingTextBox"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            app:layout_constraintBottom_toBottomOf="parent"
@@ -64,28 +68,28 @@
 
 
            <EditText
-               android:id="@+id/edit_gchat_message"
+               android:id="@+id/chattingEditText"
                android:layout_marginStart="16dp"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:layout_centerVertical="true"
-               android:layout_toStartOf="@+id/button_gchat_send"
+               android:layout_toStartOf="@+id/chattingSubmitButton"
                android:background="@android:color/transparent"
-               android:hint="Enter Message"
+               android:hint="당신의 palette를 그려보세요"
                android:inputType="textMultiLine"
                android:maxLines="6"
-               tools:ignore="Autofill" />
+               tools:ignore="Autofill"
+               android:fontFamily="@font/suit_medium"
+               android:textColor="@color/white" />
 
            <ImageButton
-               android:id="@+id/button_gchat_send"
+               android:id="@+id/chattingSubmitButton"
                android:layout_width="64dp"
                android:layout_height="48dp"
                android:layout_alignParentEnd="true"
-               android:text="Send"
                android:src="@drawable/ic_send"
-               android:background="@color/white"
                android:textColor="@color/white"
-               android:layout_centerVertical="true"/>
+               android:layout_centerVertical="true" />
 
        </RelativeLayout>
 

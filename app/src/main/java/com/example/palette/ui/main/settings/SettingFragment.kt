@@ -4,23 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.palette.MainActivity
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.PreferenceManager
 import com.example.palette.common.Constant
-import com.example.palette.data.auth.LoginRequestManager
-import com.example.palette.data.info.InfoRequestManager
+import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.databinding.FragmentSettingBinding
-import com.example.palette.ui.main.ServiceActivity
 import kotlinx.coroutines.launch
 
 
@@ -56,6 +50,11 @@ class SettingFragment : Fragment() {
     }
 
     private fun logout() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val response = AuthRequestManager.logoutRequest()
+            Log.d(Constant.TAG, "Logout response.header code : ${response.code()}")
+        }
+
         PaletteApplication.prefs = PreferenceManager(requireContext().applicationContext)
 
         PaletteApplication.prefs.clearToken()
