@@ -5,9 +5,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.palette.R
@@ -27,9 +27,21 @@ class ChattingFragment : Fragment() {
         ChatModel("RECEIVE", "안녕하세요 Palette입니다.", ""),
         ChatModel("USER", "쌈뽕하게 하나 내와봐라", ""),
         ChatModel("RECEIVE", "해드림 ㅇㅇ", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/10_sharing_book_cover_background.jpg/500px-10_sharing_book_cover_background.jpg"),
-        ChatModel("USER", "오 근데 나 군대 갔다왔는데?", ""),
-        ChatModel("RECEIVE", "ㅇㅇ 알빠노?", ""),
-        ChatModel("USER", "?", ""),
+        ChatModel("USER", "오 근데 나무위키가 최고지;;", ""),
+        ChatModel("RECEIVE", "ㅇㅇ 꺼무위키 나라;;", ""),
+        ChatModel("USER", "?? 수듄';", ""),
+        ChatModel("USER", "나무위키가 최고지;;", ""),
+        ChatModel("RECEIVE", "위키백과가 최고다", ""),
+        ChatModel("USER", "?? 수듄';", ""),
+        ChatModel("USER", "나무위키가 최고지;;", ""),
+        ChatModel("RECEIVE", "위키백과가 최고다", ""),
+        ChatModel("USER", "?? 수듄';", ""),
+        ChatModel("USER", "나무위키가 최고지;;", ""),
+        ChatModel("RECEIVE", "위키백과가 최고다", ""),
+        ChatModel("USER", "?? 수듄';", ""),
+        ChatModel("USER", "나무위키가 최고지;;", ""),
+        ChatModel("RECEIVE", "위키백과가 최고다", ""),
+        ChatModel("USER", "?? 수듄';", ""),
     )
 
     override fun onCreateView(
@@ -39,7 +51,7 @@ class ChattingFragment : Fragment() {
         binding = FragmentChattingBinding.inflate(inflater, container, false)
 
         initView()
-        setEditText()
+        initEditText()
         return binding.root
     }
 
@@ -64,7 +76,7 @@ class ChattingFragment : Fragment() {
     }
 
 
-    private fun setEditText() {
+    private fun initEditText() {
         binding.chattingEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 // EditText 내용이 변경된 후 호출됩니다.
@@ -82,7 +94,25 @@ class ChattingFragment : Fragment() {
                 // 텍스트가 변경되는 동안 호출됩니다. 여기서는 사용하지 않습니다.
             }
         })
+
+        binding.chattingSubmitButton.setOnClickListener {
+            val newMessage = binding.chattingEditText.text.toString()
+            if (newMessage.isNotBlank()) {
+                val newChatModel = ChatModel("USER", newMessage, "")
+                recyclerAdapter.addChat(newChatModel)
+                binding.chattingEditText.text.clear()
+                binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+            }
+        }
     }
+
+//    private fun scrollToPosition() {
+//        binding.chattingRecycler.let { recyclerView ->
+//            val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
+//            layoutManager?.scrollToPositionWithOffset(recyclerView.size-1, 0)
+//        }
+//    }
+
 
     override fun onDestroy() {
         super.onDestroy()

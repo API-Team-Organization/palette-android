@@ -79,8 +79,7 @@
                android:inputType="textMultiLine"
                android:maxLines="6"
                tools:ignore="Autofill"
-               android:fontFamily="@font/suit_medium"
-               android:textColor="@color/white" />
+               android:fontFamily="@font/suit_medium" />
 
            <ImageButton
                android:id="@+id/chattingSubmitButton"

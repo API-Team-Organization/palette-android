@@ -2,9 +2,11 @@ package com.example.palette.data.chat
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.palette.common.Constant
 import com.example.palette.databinding.ItemChattingMeBoxBinding
 import com.example.palette.databinding.ItemChattingPaletteBoxBinding
 import kotlinx.coroutines.CoroutineScope
@@ -56,7 +58,12 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     fun setData(list: List<ChatModel>) {
         listOfChat.clear()
         listOfChat.addAll(list)
-        notifyDataSetChanged()
+        notifyDataSetChanged() // 전체 데이터가 변경되었음을 알림
+    }
+
+    fun addChat(chat: ChatModel) {
+        listOfChat.add(chat)
+        notifyItemInserted(listOfChat.size - 1)
     }
 
     inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) : RecyclerView.ViewHolder(binding.root) {

@@ -10,11 +10,8 @@
         android:id="@+id/card_gchat_message_palette"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:cardBackgroundColor="@android:color/transparent">
+        app:layout_constraintTop_toTopOf="parent">
         <LinearLayout
             android:id="@+id/layout_gchat_container_palette"
             android:layout_width="wrap_content"
