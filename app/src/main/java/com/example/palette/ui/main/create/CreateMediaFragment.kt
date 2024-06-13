@@ -2,17 +2,25 @@ package com.example.palette.ui.main.create
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.ui.main.create.adapter.CreateMediaAdapter
 import com.example.palette.ui.main.create.adapter.CreateMediaItem
 import com.example.palette.R
+import com.example.palette.application.PaletteApplication
+import com.example.palette.common.Constant
+import com.example.palette.data.info.InfoRequestManager
+import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.databinding.FragmentCreateMediaBinding
+import com.example.palette.ui.main.create.chat.ChattingFragment
 import com.example.palette.ui.util.shortToast
+import kotlinx.coroutines.launch
 
 class CreateMediaFragment : Fragment() {
     private lateinit var binding : FragmentCreateMediaBinding
@@ -52,6 +60,10 @@ class CreateMediaFragment : Fragment() {
             }
         }
 
+        binding.llStartNewWork.setOnClickListener {
+            createChat()
+        }
+
         workAdapter.notifyDataSetChanged()
 
         return binding.root
@@ -62,5 +74,9 @@ class CreateMediaFragment : Fragment() {
             .replace(R.id.mainContent, ChattingFragment())
             .addToBackStack(null) // 백 스택에 프래그먼트 추가
             .commitAllowingStateLoss()
+    }
+
+    private fun createChat() {
+        startChatting()
     }
 }

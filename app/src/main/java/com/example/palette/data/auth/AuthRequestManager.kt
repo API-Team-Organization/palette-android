@@ -31,7 +31,7 @@ object AuthRequestManager {
         return response
     }
 
-    suspend fun session(): Response<BaseVoidResponse> {
+    suspend fun sessionRequest(): Response<BaseVoidResponse> {
         val response = authService.session(PaletteApplication.prefs.token)
         if (!response.isSuccessful)
             throw HttpException(response)

@@ -1,9 +1,6 @@
 package com.example.palette.ui.main
 
-import android.content.Context
-import android.opengl.Visibility
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -13,7 +10,6 @@ import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.ExperimentalAssetLoader
 import app.rive.runtime.kotlin.core.RiveEvent
 import com.example.palette.R
-import com.example.palette.common.Constant
 import com.example.palette.databinding.ActivityServiceBinding
 import com.example.palette.ui.base.BottomControllable
 import com.example.palette.ui.main.create.CreateMediaFragment

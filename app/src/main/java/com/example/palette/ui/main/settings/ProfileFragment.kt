@@ -30,7 +30,7 @@ class ProfileFragment : Fragment() {
             Log.d(Constant.TAG, "token : ${PaletteApplication.prefs.token}")
 
             try {
-                val profileInfo = InfoRequestManager.requestProfileInfo(PaletteApplication.prefs.token)
+                val profileInfo = InfoRequestManager.profileInfoRequest(PaletteApplication.prefs.token)
                 Log.d(Constant.TAG, "profileInfo: ${profileInfo!!.data}")
 
                 binding.profileEmail.text = profileInfo.data.email
