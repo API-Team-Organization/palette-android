@@ -15,6 +15,7 @@ import com.example.palette.common.Constant
 import com.example.palette.data.chat.ChatModel
 import com.example.palette.data.chat.ChattingRecyclerAdapter
 import com.example.palette.databinding.FragmentChattingBinding
+import com.example.palette.ui.base.BottomControllable
 import com.example.palette.ui.main.ServiceActivity
 
 
@@ -23,24 +24,12 @@ class ChattingFragment : Fragment() {
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
-    private val listDemo = listOf(
+    private var listDemo = mutableListOf(
         ChatModel("RECEIVE", "안녕하세요 Palette입니다.", ""),
         ChatModel("USER", "쌈뽕하게 하나 내와봐라", ""),
         ChatModel("RECEIVE", "해드림 ㅇㅇ", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/10_sharing_book_cover_background.jpg/500px-10_sharing_book_cover_background.jpg"),
         ChatModel("USER", "오 근데 나무위키가 최고지;;", ""),
         ChatModel("RECEIVE", "ㅇㅇ 꺼무위키 나라;;", ""),
-        ChatModel("USER", "?? 수듄';", ""),
-        ChatModel("USER", "나무위키가 최고지;;", ""),
-        ChatModel("RECEIVE", "위키백과가 최고다", ""),
-        ChatModel("USER", "?? 수듄';", ""),
-        ChatModel("USER", "나무위키가 최고지;;", ""),
-        ChatModel("RECEIVE", "위키백과가 최고다", ""),
-        ChatModel("USER", "?? 수듄';", ""),
-        ChatModel("USER", "나무위키가 최고지;;", ""),
-        ChatModel("RECEIVE", "위키백과가 최고다", ""),
-        ChatModel("USER", "?? 수듄';", ""),
-        ChatModel("USER", "나무위키가 최고지;;", ""),
-        ChatModel("RECEIVE", "위키백과가 최고다", ""),
         ChatModel("USER", "?? 수듄';", ""),
     )
 
@@ -72,7 +61,7 @@ class ChattingFragment : Fragment() {
         recyclerAdapter.setData(listDemo)
         binding.chattingRecycler.smoothScrollToPosition(listDemo.size - 1)
 
-        (activity as? ServiceActivity)?.bottomVisible(false)
+        (activity as? BottomControllable)?.bottomVisible(false)
     }
 
 
@@ -98,7 +87,9 @@ class ChattingFragment : Fragment() {
         binding.chattingSubmitButton.setOnClickListener {
             val newMessage = binding.chattingEditText.text.toString()
             if (newMessage.isNotBlank()) {
+                scrollToPosition()
                 val newChatModel = ChatModel("USER", newMessage, "")
+                listDemo.add(newChatModel)
                 recyclerAdapter.addChat(newChatModel)
                 binding.chattingEditText.text.clear()
                 binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
@@ -106,18 +97,16 @@ class ChattingFragment : Fragment() {
         }
     }
 
-//    private fun scrollToPosition() {
-//        binding.chattingRecycler.let { recyclerView ->
-//            val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
-//            layoutManager?.scrollToPositionWithOffset(recyclerView.size-1, 0)
-//        }
-//    }
+    private fun scrollToPosition() {
+        binding.chattingRecycler.let { recyclerView ->
+            val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
+            layoutManager?.scrollToPositionWithOffset(recyclerView.size-1, 0)
+        }
+    }
 
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as? ServiceActivity)?.bottomVisible(true)
+        (requireActivity() as? BottomControllable)?.bottomVisible(true)
     }
-
-
 }

@@ -9,9 +9,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.R
 
-class CreateMediaAdapter(val itemList: ArrayList<CreateMediaItem>): RecyclerView.Adapter<CreateMediaAdapter.WorkViewHolder>() {
+class CreateMediaAdapter(
+    private val itemList: ArrayList<CreateMediaItem>
+) : RecyclerView.Adapter<CreateMediaAdapter.WorkViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_work_recycler, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_work_recycler, parent, false)
         return WorkViewHolder(view)
     }
 

@@ -22,14 +22,12 @@ class ProfileFragment : Fragment() {
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         initView()
-
         return binding.root
     }
 
     private fun initView() {
         viewLifecycleOwner.lifecycleScope.launch {
             Log.d(Constant.TAG, "token : ${PaletteApplication.prefs.token}")
-
 
             try {
                 val profileInfo = InfoRequestManager.requestProfileInfo(PaletteApplication.prefs.token)
@@ -39,12 +37,9 @@ class ProfileFragment : Fragment() {
                 binding.profileName.text = profileInfo.data.name
                 binding.profileBirthDate.text = profileInfo.data.birthDate
 
-
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "Setting profileInfo error : ",e)
             }
-
         }
     }
-
 }

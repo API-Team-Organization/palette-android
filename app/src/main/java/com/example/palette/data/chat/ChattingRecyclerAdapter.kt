@@ -72,7 +72,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 chat.also {
                     textGchatMessagePalette.text = chat.message
                     CoroutineScope(Dispatchers.Main).launch {
-                        chattingCreatedImage.setImageBitmap(stringToUrl(chat.image))
+                        chattingCreatedImage.setImageBitmap(stringToUrl(chat.image)) // image
                     }
                 }
             }

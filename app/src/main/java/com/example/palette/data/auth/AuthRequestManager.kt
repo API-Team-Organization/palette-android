@@ -30,4 +30,12 @@ object AuthRequestManager {
 
         return response
     }
+
+    suspend fun session(): Response<BaseVoidResponse> {
+        val response = authService.session(PaletteApplication.prefs.token)
+        if (!response.isSuccessful)
+            throw HttpException(response)
+
+        return response
+    }
 }

@@ -20,5 +20,8 @@ interface AuthService {
     ): Response<BaseVoidResponse>
 
     @GET("/auth/session")
-    suspend fun session(): Response<BaseVoidResponse>
+    suspend fun session(
+        @Header("X-AUTH-Token") token: String,
+        @Header("Accept") accept: String = "*/*"
+    ): Response<BaseVoidResponse>
 }
