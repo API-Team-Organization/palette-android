@@ -1,6 +1,10 @@
 package com.example.palette.data.auth
 
+import android.content.Context
+import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import com.example.palette.application.PaletteApplication
+import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseVoidResponse
 import retrofit2.HttpException
 import retrofit2.Response
@@ -23,19 +27,19 @@ object AuthRequestManager {
         return response
     }
 
-    suspend fun logoutRequest(): Response<BaseVoidResponse> {
-        val response = authService.logout(PaletteApplication.prefs.token)
+    suspend fun logoutRequest(token: String): Response<BaseVoidResponse> {
+        val response = authService.logout(token)
         if (!response.isSuccessful)
             throw HttpException(response)
 
         return response
     }
 
-    suspend fun sessionRequest(): Response<BaseVoidResponse> {
-        val response = authService.session(PaletteApplication.prefs.token)
-        if (!response.isSuccessful)
-            throw HttpException(response)
+    suspend fun sessionRequest(token: String): Response<BaseVoidResponse> {
+        val response = authService.session(token)
 
         return response
     }
+
+
 }

@@ -14,12 +14,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
+import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.chat.ChatModel
 import com.example.palette.data.chat.ChattingRecyclerAdapter
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.databinding.FragmentChattingBinding
 import com.example.palette.ui.base.BottomControllable
 import com.example.palette.ui.util.shortToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 

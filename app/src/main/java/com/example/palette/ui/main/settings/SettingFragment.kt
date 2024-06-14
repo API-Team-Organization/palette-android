@@ -51,7 +51,7 @@ class SettingFragment : Fragment() {
 
     private fun logout() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val response = AuthRequestManager.logoutRequest()
+            val response = AuthRequestManager.logoutRequest(PaletteApplication.prefs.token)
             Log.d(Constant.TAG, "Logout response.header code : ${response.code()}")
         }
 
