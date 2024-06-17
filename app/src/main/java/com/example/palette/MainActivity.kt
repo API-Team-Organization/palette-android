@@ -16,6 +16,7 @@ import com.example.palette.databinding.ActivityMainBinding
 import com.example.palette.ui.login.LoginFragment
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.onboarding.OnboardingDefaultFragment
+import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 
 
@@ -48,11 +49,11 @@ class MainActivity : AppCompatActivity() {
             editor2.putBoolean("notFirst", false)
             editor.apply()
 
-            Log.d(Constant.TAG, "최초실행입니다.")
+            log("최초 실행입니다.")
 
         } else {
             editor2.putBoolean("notFirst", true)
-            Log.d(Constant.TAG, "최초실행이 아닙니다.")
+            log("최초실행이 아닙니다.")
         }
 
         editor2.apply()

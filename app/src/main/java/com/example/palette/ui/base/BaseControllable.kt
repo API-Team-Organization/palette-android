@@ -1,5 +1,5 @@
 package com.example.palette.ui.base
 
-interface BottomControllable {
+interface BaseControllable {
     fun bottomVisible(visibility: Boolean)
 }

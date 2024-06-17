@@ -8,9 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.R
+import com.example.palette.data.room.RoomData
 
 class CreateMediaAdapter(
-    private val itemList: ArrayList<CreateMediaItem>
+    private val itemList: ArrayList<RoomData>
 ) : RecyclerView.Adapter<CreateMediaAdapter.WorkViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkViewHolder {
         val view =
@@ -21,7 +22,6 @@ class CreateMediaAdapter(
     override fun onBindViewHolder(holder: WorkViewHolder, position: Int) {
         holder.iv_logo.setImageResource(R.drawable.logo)
         holder.tv_poster_title.text = itemList[position].title
-        holder.tv_poster_desc.text = itemList[position].desc
     }
 
     override fun getItemCount(): Int {
@@ -37,7 +37,6 @@ class CreateMediaAdapter(
     inner class WorkViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var iv_logo = itemView.findViewById<ImageView>(R.id.iv_logo)
         val tv_poster_title = itemView.findViewById<TextView>(R.id.tv_poster_title)
-        val tv_poster_desc = itemView.findViewById<TextView>(R.id.tv_poster_desc)
 
         init {
             itemView.setOnClickListener {

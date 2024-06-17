@@ -3,7 +3,6 @@ package com.example.palette.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -15,22 +14,19 @@ import app.rive.runtime.kotlin.core.RiveEvent
 import com.example.palette.MainActivity
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.common.Constant
 import com.example.palette.data.auth.AuthRequestManager
-import com.example.palette.data.base.BaseVoidResponse
 import com.example.palette.databinding.ActivityServiceBinding
-import com.example.palette.ui.base.BottomControllable
+import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.create.CreateMediaFragment
 import com.example.palette.ui.main.settings.SettingFragment
 import com.example.palette.ui.main.work.WorkFragment
+import com.example.palette.ui.util.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Response
 
 @OptIn(ExperimentalAssetLoader::class)
-class ServiceActivity : AppCompatActivity(), BottomControllable {
+class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val binding by lazy { ActivityServiceBinding.inflate(layoutInflater) }
     private val riveAnimationView: RiveAnimationView by lazy(LazyThreadSafetyMode.NONE) {
         binding.bottomBar
@@ -40,18 +36,17 @@ class ServiceActivity : AppCompatActivity(), BottomControllable {
         override fun notifyEvent(event: RiveEvent) {
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
-                val session = AuthRequestManager
-                    .sessionRequest(PaletteApplication
-                        .prefs
-                        .token)
+                val session = AuthRequestManager.sessionRequest(PaletteApplication.prefs.token)
 
-                PaletteApplication.prefs.token = session.headers()["X-AUTH-Token"]?: ""
-                if (PaletteApplication.prefs.token == "")
+                log(PaletteApplication.prefs.token)
+                if (!session.isSuccessful)
                     showSessionDialog(this@ServiceActivity)
             }
 
             when (event.name) {
-                "click_home" -> changeFragment(CreateMediaFragment())
+                "click_home" -> {
+                    changeFragment(CreateMediaFragment())
+                }
                 "click_search" -> changeFragment(WorkFragment())
                 "click_setting" -> changeFragment(SettingFragment())
             }
@@ -74,7 +69,6 @@ class ServiceActivity : AppCompatActivity(), BottomControllable {
     }
 
     private fun changeFragment(fragment: Fragment) {
-        Log.d("MainFragment", "changeFragment is running")
         val fragmentManager = this.supportFragmentManager // 또는 requireActivity().supportFragmentManager (Fragment 내에서)
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(R.id.mainContent, fragment)
@@ -109,12 +103,9 @@ class ServiceActivity : AppCompatActivity(), BottomControllable {
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             val session = AuthRequestManager
-                .sessionRequest(PaletteApplication
-                    .prefs
-                    .token)
+                .sessionRequest(PaletteApplication.prefs.token)
 
-            PaletteApplication.prefs.token = session.headers()["X-AUTH-Token"]?: ""
-            if (PaletteApplication.prefs.token == "")
+            if (!session.isSuccessful)
                 showSessionDialog(this@ServiceActivity)
         }
     }

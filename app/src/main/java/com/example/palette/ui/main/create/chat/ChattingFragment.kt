@@ -14,15 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
-import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.chat.ChatModel
 import com.example.palette.data.chat.ChattingRecyclerAdapter
 import com.example.palette.data.room.RoomRequestManager
+import com.example.palette.data.room.TitleData
 import com.example.palette.databinding.FragmentChattingBinding
-import com.example.palette.ui.base.BottomControllable
+import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.util.shortToast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -72,7 +70,7 @@ class ChattingFragment : Fragment() {
         recyclerAdapter.setData(listDemo)
         binding.chattingRecycler.smoothScrollToPosition(listDemo.size - 1)
 
-        (activity as? BottomControllable)?.bottomVisible(false)
+        (requireActivity() as? BaseControllable)?.bottomVisible(false)
     }
 
     private fun initEditText() {
@@ -99,7 +97,7 @@ class ChattingFragment : Fragment() {
         val newMessage = binding.chattingEditText.text.toString()
         if (newMessage.isNotBlank()) {
             scrollToPosition()
-            createRoom()
+            createRoom(newMessage)
             val newChatModel = ChatModel("USER", newMessage, "")
             listDemo.add(newChatModel)
             recyclerAdapter.addChat(newChatModel)
@@ -108,10 +106,10 @@ class ChattingFragment : Fragment() {
         }
     }
 
-    private fun createRoom() {
+    private fun createRoom(title: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val roomResponse = RoomRequestManager.roomRequest(PaletteApplication.prefs.token)
+                val roomResponse = RoomRequestManager.roomRequest(PaletteApplication.prefs.token, TitleData(title))
 
                 if (roomResponse.isSuccessful) {
                     shortToast("생성 성공")
@@ -131,6 +129,6 @@ class ChattingFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        (requireActivity() as? BottomControllable)?.bottomVisible(true)
+        (requireActivity() as? BaseControllable)?.bottomVisible(true)
     }
 }
