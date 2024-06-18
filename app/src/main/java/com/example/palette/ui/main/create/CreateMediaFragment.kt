@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.palette.MainActivity
 import com.example.palette.ui.main.create.adapter.CreateMediaAdapter
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
+import com.example.palette.common.Constant
 import com.example.palette.data.room.data.RoomData
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.IdData
@@ -111,8 +113,6 @@ class CreateMediaFragment : Fragment() {
 
         // "예" 버튼 추가
         builder.setPositiveButton("삭제") { dialog, _ ->
-            itemList.removeAt(position)
-            workAdapter.notifyItemRemoved(position)
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
                     val response = RoomRequestManager.deleteRoom(PaletteApplication.prefs.token, itemList[position].id)
@@ -124,10 +124,10 @@ class CreateMediaFragment : Fragment() {
                         shortToast("삭제 실패: ${response.message()}")
                     }
                 } catch (e: HttpException) {
-                    log("CreateMediaFragment deleteRoom error: ${e.response()?.errorBody()?.string()}")
+                    Log.e(Constant.TAG, "CreateMediaFragment deleteRoom Http error: ${e.response()?.errorBody()?.string()}")
                     shortToast("Failed to delete item: ${e.message()}")
                 } catch (e: Exception) {
-                    log("CreateMediaFragment deleteRoom error: ${e.message}")
+                    Log.e(Constant.TAG, "CreateMediaFragment deleteRoom Exception error: ${e.message}")
                     shortToast("An error occurred: ${e.message}")
                 }
             }
