@@ -1,19 +1,25 @@
 package com.example.palette.ui.main.create
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.palette.MainActivity
 import com.example.palette.ui.main.create.adapter.CreateMediaAdapter
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.data.room.RoomData
+import com.example.palette.data.room.data.RoomData
 import com.example.palette.data.room.RoomRequestManager
+import com.example.palette.data.room.data.IdData
 import com.example.palette.databinding.FragmentCreateMediaBinding
+import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.create.chat.ChattingFragment
 import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
@@ -46,9 +52,13 @@ class CreateMediaFragment : Fragment() {
         // 아이템 클릭 리스너 설정
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                val item = itemList[position]
-                shortToast("${item.title} 클릭함")
+                // TODO: 여기서 id 값 서버에 보내서 방마다 다른 채팅 보이게 할 것.
                 startChatting()
+            }
+
+            override fun onItemLongClick(position: Int) {
+                log("onItemLongClick itemPosition is ${itemList[position]}")
+                deleteChatDialog(requireActivity(), position)
             }
         }
 
@@ -74,7 +84,9 @@ class CreateMediaFragment : Fragment() {
             } catch (e: HttpException) {
                 if (e.code() == 401) {
                     shortToast("인증 오류: 다시 로그인해주세요.")
-                    // 로그인 페이지로 이동 또는 로그인 상태 재설정
+                    // 로그인 페이지로 이동 또는 로그인 상태 재설정증
+                    (requireActivity() as? BaseControllable)?.sessionDialog(requireActivity())
+
                 } else {
                     log("HttpException & !401 에서 서버 오류가 발생했습니다: ${e.message()}")
                 }
@@ -89,5 +101,47 @@ class CreateMediaFragment : Fragment() {
             .replace(R.id.mainContent, ChattingFragment())
             .addToBackStack(null) // 백 스택에 프래그먼트 추가
             .commitAllowingStateLoss()
+    }
+
+    private fun deleteChatDialog(context: Context, position: Int) {
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("채팅방 삭제")
+        builder.setMessage("정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?")
+
+        // "예" 버튼 추가
+        builder.setPositiveButton("삭제") { dialog, _ ->
+            itemList.removeAt(position)
+            workAdapter.notifyItemRemoved(position)
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val response = RoomRequestManager.deleteRoom(PaletteApplication.prefs.token, itemList[position].id)
+                    if (response.isSuccessful) {
+                        itemList.removeAt(position)
+                        workAdapter.notifyItemRemoved(position)
+                        shortToast("삭제되었습니다")
+                    } else {
+                        shortToast("삭제 실패: ${response.message()}")
+                    }
+                } catch (e: HttpException) {
+                    log("CreateMediaFragment deleteRoom error: ${e.response()?.errorBody()?.string()}")
+                    shortToast("Failed to delete item: ${e.message()}")
+                } catch (e: Exception) {
+                    log("CreateMediaFragment deleteRoom error: ${e.message}")
+                    shortToast("An error occurred: ${e.message}")
+                }
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        // 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
+        builder.setCancelable(false)
+
+        val dialog = builder.create()
+        dialog.show()
     }
 }

@@ -3,12 +3,11 @@ package com.example.palette.ui.main.create.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.R
-import com.example.palette.data.room.RoomData
+import com.example.palette.data.room.data.RoomData
 
 class CreateMediaAdapter(
     private val itemList: ArrayList<RoomData>
@@ -29,10 +28,11 @@ class CreateMediaAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClick(position: Int) {}
+        fun onItemClick(position: Int)
+        fun onItemLongClick(position: Int)
     }
 
-    var itemClickListener: OnItemClickListener? = null
+    lateinit var itemClickListener: OnItemClickListener
 
     inner class WorkViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var iv_logo = itemView.findViewById<ImageView>(R.id.iv_logo)
@@ -40,7 +40,12 @@ class CreateMediaAdapter(
 
         init {
             itemView.setOnClickListener {
-                itemClickListener?.onItemClick(adapterPosition)
+                itemClickListener.onItemClick(adapterPosition)
+            }
+
+            itemView.setOnLongClickListener {
+                itemClickListener.onItemLongClick(bindingAdapterPosition)
+                true
             }
         }
     }

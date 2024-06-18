@@ -17,7 +17,7 @@ import com.example.palette.common.Constant
 import com.example.palette.data.chat.ChatModel
 import com.example.palette.data.chat.ChattingRecyclerAdapter
 import com.example.palette.data.room.RoomRequestManager
-import com.example.palette.data.room.TitleData
+import com.example.palette.data.room.data.TitleData
 import com.example.palette.databinding.FragmentChattingBinding
 import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.util.shortToast

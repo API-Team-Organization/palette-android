@@ -1,4 +1,4 @@
-package com.example.palette.data.room
+package com.example.palette.data.room.data
 
 data class RoomData(
     val id: Int,

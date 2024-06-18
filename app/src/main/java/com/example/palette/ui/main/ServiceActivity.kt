@@ -40,13 +40,11 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
                 log(PaletteApplication.prefs.token)
                 if (!session.isSuccessful)
-                    showSessionDialog(this@ServiceActivity)
+                    sessionDialog(this@ServiceActivity)
             }
 
             when (event.name) {
-                "click_home" -> {
-                    changeFragment(CreateMediaFragment())
-                }
+                "click_home" -> changeFragment(CreateMediaFragment())
                 "click_search" -> changeFragment(WorkFragment())
                 "click_setting" -> changeFragment(SettingFragment())
             }
@@ -63,11 +61,6 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         setContentView(binding.root)
     }
 
-    // bottomVisible 메서드 정의
-    override fun bottomVisible(visibility: Boolean) {
-        binding.bottomBar.visibility = if (visibility) View.VISIBLE else View.GONE
-    }
-
     private fun changeFragment(fragment: Fragment) {
         val fragmentManager = this.supportFragmentManager // 또는 requireActivity().supportFragmentManager (Fragment 내에서)
         val transaction = fragmentManager.beginTransaction()
@@ -76,17 +69,25 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         transaction.commit()
     }
 
-    private fun showSessionDialog(context: Context) {
+
+    // bottomVisible 메서드 정의
+    override fun bottomVisible(visibility: Boolean) {
+        binding.bottomBar.visibility = if (visibility) View.VISIBLE else View.GONE
+    }
+
+    // TODO: 홈 켜둔 상태로 3시간 지난 상태면 Dialog가 무한 호출됨. 해결 ㄱㄱ
+    override fun sessionDialog(context: Context) {
         val builder = AlertDialog.Builder(context)
 
         builder.setTitle("세션 만료")
         builder.setMessage("세션이 만료되었습니다. 로그인 후, 이용해 주세요.")
+        PaletteApplication.prefs.clearToken()
 
-        // "예" 버튼 추가
-        builder.setPositiveButton("OK") { dialog, which ->
-            val intent = Intent(this, MainActivity::class.java)
+        builder.setPositiveButton("로그인") { dialog, _ ->
+            val intent = Intent(context, MainActivity::class.java)
 
-            startActivity(intent)
+            context.startActivity(intent)
+            finish()
             dialog.dismiss()
         }
 
@@ -106,7 +107,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
                 .sessionRequest(PaletteApplication.prefs.token)
 
             if (!session.isSuccessful)
-                showSessionDialog(this@ServiceActivity)
+                sessionDialog(this@ServiceActivity)
         }
     }
 }
