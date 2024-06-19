@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.ExperimentalAssetLoader
@@ -31,6 +31,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val riveAnimationView: RiveAnimationView by lazy(LazyThreadSafetyMode.NONE) {
         binding.bottomBar
     }
+    private var bottomFlags = arrayOf(0,0,0)
 
     val eventListener = object : RiveFileController.RiveEventListener {
         override fun notifyEvent(event: RiveEvent) {
@@ -44,9 +45,30 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
             }
 
             when (event.name) {
-                "click_home" -> changeFragment(CreateMediaFragment())
-                "click_search" -> changeFragment(WorkFragment())
-                "click_setting" -> changeFragment(SettingFragment())
+                "click_home" -> {
+                    if (bottomFlags[0] == 0) {
+                        bottomFlags[0] = 1
+                        bottomFlags[1] = 0
+                        bottomFlags[2] = 0
+                        changeFragment(CreateMediaFragment())
+                    }
+                }
+                "click_search" -> {
+                    if (bottomFlags[1] == 0) {
+                        bottomFlags[0] = 0
+                        bottomFlags[1] = 1
+                        bottomFlags[2] = 0
+                        changeFragment(WorkFragment())
+                    }
+                }
+                "click_setting" -> {
+                    if (bottomFlags[2] == 0) {
+                        bottomFlags[0] = 0
+                        bottomFlags[1] = 0
+                        bottomFlags[2] = 1
+                        changeFragment(SettingFragment())
+                    }
+                }
             }
         }
     }

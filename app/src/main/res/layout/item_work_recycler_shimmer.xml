@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/iv_sample"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:background="@color/cardview_shadow_start_color"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,8 +23,8 @@
         android:layout_marginStart="32dp">
         <TextView
             android:id="@+id/tv_name"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
             android:background="@color/cardview_shadow_start_color"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constrainedWidth="true"
@@ -35,8 +35,8 @@
 
         <TextView
             android:id="@+id/tv_email"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
+            android:layout_width="210dp"
+            android:layout_height="30dp"
             android:background="@color/cardview_shadow_start_color"
             android:layout_marginTop="12dp"
             app:layout_constrainedWidth="true"
@@ -46,7 +46,4 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
     </LinearLayout>
-
-
-
 </LinearLayout>
