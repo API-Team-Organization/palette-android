@@ -2,26 +2,23 @@ package com.example.palette.ui.main.create
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.palette.MainActivity
-import com.example.palette.ui.main.create.adapter.CreateMediaAdapter
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
-import com.example.palette.data.room.data.RoomData
 import com.example.palette.data.room.RoomRequestManager
-import com.example.palette.data.room.data.IdData
+import com.example.palette.data.room.data.RoomData
 import com.example.palette.databinding.FragmentCreateMediaBinding
 import com.example.palette.ui.base.BaseControllable
+import com.example.palette.ui.main.create.adapter.CreateMediaAdapter
 import com.example.palette.ui.main.create.chat.ChattingFragment
 import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
@@ -41,12 +38,15 @@ class CreateMediaFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentCreateMediaBinding.inflate(inflater, container, false)
 
-        val workRecyclerView = binding.workRecyclerView
 
-        // 어댑터 초기화
-        workAdapter = CreateMediaAdapter(itemList)
-        workRecyclerView.adapter = workAdapter
-        workRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        with(binding) {
+            // 어댑터 초기화
+            workAdapter = CreateMediaAdapter(itemList)
+            workRecyclerView.adapter = workAdapter
+            workRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        }
+
+        showSampleData(isLoading = true)
 
         // 데이터 로드
         loadData()
@@ -77,9 +77,12 @@ class CreateMediaFragment : Fragment() {
                 val roomList = RoomRequestManager.roomList(PaletteApplication.prefs.token)
                 if (roomList.code <= 400) {
                     log("CreateMediaFragment <= 400 check data ${roomList.data}")
+
                     itemList.clear()
                     itemList.addAll(roomList.data)
                     workAdapter.notifyDataSetChanged() // 데이터 변경 통지
+
+                    showSampleData(isLoading = false)
                 } else {
                     log("roomList.code <= 400 else{}에서 서버 오류가 발생했습니다: ${roomList.message}")
                 }
@@ -143,5 +146,17 @@ class CreateMediaFragment : Fragment() {
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+    private fun showSampleData(isLoading: Boolean) {
+        if (isLoading) {
+            binding.sflSample.startShimmer()
+            binding.sflSample.visibility = View.VISIBLE
+            binding.workRecyclerView.visibility = View.GONE
+        } else {
+            binding.sflSample.stopShimmer()
+            binding.sflSample.visibility = View.GONE
+            binding.workRecyclerView.visibility = View.VISIBLE
+        }
     }
 }

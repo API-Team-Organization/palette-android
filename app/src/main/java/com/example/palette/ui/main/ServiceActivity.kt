@@ -69,13 +69,11 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         transaction.commit()
     }
 
-
     // bottomVisible 메서드 정의
     override fun bottomVisible(visibility: Boolean) {
         binding.bottomBar.visibility = if (visibility) View.VISIBLE else View.GONE
     }
 
-    // TODO: 홈 켜둔 상태로 3시간 지난 상태면 Dialog가 무한 호출됨. 해결 ㄱㄱ
     override fun sessionDialog(context: Context) {
         val builder = AlertDialog.Builder(context)
 
