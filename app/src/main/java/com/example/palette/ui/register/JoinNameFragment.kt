@@ -7,13 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.databinding.FragmentJoinNameBinding
-import kotlinx.coroutines.withTimeoutOrNull
 import java.util.regex.Pattern
 
 class JoinNameFragment : Fragment() {
@@ -24,7 +22,6 @@ class JoinNameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentJoinNameBinding.inflate(inflater, container, false)
 
         binding.btnComplete.setOnClickListener {

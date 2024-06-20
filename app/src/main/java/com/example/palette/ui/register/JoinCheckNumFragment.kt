@@ -18,7 +18,6 @@ class JoinCheckNumFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentJoinCheckNumBinding.inflate(inflater, container, false)
 
         showEmail()
