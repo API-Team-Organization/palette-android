@@ -98,7 +98,8 @@ class JoinCompleteFragment : Fragment() {
 
                     } catch (e: HttpException) {
                         Log.e(TAG, "HTTP error: ${e.code()}", e)
-                        shortToast("HTTP 오류 발생: ${e.message()}")
+                        shortToast("중복된 계정입니다.")
+                        findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
 
                     } catch (e: Exception) {
                         Log.e(TAG, "알 수 없는 오류 발생", e)

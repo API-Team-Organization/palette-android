@@ -43,7 +43,7 @@
                 android:id="@+id/n_etJoinEmail"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_object"
+                android:background="@drawable/bac_auth"
                 android:fontFamily="@font/suit_semibold"
                 android:textColor="@color/black"
                 android:layout_marginTop="40dp"
@@ -55,13 +55,13 @@
                 android:id="@+id/etJoinCheckNum"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_object"
+                android:background="@drawable/bac_auth"
                 android:hint="인증번호"
                 android:maxLength="6"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="20dp"
                 android:inputType="number"
-                android:paddingStart="8dp"/>
+                android:paddingStart="10dp"/>
 
         </LinearLayout>
 

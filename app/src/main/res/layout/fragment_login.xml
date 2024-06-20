@@ -61,12 +61,12 @@
                 android:id="@+id/loginEmailEdit"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_object"
+                android:background="@drawable/bac_auth"
                 android:hint="이메일"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="40dp"
                 android:inputType="textEmailAddress"
-                android:paddingStart="8dp"
+                android:paddingStart="10dp"
                 android:fontFamily="@font/pretendard_medium"
                 android:text="peter.co.kr@gmail.com"/>
             <TextView
@@ -83,12 +83,12 @@
                 android:id="@+id/loginPasswordEdit"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_object"
+                android:background="@drawable/bac_auth"
                 android:hint="비밀번호"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="20dp"
                 android:inputType="textPassword"
-                android:paddingStart="8dp"
+                android:paddingStart="10dp"
                 android:fontFamily="@font/pretendard_medium"
                 android:text="peter0987"/>
             <TextView
