@@ -14,6 +14,7 @@ import com.example.palette.application.PaletteApplication
 import com.example.palette.application.PreferenceManager
 import com.example.palette.common.Constant
 import com.example.palette.data.auth.AuthRequestManager
+import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentSettingBinding
 import kotlinx.coroutines.launch
 
@@ -34,19 +35,25 @@ class SettingFragment : Fragment() {
 
     private fun initView() {
 //        anim = AnimationUtils.loadAnimation(activity, R.anim.scale)
-        with(binding) {
-            profile.setOnClickListener {
-                showProfileInfo()
-            }
+        viewLifecycleOwner.lifecycleScope.launch {
+            Log.d(Constant.TAG, "token : ${PaletteApplication.prefs.token}")
 
-            logout.setOnClickListener {
-                logout()
+            try {
+                val profileInfo = InfoRequestManager.profileInfoRequest(PaletteApplication.prefs.token)
+                Log.d(Constant.TAG, "profileInfo: ${profileInfo!!.data}")
+
+                binding.userEmail.text = profileInfo.data.email
+                binding.userName.text = profileInfo.data.name
+                binding.userBirthday.text = profileInfo.data.birthDate
+
+            } catch (e: Exception) {
+                Log.e(Constant.TAG, "Setting profileInfo error : ",e)
             }
         }
-    }
 
-    private fun showProfileInfo() {
-        changeFragment(ProfileFragment())
+        binding.logout.setOnClickListener {
+            logout()
+        }
     }
 
     private fun logout() {
