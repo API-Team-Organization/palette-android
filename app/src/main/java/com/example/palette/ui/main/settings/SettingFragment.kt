@@ -70,12 +70,4 @@ class SettingFragment : Fragment() {
 
         activity?.finish()
     }
-
-    private fun changeFragment(fragment: Fragment) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.mainContent, fragment)
-            .addToBackStack(null) // 백 스택에 프래그먼트 추가
-            .commitAllowingStateLoss()
-    }
-
 }
