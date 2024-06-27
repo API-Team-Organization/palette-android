@@ -35,7 +35,7 @@ class JoinCheckNumFragment : Fragment() {
     }
 
     private fun showEmail() {
-        var result = arguments?.getString("email")
+        val result = arguments?.getString("email")
 
         result?.let {
             binding.nEtJoinEmail.apply {
