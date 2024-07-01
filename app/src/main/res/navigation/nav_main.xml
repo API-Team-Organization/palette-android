@@ -17,21 +17,5 @@
         tools:layout="@layout/fragment_setting"
         android:label="settingFragment"
         android:name="com.example.palette.ui.main.settings.SettingFragment">
-        <action
-            android:id="@+id/action_settingFragment_to_profileFragment"
-            app:destination="@id/profileFragment"
-            app:launchSingleTop="true"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"/>
     </fragment>
-
-    <fragment
-        android:id="@+id/profileFragment"
-        tools:layout="@layout/fragment_profile"
-        android:label="profileFragment"
-        android:name="com.example.palette.ui.main.settings.ProfileFragment">
-    </fragment>
-
-
-
 </navigation>
