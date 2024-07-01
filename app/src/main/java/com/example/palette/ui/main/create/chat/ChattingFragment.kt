@@ -3,7 +3,6 @@ package com.example.palette.ui.main.create.chat
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,19 +12,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.common.Constant
 import com.example.palette.data.chat.ChatData
-import com.example.palette.data.chat.ChatRequestManager
 import com.example.palette.data.chat.ChatModel
-import com.example.palette.ui.main.create.chat.adapter.ChattingRecyclerAdapter
+import com.example.palette.data.chat.ChatRequestManager
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.RoomData
-import com.example.palette.data.room.data.TitleData
 import com.example.palette.databinding.FragmentChattingBinding
 import com.example.palette.ui.base.BaseControllable
+import com.example.palette.ui.main.create.chat.adapter.ChattingRecyclerAdapter
 import com.example.palette.ui.util.log
-import com.example.palette.ui.util.shortToast
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -104,10 +99,8 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
     }
 
     private fun submitText(chat: ChatData) {
-        // TODO: 메세지 시, roomId, chat 서버에 보내기.
         viewLifecycleOwner.lifecycleScope.launch {
             ChatRequestManager.createChat(PaletteApplication.prefs.token, chat)
-            // TODO: 첫 글 시, 제목 설정
             if (listDemo.size == 1) {
                 log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))

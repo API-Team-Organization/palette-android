@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -56,9 +55,7 @@ class CreateMediaFragment : Fragment() {
         // 아이템 클릭 리스너 설정
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                // TODO: 여기서 id 값 서버에 보내서 방마다 다른 채팅 보이게 할 것.
                 log("item position is $position")
-                // TODO: roomList 가 정의되어있지 않음 해결 ㄱㄱ
                 startChatting(roomList.data[position].id)
             }
 

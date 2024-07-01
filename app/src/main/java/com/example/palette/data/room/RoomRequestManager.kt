@@ -4,9 +4,7 @@ import android.util.Log
 import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseResponse
 import com.example.palette.data.base.BaseVoidResponse
-import com.example.palette.data.room.data.IdData
 import com.example.palette.data.room.data.RoomData
-import com.example.palette.data.room.data.TitleData
 import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit

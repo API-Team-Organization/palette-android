@@ -2,9 +2,7 @@ package com.example.palette.data.room
 
 import com.example.palette.data.base.BaseResponse
 import com.example.palette.data.base.BaseVoidResponse
-import com.example.palette.data.room.data.IdData
 import com.example.palette.data.room.data.RoomData
-import com.example.palette.data.room.data.TitleData
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

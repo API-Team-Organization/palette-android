@@ -1,11 +1,8 @@
 package com.example.palette.data.info
 
 import android.util.Log
-import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseResponse
-import okhttp3.Headers
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
