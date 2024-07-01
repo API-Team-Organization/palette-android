@@ -98,7 +98,6 @@
                         android:id="@+id/userName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="이성은"
                         android:textSize="24sp"
                         android:fontFamily="@font/pretendard_bold"
                         android:layout_marginTop="32dp"/>
@@ -107,7 +106,6 @@
                         android:id="@+id/userEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="asdkjjl908ylsjklkdjl.som"
                         android:textSize="16sp"
                         android:fontFamily="@font/pretendard_bold"
                         android:layout_marginTop="16dp"/>
@@ -116,7 +114,6 @@
                         android:id="@+id/userBirthday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2007.08.27"
                         android:textSize="16sp"
                         android:fontFamily="@font/pretendard_bold"
                         android:layout_marginTop="16dp"/>
