@@ -1,12 +1,11 @@
-package com.example.palette.data.chat
+package com.example.palette.ui.main.create.chat.adapter
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.palette.common.Constant
+import com.example.palette.data.chat.ChatModel
 import com.example.palette.databinding.ItemChattingMeBoxBinding
 import com.example.palette.databinding.ItemChattingPaletteBoxBinding
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +27,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     override fun getItemViewType(position: Int): Int {
 //        return super.getItemViewType(position)
-        return if (listOfChat[position].type == "USER") VIEW_TYPE_RIGHT else VIEW_TYPE_LEFT
+        return if (listOfChat[position].isAi) VIEW_TYPE_LEFT else VIEW_TYPE_RIGHT
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -49,13 +48,13 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     override fun getItemCount(): Int = listOfChat.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (listOfChat[position].type == "USER")
+        if (!listOfChat[position].isAi)
             (holder as RightViewHolder).bind(listOfChat[position])
         else
             (holder as LeftViewHolder).bind(listOfChat[position])
     }
 
-    fun setData(list: List<ChatModel>) {
+    fun setData(list: MutableList<ChatModel>) {
         listOfChat.clear()
         listOfChat.addAll(list)
         notifyDataSetChanged() // 전체 데이터가 변경되었음을 알림
@@ -70,9 +69,8 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         fun bind(chat: ChatModel) {
             binding.apply {
                 chat.also {
-                    textGchatMessagePalette.text = chat.message
                     CoroutineScope(Dispatchers.Main).launch {
-                        chattingCreatedImage.setImageBitmap(stringToUrl(chat.image)) // image
+                        chattingCreatedImage.setImageBitmap(stringToUrl(chat.message)) // image
                     }
                 }
             }

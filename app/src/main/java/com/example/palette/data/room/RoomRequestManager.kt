@@ -19,8 +19,8 @@ object RoomRequestManager {
         .build()
     private val roomService: RoomService = retrofit.create(RoomService::class.java)
 
-    suspend fun roomRequest(token: String, title: TitleData): Response<BaseVoidResponse> {
-        val response = roomService.createRoom(token = token, title = title)
+    suspend fun roomRequest(token: String): Response<BaseVoidResponse> {
+        val response = roomService.createRoom(token = token)
         if (!response.isSuccessful){
             throw HttpException(response)
         }
@@ -31,12 +31,21 @@ object RoomRequestManager {
         return roomService.getRoomList(token)
     }
 
-    // TODO: id=3 title= 에서 버그남. 해결 ㄱㄱ
     suspend fun deleteRoom(token: String, id: Int): Response<BaseVoidResponse> {
         val response = roomService.deleteRoom(token = token, roomId = id)
         if (!response.isSuccessful) {
             Log.d(Constant.TAG,"RoomRequestManager deleteRoom response is ${response}")
             throw HttpException(response)
+        }
+        return response
+    }
+
+    suspend fun setRoomTitle(token: String, roomData: RoomData): Response<BaseVoidResponse> {
+        Log.d(Constant.TAG, "RoomRequestManager setRoomTitle roomData : $roomData.")
+
+        val response = roomService.setRoomTitle(token = token, roomData = roomData)
+        if (!response.isSuccessful) {
+            Log.d(Constant.TAG, "RoomRequestManager setRoomTitle 실패했습니다. $response")
         }
         return response
     }

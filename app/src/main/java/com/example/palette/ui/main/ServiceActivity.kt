@@ -2,11 +2,14 @@ package com.example.palette.ui.main
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.ExperimentalAssetLoader
@@ -15,6 +18,7 @@ import com.example.palette.MainActivity
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
+import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.databinding.ActivityServiceBinding
 import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.create.CreateMediaFragment
@@ -116,6 +120,25 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    override fun deleteRoom(token: String, roomId: Int) {
+        lifecycleScope.launch {
+            try {
+                val response = RoomRequestManager.deleteRoom(PaletteApplication.prefs.token, roomId)
+                log("ServiceActivity onDestroyView 지워졌는지 확인 ${response.isSuccessful}")
+            } catch (e: Exception) {
+                log("ServiceActivity onDestroyView error: $e")
+            }
+        }
+        finish() //인텐트 종료
+
+        overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0) //인텐트 효과 없애기
+        val intent = intent //인텐트
+        startActivity(intent) //액티비티 열기
+        overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0) //인텐트 효과 없애기
+
     }
 
     override fun onRestart() {

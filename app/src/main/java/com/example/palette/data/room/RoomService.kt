@@ -10,6 +10,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -18,10 +19,8 @@ interface RoomService {
     suspend fun createRoom(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
-        @Body title: TitleData
     ): Response<BaseVoidResponse>
 
-    // TODO: getRoomList token때문에 bottomNav 움직이면 예전 token써서 버그 발생. 해결ㄱㄱ
     @GET("/room/list")
     suspend fun getRoomList(
         @Header("X-AUTH-Token") token: String,
@@ -33,5 +32,12 @@ interface RoomService {
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Path("roomId") roomId: Int
+    ): Response<BaseVoidResponse>
+
+    @PATCH("/room/title")
+    suspend fun setRoomTitle(
+        @Header("X-AUTH-Token") token: String,
+        @Header("Accept") accept: String = "*/*",
+        @Body roomData: RoomData
     ): Response<BaseVoidResponse>
 }

@@ -14,29 +14,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
+import com.example.palette.data.chat.ChatData
+import com.example.palette.data.chat.ChatRequestManager
 import com.example.palette.data.chat.ChatModel
-import com.example.palette.data.chat.ChattingRecyclerAdapter
+import com.example.palette.ui.main.create.chat.adapter.ChattingRecyclerAdapter
 import com.example.palette.data.room.RoomRequestManager
+import com.example.palette.data.room.data.RoomData
 import com.example.palette.data.room.data.TitleData
 import com.example.palette.databinding.FragmentChattingBinding
 import com.example.palette.ui.base.BaseControllable
+import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class ChattingFragment : Fragment() {
+class ChattingFragment(private var roomId: Int) : Fragment() {
     private lateinit var binding: FragmentChattingBinding
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
-    private var listDemo = mutableListOf(
-        ChatModel("RECEIVE", "안녕하세요 Palette입니다.", ""),
-        ChatModel("USER", "쌈뽕하게 하나 내와봐라", ""),
-        ChatModel("RECEIVE", "해드림 ㅇㅇ", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/10_sharing_book_cover_background.jpg/500px-10_sharing_book_cover_background.jpg"),
-        ChatModel("USER", "오 근데 나무위키가 최고지;;", ""),
-        ChatModel("RECEIVE", "ㅇㅇ 꺼무위키 나라;;", ""),
-        ChatModel("USER", "?? 수듄';", ""),
-    )
+    private lateinit var listDemo: MutableList<ChatModel>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,12 +48,27 @@ class ChattingFragment : Fragment() {
     }
 
     private fun initView() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            listDemo = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
+            if (listDemo.size != 0) {
+                recyclerAdapter.setData(listDemo)
+                binding.chattingRecycler.smoothScrollToPosition(listDemo.size - 1)
+            }
+        }
+
         binding.chattingToolbar.setNavigationOnClickListener {
             requireActivity().supportFragmentManager.popBackStack() // 백 스택에서 프래그먼트 제거
         }
 
         binding.chattingSubmitButton.setOnClickListener {
-            submitText()
+            val newMessage = binding.chattingEditText.text.toString()
+
+            val chat = ChatData(roomId, newMessage)
+
+            if (newMessage.isNotBlank()) {
+                submitText(chat)
+            }
+
         }
 
         binding.chattingRecycler.apply {
@@ -66,9 +79,6 @@ class ChattingFragment : Fragment() {
                 false
             )
         }
-
-        recyclerAdapter.setData(listDemo)
-        binding.chattingRecycler.smoothScrollToPosition(listDemo.size - 1)
 
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
     }
@@ -93,31 +103,26 @@ class ChattingFragment : Fragment() {
         })
     }
 
-    private fun submitText() {
-        val newMessage = binding.chattingEditText.text.toString()
-        if (newMessage.isNotBlank()) {
-            scrollToPosition()
-            createRoom(newMessage)
-            val newChatModel = ChatModel("USER", newMessage, "")
-            listDemo.add(newChatModel)
-            recyclerAdapter.addChat(newChatModel)
-            binding.chattingEditText.text.clear()
-            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-        }
-    }
-
-    private fun createRoom(title: String) {
+    private fun submitText(chat: ChatData) {
+        // TODO: 메세지 시, roomId, chat 서버에 보내기.
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val roomResponse = RoomRequestManager.roomRequest(PaletteApplication.prefs.token, TitleData(title))
-
-                if (roomResponse.isSuccessful) {
-                    shortToast("생성 성공")
-                }
-            } catch (e: Exception) {
-                Log.e(Constant.TAG, "ChattingFragment createRoom error : ",e)
+            ChatRequestManager.createChat(PaletteApplication.prefs.token, chat)
+            // TODO: 첫 글 시, 제목 설정
+            if (listDemo.size == 1) {
+                log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
+                RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
             }
+            log("ChattingFragment 메세지를 제목으로 설정하지않습니다. ${chat} && listDemo == $listDemo")
+
+            listDemo = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
         }
+        scrollToPosition()
+
+        val newChatModel = ChatModel(id = -100, isAi = false, message = chat.message, datetime = "대충 날짜", roomId = roomId, userId = 0)
+        listDemo.add(newChatModel)
+        recyclerAdapter.addChat(newChatModel)
+        binding.chattingEditText.text.clear()
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
 
     private fun scrollToPosition() {
@@ -127,8 +132,17 @@ class ChattingFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        if (listDemo.isEmpty()) {
+            (requireActivity() as? BaseControllable)?.deleteRoom(roomId = roomId)
+        }
+
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+
         (requireActivity() as? BaseControllable)?.bottomVisible(true)
     }
 }

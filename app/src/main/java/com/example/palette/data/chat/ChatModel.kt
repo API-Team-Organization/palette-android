@@ -1,7 +1,10 @@
 package com.example.palette.data.chat
 
 data class ChatModel(
-    var type: String = "" ,
-    var message: String = "",
-    var image: String = ""
+    val id: Int,
+    val message: String = "",
+    val datetime: String = "",
+    val roomId: Int,
+    val userId: Int,
+    val isAi: Boolean
 )
