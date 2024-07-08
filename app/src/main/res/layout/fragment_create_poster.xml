@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.service.create.CreatePosterFragment">
+    tools:context=".ui.main.create.CreatePosterFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
                 android:src="@drawable/ic_arrow_back"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"/>
+                android:layout_marginEnd="10dp"/>
 
             <ImageView
                 android:layout_width="40dp"
@@ -36,8 +36,7 @@
                 android:textSize="20sp"
                 android:fontFamily="@font/pretendard_bold"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="19dp"
-                />
+                android:layout_marginTop="19dp" />
         </LinearLayout>
 
     </LinearLayout>
