@@ -13,7 +13,6 @@ object ChatRequestManager {
         .baseUrl("https://paletteapp.xyz/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
     private val chatService: ChatService = retrofit.create(ChatService::class.java)
 
     suspend fun createChat(token: String, chat: ChatData): Response<BaseVoidResponse> {

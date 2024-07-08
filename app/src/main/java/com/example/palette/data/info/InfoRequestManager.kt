@@ -11,7 +11,6 @@ object InfoRequestManager {
         .baseUrl("https://paletteapp.xyz/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
     private val infoService: InfoService = retrofit.create(InfoService::class.java)
 
     suspend fun profileInfoRequest(token: String): BaseResponse<ProfileData>? {

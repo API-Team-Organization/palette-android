@@ -11,7 +11,6 @@ object RegisterRequestManager {
         .baseUrl("https://paletteapp.xyz/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
     private val authService: AuthService = retrofit.create(AuthService::class.java)
 
     suspend fun registerRequest(registerData: RegisterRequest): Response<BaseVoidResponse> {

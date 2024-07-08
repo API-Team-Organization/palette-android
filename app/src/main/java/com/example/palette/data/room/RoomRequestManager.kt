@@ -15,6 +15,7 @@ object RoomRequestManager {
         .baseUrl("https://paletteapp.xyz/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
     private val roomService: RoomService = retrofit.create(RoomService::class.java)
 
     suspend fun roomRequest(token: String): Response<BaseVoidResponse> {

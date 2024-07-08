@@ -35,6 +35,4 @@ object AuthRequestManager {
 
         return response
     }
-
-
 }
