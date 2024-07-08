@@ -17,8 +17,7 @@ class JoinCheckNumFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    ): View {
         binding = FragmentJoinCheckNumBinding.inflate(inflater, container, false)
 
         showEmail()
@@ -36,7 +35,7 @@ class JoinCheckNumFragment : Fragment() {
     }
 
     private fun showEmail() {
-        var result = arguments?.getString("email")
+        val result = arguments?.getString("email")
 
         result?.let {
             binding.nEtJoinEmail.apply {

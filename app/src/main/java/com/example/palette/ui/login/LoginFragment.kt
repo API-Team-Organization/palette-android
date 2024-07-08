@@ -20,6 +20,7 @@ import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.databinding.FragmentLoginBinding
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.SocketTimeoutException

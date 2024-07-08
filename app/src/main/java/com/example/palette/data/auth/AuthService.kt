@@ -24,4 +24,9 @@ interface AuthService {
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*"
     ): Response<BaseVoidResponse>
+
+    @POST("/auth/register")
+    suspend fun register(
+        @Body registerRequest: RegisterRequest
+    ): Response<BaseVoidResponse>
 }

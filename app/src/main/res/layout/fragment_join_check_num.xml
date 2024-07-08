@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="이메일로 전송된 인증코드를 입력해주세요!"
+                android:text="이메일로 전송된 인증번호를 입력해주세요!"
                 android:fontFamily="@font/pretendard_bold"
                 android:textSize="15sp"
                 android:textColor="@color/darkGray"
@@ -43,7 +43,7 @@
                 android:id="@+id/n_etJoinEmail"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_object"
+                android:background="@drawable/bac_auth"
                 android:fontFamily="@font/suit_semibold"
                 android:textColor="@color/black"
                 android:layout_marginTop="40dp"
@@ -55,14 +55,13 @@
                 android:id="@+id/etJoinCheckNum"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_object"
-                android:hint="인증코드"
-                android:text="123456"
+                android:background="@drawable/bac_auth"
+                android:hint="인증번호"
                 android:maxLength="6"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="20dp"
                 android:inputType="number"
-                android:paddingStart="8dp"/>
+                android:paddingStart="10dp"/>
 
         </LinearLayout>
 
