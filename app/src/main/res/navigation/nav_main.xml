@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_service">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_service"
+    app:startDestination="@layout/fragment_create_media">
 
+    <fragment
+        android:id="@+id/createMediaFragment"
+        tools:layout="@layout/fragment_create_media"
+        android:label="createMediaFragment"
+        android:name="com.example.palette.ui.main.create.CreateMediaFragment">
+    </fragment>
 
-
+    <fragment
+        android:id="@+id/settingFragment"
+        tools:layout="@layout/fragment_setting"
+        android:label="settingFragment"
+        android:name="com.example.palette.ui.main.settings.SettingFragment">
+    </fragment>
 </navigation>

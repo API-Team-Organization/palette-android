@@ -18,12 +18,9 @@ class Onboarding3Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentOnboarding3Binding.inflate(inflater, container, false)
-
         binding.onBoarding3Button.setOnClickListener {
             findNavController().navigate(R.id.action_onboardingDefaultFragment_to_startFragment)
         }
-
         return binding.root
     }
-
 }

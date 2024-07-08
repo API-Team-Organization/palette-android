@@ -41,11 +41,14 @@ android {
 
 dependencies {
 
+    // shimmer 로딩뷰
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
+
     // viewPager2
-    implementation ("androidx.viewpager2:viewpager2:1.1.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
 
     //coroutine 코루틴
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // Retrofit 라이브러리
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -67,11 +70,11 @@ dependencies {
     implementation("androidx.startup:startup-runtime:1.1.1")
 
     // viewModel dependencies
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2")
 
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")

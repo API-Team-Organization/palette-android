@@ -8,19 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.common.Constant
 import com.example.palette.common.Constant.TAG
 import com.example.palette.common.HeaderUtil
 import com.example.palette.data.auth.LoginRequest
-import com.example.palette.data.auth.LoginRequestManager
+import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.databinding.FragmentLoginBinding
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
@@ -46,7 +42,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun initView() {
-        handleOnBackPressed()
         with(binding) {
             loginButton.setOnClickListener {
                 if (loginEmailEdit.text.isEmpty()) {
@@ -65,6 +60,9 @@ class LoginFragment : Fragment() {
                 }
                 login()
                 loginRequest()
+            }
+            loginToJoin.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
             }
         }
     }
@@ -93,7 +91,7 @@ class LoginFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = LoginRequestManager.loginRequest(loginRequest)
+                val response = AuthRequestManager.loginRequest(loginRequest)
                 Log.d(TAG, "response.header : ${response.code()}")
 
                 val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
@@ -114,20 +112,5 @@ class LoginFragment : Fragment() {
                 shortToast("알 수 없는 에러")
             }
         }
-    }
-
-    private fun handleOnBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (System.currentTimeMillis() - backPressedTime <= 2000) {
-                    requireActivity().finish()
-                } else {
-                    backPressedTime = System.currentTimeMillis()
-                    shortToast("한 번 더 누르면 종료됩니다.")
-                }
-            }
-        }
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 }

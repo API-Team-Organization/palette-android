@@ -1,7 +1,8 @@
 package com.example.palette.data.info
 
+import android.util.Log
+import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseResponse
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -13,8 +14,9 @@ object InfoRequestManager {
 
     private val infoService: InfoService = retrofit.create(InfoService::class.java)
 
-    suspend fun requestProfileInfo(token: String): BaseResponse<ProfileData>? {
-        val response = infoService.profileInfo(token)
+    suspend fun profileInfoRequest(token: String): BaseResponse<ProfileData>? {
+        val response = infoService.profileInfo(token, "*/*")
+        Log.d(Constant.TAG, "response is $response")
         return response.body()
     }
 }

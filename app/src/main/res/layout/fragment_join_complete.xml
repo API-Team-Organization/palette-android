@@ -20,13 +20,10 @@
             android:orientation="vertical"
             android:gravity="center">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/complete"
-                android:textSize="60sp"
-                android:fontFamily="@font/suit_heavy"
-                android:textColor="@color/black"/>
+            <app.rive.runtime.kotlin.RiveAnimationView
+                android:layout_width="300dp"
+                android:layout_height="162dp"
+                app:riveResource="@raw/join_complete"/>
 
             <TextView
                 android:id="@+id/good"
