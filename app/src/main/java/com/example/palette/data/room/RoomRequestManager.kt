@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RoomRequestManager {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://standard.alcl.cloud:24136")
+        .baseUrl("https://paletteapp.xyz/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     private val roomService: RoomService = retrofit.create(RoomService::class.java)
