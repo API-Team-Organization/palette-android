@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant.TAG
@@ -58,6 +59,9 @@ class LoginFragment : Fragment() {
                 }
                 login()
                 loginRequest()
+            }
+            loginToJoin.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
             }
         }
     }
