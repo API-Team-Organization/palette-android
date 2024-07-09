@@ -2,17 +2,26 @@ package com.example.palette.ui.register
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
+import com.example.palette.application.PaletteApplication
+import com.example.palette.data.auth.AuthRequestManager
+import com.example.palette.data.auth.VerifyRequest
 import com.example.palette.databinding.FragmentJoinCheckNumBinding
 import com.example.palette.ui.util.shortToast
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class JoinCheckNumFragment : Fragment() {
-    private lateinit var binding : FragmentJoinCheckNumBinding
+    private lateinit var binding: FragmentJoinCheckNumBinding
+    private val registerViewModel: RegisterViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,12 +32,8 @@ class JoinCheckNumFragment : Fragment() {
         showEmail()
 
         binding.btnCheckNum.setOnClickListener {
-            if (true) { // 인증번호가 맞다면
-                findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinPasswordFragment)
-            } else { // 맞지 않다면
-                shortToast("인증번호가 다릅니다.")
-            }
-
+            val verificationCode = binding.etJoinCheckNum.text.toString()
+            verifyCode(verificationCode)
         }
 
         return binding.root
@@ -41,6 +46,27 @@ class JoinCheckNumFragment : Fragment() {
             binding.nEtJoinEmail.apply {
                 text = Editable.Factory.getInstance().newEditable(it)
                 isEnabled = false
+            }
+        }
+    }
+
+    private fun verifyCode(code: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val verifyData = VerifyRequest(code)
+                val response = AuthRequestManager.verifyRequest(PaletteApplication.prefs.token, verifyData)
+                Log.d("JoinCheckNumFragment", response.body().toString())
+
+                if (response.isSuccessful) {
+                    findNavController().navigate(R.id.action_joinCheckNumFragment_to_loginFragment)
+                } else {
+                    shortToast("인증번호가 일치하지 않습니다.")
+                }
+            } catch (e: HttpException) {
+                shortToast("서버 오류가 발생했습니다")
+                Log.d("JoinCheckNumFragment", e.stackTraceToString())
+            } catch (e: Exception) {
+                shortToast("알 수 없는 오류: ${e.message}")
             }
         }
     }

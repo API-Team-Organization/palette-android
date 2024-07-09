@@ -18,29 +18,31 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_poster_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="오렌지 주스 포스터"
-            android:textSize="22sp"
-            android:fontFamily="@font/pretendard_bold"
-            android:textColor="@color/black"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"/>
+        android:orientation="vertical"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/tv_poster_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="나 : (대충 오렌지 주스 홍보 설.."
+            android:text="Palette 어시스턴트"
             android:textSize="18sp"
             android:fontFamily="@font/pretendard_semibold"
             android:textColor="@color/darkGray"
+            android:layout_marginStart="16dp"/>
+
+        <TextView
+            android:id="@+id/tv_poster_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="모디 홍보 포스터 제작임 엌ㅋㅋㅋㅋㅋㅋㅋ"
+            android:textSize="22sp"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="@color/black"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"/>
+            android:ems="10"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
     </LinearLayout>
 </LinearLayout>

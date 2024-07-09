@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
+import com.example.palette.common.Constant
 import com.example.palette.common.Constant.TAG
 import com.example.palette.common.HeaderUtil
 import com.example.palette.data.auth.RegisterRequest
@@ -40,7 +41,7 @@ class JoinCompleteFragment : Fragment() {
         binding.btnStart.setOnClickListener {
             if (true) { // 회원가입 성공하면
                 registerRequest()
-                findNavController().navigate(R.id.action_joinCompleteFragment_to_loginFragment)
+                findNavController().navigate(R.id.action_joinCompleteFragment_to_joinCheckNumFragment)
             }
         }
 
@@ -83,7 +84,7 @@ class JoinCompleteFragment : Fragment() {
                         Log.d(TAG, "token is $token")
 
                         PaletteApplication.prefs.token = token ?: ""
-                        shortToast("회원가입 성공")
+                        shortToast("회원가입 성공, 이메일 인증을 진행해주세요.")
 
                     } catch (e: SocketTimeoutException) {
                         Log.e(TAG, "Network timeout", e)
@@ -91,7 +92,8 @@ class JoinCompleteFragment : Fragment() {
 
                     } catch (e: HttpException) {
                         Log.e(TAG, "HTTP error: ${e.code()}", e)
-                        shortToast("중복된 계정입니다.")
+                        Log.e(TAG, "HTTP error: ${e.response()?.raw()?.request()}", e)
+                        shortToast("http 문제 발생")
                         findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
 
                     } catch (e: Exception) {
@@ -106,5 +108,4 @@ class JoinCompleteFragment : Fragment() {
             }
         }
     }
-
 }

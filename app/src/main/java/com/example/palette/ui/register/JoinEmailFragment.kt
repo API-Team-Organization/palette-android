@@ -56,7 +56,7 @@ class JoinEmailFragment : Fragment() {
                     }
                     registerViewModel.setEmail(binding.etJoinEmail.text.toString())
 
-                    findNavController().navigate(R.id.action_joinEmailFragment_to_joinCheckNumFragment, bundle)
+                    findNavController().navigate(R.id.action_joinEmailFragment_to_joinPasswordFragment, bundle)
                 } else {
                     checkEmailFailed(etJoinEmail)
                     failedEmailFormat.visibility = View.VISIBLE

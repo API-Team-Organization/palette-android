@@ -41,5 +41,11 @@ object AuthRequestManager {
         return response
     }
 
+    suspend fun verifyRequest(token: String, verifyData: VerifyRequest): Response<BaseVoidResponse> {
+        val response = authService.verify(token, verifyData)
+        if (response.code() >= 500)
+            throw HttpException(response)
 
+        return response
+    }
 }

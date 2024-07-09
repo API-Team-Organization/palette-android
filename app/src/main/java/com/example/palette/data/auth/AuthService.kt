@@ -29,4 +29,10 @@ interface AuthService {
     suspend fun register(
         @Body registerRequest: RegisterRequest
     ): Response<BaseVoidResponse>
+
+    @POST("/auth/verify")
+    suspend fun verify(
+        @Header("X-AUTH-Token") token: String,
+        @Body verifyRequest: VerifyRequest
+    ): Response<BaseVoidResponse>
 }
