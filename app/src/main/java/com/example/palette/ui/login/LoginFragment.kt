@@ -3,24 +3,23 @@ package com.example.palette.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant.TAG
 import com.example.palette.common.HeaderUtil
-import com.example.palette.data.auth.LoginRequest
 import com.example.palette.data.auth.AuthRequestManager
+import com.example.palette.data.auth.LoginRequest
 import com.example.palette.databinding.FragmentLoginBinding
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
@@ -29,8 +28,6 @@ class LoginFragment : Fragment() {
     private lateinit var binding : FragmentLoginBinding
     private lateinit var email: String
     private lateinit var pw: String
-
-    private var backPressedTime: Long = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
