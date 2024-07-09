@@ -55,7 +55,7 @@ class LoginFragment : Fragment() {
                     loginEmailEdit.background = ContextCompat.getDrawable(loginEmailEdit.context, R.drawable.bac_object)
                     return@setOnClickListener
                 }
-                login()
+                updateLoginView()
                 loginRequest()
             }
             loginToJoin.setOnClickListener {
@@ -64,14 +64,13 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun login() {
+    private fun updateLoginView() {
         with(binding) {
             emailFailedText.visibility = View.GONE
             loginEmailEdit.background = ContextCompat.getDrawable(binding.loginEmailEdit.context, R.drawable.bac_object)
             passwordFailedText.visibility = View.GONE
             loginPasswordEdit.background = ContextCompat.getDrawable(binding.loginPasswordEdit.context, R.drawable.bac_object)
         }
-        // 서버랑 통신 해서 이메일 존재 여부, 비밀 번호 일치 등 확인 후, 로그인 성공 Toast
     }
 
     private fun handleLoginFailure(loginText: EditText) {
