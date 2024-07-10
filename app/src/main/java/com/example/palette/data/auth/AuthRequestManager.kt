@@ -35,4 +35,32 @@ object AuthRequestManager {
 
         return response
     }
+
+    suspend fun verifyRequest(token: String, verifyData: VerifyRequest): Response<BaseVoidResponse> {
+        val response = authService.verify(token, verifyData)
+        if (response.code() >= 500)
+            throw HttpException(response)
+
+        return response
+    }
+
+    suspend fun resendRequest(token: String): Response<BaseVoidResponse> {
+        val response = authService.resend(token)
+
+        return response
+    }
+
+    suspend fun resignRequest(token: String): Response<BaseVoidResponse> {
+        return authService.resign(token)
+    }
+
+    suspend fun changePasswordRequest(token: String, beforePassword: String, afterPassword: String): Response<BaseVoidResponse> {
+        val request = ChangePasswordRequest(beforePassword, afterPassword)
+        val response = authService.changePassword(token, request)
+
+        if (response.code() >= 500)
+            throw HttpException(response)
+
+        return response
+    }
 }
