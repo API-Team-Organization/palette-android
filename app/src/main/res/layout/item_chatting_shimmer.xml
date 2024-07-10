@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="64dp"
+    android:layout_marginBottom="64dp"
+    android:layout_marginEnd="24dp"
+    android:layout_marginStart="24dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:weightSum="10"
+    android:background="@color/cardview_shadow_start_color">
+
+    <ImageView
+        android:id="@+id/image_sample"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:src="@drawable/ic_imagesearch_roller"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="생성 중 입니다."
+        android:textSize="24sp"
+        android:fontFamily="@font/pretendard_semibold"/>
+</LinearLayout>

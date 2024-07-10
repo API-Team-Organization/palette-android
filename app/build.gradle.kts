@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+    // glide 이미지 로딩
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+
     // shimmer 로딩뷰
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
@@ -66,7 +69,7 @@ dependencies {
     // Rive
     // During initialization, you may need to add a dependency
     // for Jetpack Startup
-    implementation("app.rive:rive-android:8.7.0")
+    implementation("app.rive:rive-android:9.5.5")
     implementation("androidx.startup:startup-runtime:1.1.1")
 
     // viewModel dependencies
@@ -80,6 +83,6 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 }

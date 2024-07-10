@@ -13,23 +13,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.chat.ChatData
-import com.example.palette.data.chat.ChatModel
 import com.example.palette.data.chat.ChatRequestManager
+import com.example.palette.data.chat.Received
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.RoomData
 import com.example.palette.databinding.FragmentChattingBinding
 import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.create.chat.adapter.ChattingRecyclerAdapter
 import com.example.palette.ui.util.log
+import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
-class ChattingFragment(private var roomId: Int) : Fragment() {
+class ChattingFragment(private var roomId: Int, private var title: String) : Fragment() {
     private lateinit var binding: FragmentChattingBinding
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
-    private lateinit var listDemo: MutableList<ChatModel>
+    private lateinit var listDemo: MutableList<Received>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,12 +47,20 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
     }
 
     private fun initView() {
+        binding.chattingToolbar.title = title
+
         viewLifecycleOwner.lifecycleScope.launch {
             listDemo = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
             if (listDemo.size != 0) {
+                log("ChattingFragment 리스트는 비어있지 않습니다.")
                 recyclerAdapter.setData(listDemo)
                 binding.chattingRecycler.smoothScrollToPosition(listDemo.size - 1)
             }
+            else {
+                log("ChattingFragment 리스트는 비어있습니다.")
+
+            }
+
         }
 
         binding.chattingToolbar.setNavigationOnClickListener {
@@ -79,6 +91,7 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
     }
 
     private fun initEditText() {
+        showSampleData(false)
         binding.chattingEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 // EditText 내용이 변경된 후 호출됩니다.
@@ -86,7 +99,6 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
                     binding.chattingSubmitButton.setImageResource(R.drawable.ic_send)
                 } else {
                     binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_ok)
-
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -100,20 +112,52 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
 
     private fun submitText(chat: ChatData) {
         viewLifecycleOwner.lifecycleScope.launch {
-            ChatRequestManager.createChat(PaletteApplication.prefs.token, chat)
+            showSampleData(true)
+            val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat)
+            showSampleData(false)
             if (listDemo.size == 1) {
                 log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
+                binding.chattingToolbar.title = chat.message
             }
-            log("ChattingFragment 메세지를 제목으로 설정하지않습니다. ${chat} && listDemo == $listDemo")
+            if (response.isSuccessful) {
+                with(response.body()!!.data.received[0]) {
+                    log("ChattingFragment submitText response.body()!!.data.received[0] : ${response.body()!!.data.received[0]}")
+                    val newReceived1 = Received(id = id, isAi = isAi, message = message, datetime = datetime, roomId = roomId, userId = userId, resource = resource)
+                    listDemo.add(newReceived1)
+                    recyclerAdapter.addChat(newReceived1)
+                }
+
+                with(response.body()!!.data.received[1]) {
+                    log("ChattingFragment submitText response.body()!!.data.received[1] : ${response.body()!!.data.received[1]}")
+                    val newReceived2 = Received(id = id, isAi = isAi, message = message, datetime = datetime, roomId = roomId, userId = userId, resource = resource)
+                    listDemo.add(newReceived2)
+                    recyclerAdapter.addChat(newReceived2)
+                }
+            } else {
+                shortToast("부적절한 단어! 변경 후 다시 시도해주세요")
+                return@launch
+            }
 
             listDemo = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
+            log("/chat/{roomId}에서 어떤 값을 주는지 확인: ${listDemo}")
+            scrollToPosition()
         }
+
         scrollToPosition()
 
-        val newChatModel = ChatModel(id = -100, isAi = false, message = chat.message, datetime = "대충 날짜", roomId = roomId, userId = 0)
-        listDemo.add(newChatModel)
-        recyclerAdapter.addChat(newChatModel)
+        val newReceived = Received(
+            id = -100,
+            isAi = false,
+            message = chat.message,
+            datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date()),
+            roomId = roomId,
+            userId = 0,
+            resource = "Chat"
+        )
+        listDemo.add(newReceived)
+        recyclerAdapter.addChat(newReceived)
+
         binding.chattingEditText.text.clear()
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
@@ -125,17 +169,28 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
         }
     }
 
+    private fun showSampleData(isLoading: Boolean) {
+        if (isLoading) {
+            binding.sflSample.startShimmer()
+            binding.sflSample.visibility = View.VISIBLE
+            binding.chattingRecycler.visibility = View.GONE
+        } else {
+            binding.sflSample.stopShimmer()
+            binding.sflSample.visibility = View.GONE
+            binding.chattingRecycler.visibility = View.VISIBLE
+        }
+    }
+
     override fun onDestroyView() {
+        super.onDestroyView()
+
         if (listDemo.isEmpty()) {
             (requireActivity() as? BaseControllable)?.deleteRoom(roomId = roomId)
         }
-
-        super.onDestroyView()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
         (requireActivity() as? BaseControllable)?.bottomVisible(true)
     }
 }

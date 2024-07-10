@@ -56,7 +56,7 @@ class CreateMediaFragment : Fragment() {
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 log("item position is $position")
-                startChatting(roomList.data[position].id)
+                startChatting(roomList.data[position].id, roomList.data[position].title.toString())
             }
 
             override fun onItemLongClick(position: Int) {
@@ -67,12 +67,6 @@ class CreateMediaFragment : Fragment() {
 
         binding.llStartNewWork.setOnClickListener {
             createRoom()
-            viewLifecycleOwner.lifecycleScope.launch {
-                val roomId = RoomRequestManager.roomList(PaletteApplication.prefs.token).data.last().id
-                startChatting(roomId)
-            }
-
-
         }
 
         return binding.root
@@ -107,9 +101,9 @@ class CreateMediaFragment : Fragment() {
         }
     }
 
-    private fun startChatting(position: Int) {
+    private fun startChatting(position: Int, title: String) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.mainContent, ChattingFragment(position))
+            .replace(R.id.mainContent, ChattingFragment(roomId = position, title = title))
             .addToBackStack(null) // 백 스택에 프래그먼트 추가
             .commitAllowingStateLoss()
     }
@@ -155,7 +149,12 @@ class CreateMediaFragment : Fragment() {
                 val roomResponse = RoomRequestManager.roomRequest(PaletteApplication.prefs.token)
 
                 if (roomResponse.isSuccessful) {
-                    shortToast("생성 성공") // 생성했으면, room/list해서 받은 뒤에, 가장 마지막에 있는거 id를 roomId에 넣고, createChatting 재실행
+                    shortToast("생성 성공")
+                    startChatting(roomResponse.body()!!.data.id, title = roomResponse.body()!!.data.title.toString())
+                    log("생성된 roomId == ${roomResponse.body()!!.data.id}")
+                }
+                else {
+                    shortToast("생성 실패 errorCode: 34533")
                 }
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "ChattingFragment createRoom error : ",e)

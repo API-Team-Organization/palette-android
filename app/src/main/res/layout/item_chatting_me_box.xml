@@ -6,6 +6,16 @@
     android:layout_marginEnd="8dp"
     android:layout_marginTop="16dp">
 
+    <TextView
+        android:id="@+id/text_gchat_time_me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/card_gchat_message_me"
+        android:fontFamily="@font/pretendard_medium"
+        android:layout_marginEnd="8dp"/>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_gchat_message_me"
         android:layout_width="wrap_content"
@@ -27,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:maxWidth="260dp"
+                android:maxWidth="240dp"
                 android:paddingLeft="12dp"
                 android:paddingTop="8dp"
                 android:paddingRight="12dp"
