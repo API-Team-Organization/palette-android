@@ -67,12 +67,6 @@ class CreateMediaFragment : Fragment() {
 
         binding.llStartNewWork.setOnClickListener {
             createRoom()
-            viewLifecycleOwner.lifecycleScope.launch {
-                val roomId = RoomRequestManager.roomList(PaletteApplication.prefs.token).data.last().id
-                startChatting(roomId)
-            }
-
-
         }
 
         return binding.root
@@ -155,7 +149,12 @@ class CreateMediaFragment : Fragment() {
                 val roomResponse = RoomRequestManager.roomRequest(PaletteApplication.prefs.token)
 
                 if (roomResponse.isSuccessful) {
-                    shortToast("생성 성공") // 생성했으면, room/list해서 받은 뒤에, 가장 마지막에 있는거 id를 roomId에 넣고, createChatting 재실행
+                    shortToast("생성 성공")
+                    startChatting(roomResponse.body()!!.data.id)
+                    log("생성된 roomId == ${roomResponse.body()!!.data.id}")
+                }
+                else {
+                    shortToast("생성 실패 errorCode: 34533")
                 }
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "ChattingFragment createRoom error : ",e)

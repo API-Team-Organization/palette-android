@@ -17,7 +17,7 @@ interface RoomService {
     suspend fun createRoom(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
-    ): Response<BaseVoidResponse>
+    ): Response<BaseResponse<RoomData>>
 
     @GET("/room/list")
     suspend fun getRoomList(

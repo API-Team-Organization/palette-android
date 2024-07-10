@@ -1,7 +1,6 @@
 package com.example.palette.data.chat
 
 import com.example.palette.data.base.BaseResponse
-import com.example.palette.data.base.BaseVoidResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,12 +14,12 @@ interface ChatService {
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Body postChat: ChatData
-    ): Response<BaseVoidResponse>
+    ): Response<BaseResponse<PaletteChat>>
 
     @GET("/chat/{roomId}")
     suspend fun getChatList(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Path("roomId") roomId: Int
-    ): Response<BaseResponse<MutableList<ChatModel>>>
+    ): Response<BaseResponse<MutableList<Received>>>
 }

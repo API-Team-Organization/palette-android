@@ -1,24 +1,15 @@
 package com.example.palette.ui.main.create.chat.adapter
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.palette.data.chat.ChatModel
+import com.bumptech.glide.Glide
+import com.example.palette.data.chat.Received
 import com.example.palette.databinding.ItemChattingMeBoxBinding
 import com.example.palette.databinding.ItemChattingPaletteBoxBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
-import java.net.URL
-
 
 class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    private val listOfChat = mutableListOf<ChatModel>()
+    private val listOfChat = mutableListOf<Received>()
 
     companion object {
         const val VIEW_TYPE_LEFT = 1
@@ -48,63 +39,47 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     override fun getItemCount(): Int = listOfChat.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (!listOfChat[position].isAi)
-            (holder as RightViewHolder).bind(listOfChat[position])
-        else
-            (holder as LeftViewHolder).bind(listOfChat[position])
+        val chat = listOfChat[position]
+        if (!chat.isAi) {
+            (holder as RightViewHolder).bind(chat)
+        } else {
+            (holder as LeftViewHolder).bind(chat)
+        }
     }
 
-    fun setData(list: MutableList<ChatModel>) {
+    fun setData(list: MutableList<Received>) {
         listOfChat.clear()
         listOfChat.addAll(list)
         notifyDataSetChanged() // 전체 데이터가 변경되었음을 알림
     }
 
-    fun addChat(chat: ChatModel) {
+    fun addChat(chat: Received) {
         listOfChat.add(chat)
         notifyItemInserted(listOfChat.size - 1)
     }
 
     inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(chat: ChatModel) {
+        fun bind(chat: Received) {
             binding.apply {
-                chat.also {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        chattingCreatedImage.setImageBitmap(stringToUrl(chat.message)) // image
-                    }
+                // 초기화
+                chattingCreatedImage.setImageDrawable(null) // 이미지 초기화
+                textGchatMessagePalette.text = null // 텍스트 초기화
+
+                if (chat.resource == "IMAGE") {
+                    Glide.with(itemView)
+                        .load(chat.message) // 이미지 URL
+                        .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
+                        .into(chattingCreatedImage) // ImageView 설정
+                } else {
+                    textGchatMessagePalette.text = chat.message // 텍스트 설정
                 }
             }
         }
     }
 
     inner class RightViewHolder(private val binding: ItemChattingMeBoxBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(chat: ChatModel) {
-            binding.apply {
-                chat.also {
-                    textGchatMessageMe.text = chat.message
-                }
-            }
-        }
-    }
-
-    private suspend fun stringToUrl(urlString: String): Bitmap? {
-        return withContext(Dispatchers.IO) {
-            try {
-                // 이미지 URL 경로
-                val url = URL(urlString)
-                // web에서 이미지를 가져와 ImageView에 저장할 Bitmap을 만든다.
-                val conn = url.openConnection() as HttpURLConnection
-                conn.doInput = true // 서버로부터 응답 수신
-                conn.connect() // 연결된 곳에 접속할 때 (connect() 호출해야 실제 통신 가능함)
-
-                val inputStream = conn.inputStream // inputStream 값 가져오기
-                val bitmap = BitmapFactory.decodeStream(inputStream) // Bitmap으로 변환
-                inputStream.close()
-                bitmap
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
+        fun bind(chat: Received) {
+            binding.textGchatMessageMe.text = chat.message // 텍스트 설정
         }
     }
 }
