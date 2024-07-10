@@ -6,6 +6,16 @@
     android:layout_marginStart="8dp"
     android:layout_marginTop="16dp">
 
+    <TextView
+        android:id="@+id/text_gchat_time_palette"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text=""
+        android:fontFamily="@font/pretendard_medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/card_gchat_message_palette"/>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_gchat_message_palette"
         android:layout_width="wrap_content"
@@ -23,20 +33,20 @@
                 android:layout_height="wrap_content"
                 android:maxWidth="260dp"
                 android:maxHeight="400dp"/>
-            <TextView
-                android:id="@+id/text_gchat_message_palette"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:maxWidth="260dp"
-                android:paddingLeft="12dp"
-                android:paddingTop="8dp"
-                android:paddingRight="12dp"
-                android:text=""
-                android:textSize="16sp"
-                android:fontFamily="@font/pretendard_medium"
-                android:layout_gravity="start"
-                android:gravity="start"/>
+                <TextView
+                    android:id="@+id/text_gchat_message_palette"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:maxWidth="240dp"
+                    android:paddingLeft="12dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="12dp"
+                    android:text=""
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:layout_gravity="start"
+                    android:gravity="start"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

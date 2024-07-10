@@ -23,6 +23,9 @@ import com.example.palette.ui.main.create.chat.adapter.ChattingRecyclerAdapter
 import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class ChattingFragment(private var roomId: Int) : Fragment() {
@@ -140,7 +143,16 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
         }
 
         scrollToPosition()
-        val newReceived = Received(id = -100, isAi = false, message = chat.message, datetime = "대충 날짜", roomId = roomId, userId = 0, resource = "Chat")
+
+        val newReceived = Received(
+            id = -100,
+            isAi = false,
+            message = chat.message,
+            datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date()),
+            roomId = roomId,
+            userId = 0,
+            resource = "Chat"
+        )
         listDemo.add(newReceived)
         recyclerAdapter.addChat(newReceived)
 

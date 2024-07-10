@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val listOfChat = mutableListOf<Received>()
@@ -78,6 +80,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 // 초기화
                 chattingCreatedImage.setImageDrawable(null) // 이미지 초기화
                 textGchatMessagePalette.text = null // 텍스트 초기화
+                textGchatTimePalette.text = null // 텍스트 초기화
 
                 if (chat.resource == "IMAGE") {
                     Glide.with(itemView)
@@ -91,6 +94,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                     }
                 } else {
                     textGchatMessagePalette.text = chat.message // 텍스트 설정
+                    textGchatTimePalette.text = formatChatTime(chat.datetime) // 텍스트 설정
                 }
             }
         }
@@ -155,6 +159,14 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     inner class RightViewHolder(private val binding: ItemChattingMeBoxBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(chat: Received) {
             binding.textGchatMessageMe.text = chat.message // 텍스트 설정
+            binding.textGchatTimeMe.text = formatChatTime(chat.datetime) // 텍스트 초기화
         }
+    }
+
+    fun formatChatTime(datetime: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val date = inputFormat.parse(datetime)
+        return outputFormat.format(date!!)
     }
 }
