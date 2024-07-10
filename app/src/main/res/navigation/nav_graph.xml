@@ -140,7 +140,11 @@
         android:id="@+id/editUserInfoFragment"
         android:name="com.example.palette.ui.main.settings.EditUserInfoFragment"
         android:label="fragment_edit_user_info"
-        tools:layout="@layout/fragment_edit_user_info" />
+        tools:layout="@layout/fragment_edit_user_info" >
+        <action
+            android:id="@+id/action_editUserInfoFragment_to_changeUserInfoFragment"
+            app:destination="@id/changeUserInfoFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.example.palette.ui.main.settings.SettingFragment"
@@ -150,5 +154,10 @@
             android:id="@+id/action_settingFragment_to_editUserInfoFragment"
             app:destination="@id/editUserInfoFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/changeUserInfoFragment"
+        android:name="com.example.palette.ui.main.settings.ChangeNameFragment"
+        android:label="fragment_change_user_info"
+        tools:layout="@layout/fragment_change_user_info" />
 
 </navigation>

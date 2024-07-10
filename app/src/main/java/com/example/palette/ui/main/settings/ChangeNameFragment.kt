@@ -1,0 +1,75 @@
+package com.example.palette.ui.main.settings
+
+import android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
+import com.example.palette.application.PaletteApplication
+import com.example.palette.data.info.InfoRequestManager
+import com.example.palette.databinding.FragmentChangeUserInfoBinding
+import com.example.palette.ui.util.shortToast
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
+
+class ChangeNameFragment : Fragment() {
+
+    private lateinit var binding: FragmentChangeUserInfoBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentChangeUserInfoBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.changeNameBtn.setOnClickListener {
+            val username = binding.etChangeName.text.toString().trim()
+
+            if (username.isEmpty()) {
+                shortToast("이름을 입력해주세요.")
+                return@setOnClickListener
+            }
+
+            changeName(username, null)
+        }
+    }
+
+    private fun changeName(username: String, birthDate: String?) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = InfoRequestManager.changeNameRequest(
+                    PaletteApplication.prefs.token,
+                    username,
+                    null
+                )
+
+                if (response.isSuccessful) {
+                    // 프로필 업데이트 성공
+                    shortToast("프로필이 성공적으로 업데이트되었습니다.")
+                    Log.d("ProfileEditFragment", "Profile updated successfully.")
+                    // 업데이트 성공 후 필요한 작업 처리
+                } else {
+                    // 프로필 업데이트 실패
+                    shortToast("프로필 업데이트에 실패했습니다.")
+                    Log.e("ProfileEditFragment", "Failed to update profile: ${response.code()} - ${response.message()}")
+                    // 실패 시 처리 코드 추가
+                }
+            } catch (e: HttpException) {
+                shortToast("서버 오류가 발생했습니다.")
+                Log.e("ProfileEditFragment", "Server error", e)
+                // HttpException 발생 시 처리 코드 추가
+            } catch (e: Exception) {
+                shortToast("네트워크 오류가 발생했습니다.")
+                Log.e("ProfileEditFragment", "Network error", e)
+                // 기타 예외 발생 시 처리 코드 추가
+            }
+        }
+    }
+}

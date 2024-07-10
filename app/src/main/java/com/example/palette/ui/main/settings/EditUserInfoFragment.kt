@@ -24,6 +24,13 @@ class EditUserInfoFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
 
+        binding.changeName.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, ChangeNameFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
+
         return binding.root
     }
 }
