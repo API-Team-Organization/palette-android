@@ -1,12 +1,26 @@
 package com.example.palette.ui.main.create.chat.adapter
 
+import android.content.ContentValues
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.palette.data.chat.Received
 import com.example.palette.databinding.ItemChattingMeBoxBinding
 import com.example.palette.databinding.ItemChattingPaletteBoxBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
 
 class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val listOfChat = mutableListOf<Received>()
@@ -70,9 +84,70 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                         .load(chat.message) // 이미지 URL
                         .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
                         .into(chattingCreatedImage) // ImageView 설정
+
+                    chattingCreatedImage.setOnLongClickListener {
+                        showDownloadDialog(itemView.context, chat.message)
+                        true
+                    }
                 } else {
                     textGchatMessagePalette.text = chat.message // 텍스트 설정
                 }
+            }
+        }
+
+        private suspend fun downloadBitmap(urlString: String): Bitmap? {
+            return withContext(Dispatchers.IO) {
+                try {
+                    val url = URL(urlString)
+                    val connection = url.openConnection() as HttpURLConnection
+                    connection.doInput = true
+                    connection.connect()
+                    val inputStream = connection.inputStream
+                    BitmapFactory.decodeStream(inputStream)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
+        }
+
+        private fun saveImageToGallery(context: Context, bitmap: Bitmap) {
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image.jpg")
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                put(MediaStore.Images.Media.IS_PENDING, 1)
+            }
+
+            val resolver = context.contentResolver
+            val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+            uri?.let {
+                resolver.openOutputStream(it).use { outputStream ->
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream!!)
+                }
+
+                contentValues.clear()
+                contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                resolver.update(uri, contentValues, null, null)
+            }
+        }
+
+        private fun showDownloadDialog(context: Context, imageUrl: String) {
+            AlertDialog.Builder(context).apply {
+                setTitle("이미지 다운로드")
+                setMessage("이미지를 다운로드하시겠습니까?")
+                setPositiveButton("예") { _, _ ->
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val bitmap = downloadBitmap(imageUrl)
+                        bitmap?.let {
+                            saveImageToGallery(context, it)
+                        }
+                        Toast.makeText(context, "다운로드되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                setNegativeButton("아니오", null)
+                show()
             }
         }
     }
