@@ -54,4 +54,8 @@ object AuthRequestManager {
 
         return response
     }
+
+    suspend fun resignRequest(token: String): Response<BaseVoidResponse> {
+        return authService.resign(token)
+    }
 }
