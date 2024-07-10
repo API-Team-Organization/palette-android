@@ -1,10 +1,5 @@
 package com.example.palette.data.auth
 
-import android.content.Context
-import android.util.Log
-import androidx.appcompat.app.AlertDialog
-import com.example.palette.application.PaletteApplication
-import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseVoidResponse
 import retrofit2.HttpException
 import retrofit2.Response

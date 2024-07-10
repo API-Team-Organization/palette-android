@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.common.Constant
 import com.example.palette.common.Constant.TAG
 import com.example.palette.common.HeaderUtil
 import com.example.palette.data.auth.RegisterRequest

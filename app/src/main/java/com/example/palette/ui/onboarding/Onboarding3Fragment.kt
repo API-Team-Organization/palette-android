@@ -5,10 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
-import com.example.palette.databinding.FragmentLoginBinding
 import com.example.palette.databinding.FragmentOnboarding3Binding
 
 class Onboarding3Fragment : Fragment() {

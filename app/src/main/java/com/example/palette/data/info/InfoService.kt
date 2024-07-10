@@ -1,6 +1,5 @@
 package com.example.palette.data.info
 
-import com.example.palette.data.auth.ChangePasswordRequest
 import com.example.palette.data.base.BaseResponse
 import com.example.palette.data.base.BaseVoidResponse
 import retrofit2.Response
