@@ -5,10 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.work.WorkVideoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:src="@drawable/ic_update"
+        android:layout_gravity="center"/>
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="비디오 베이베 비디오 베이베 좀 더 힘을 내!" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="업데이트 예정"
+        android:textSize="24sp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="80dp"
+        android:fontFamily="@font/pretendard_semibold"/>
 
 </FrameLayout>
