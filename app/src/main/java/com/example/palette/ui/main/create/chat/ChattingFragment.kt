@@ -130,7 +130,7 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
                     recyclerAdapter.addChat(newReceived2)
                 }
             } else {
-                shortToast("이미지를 제작하는데 실패했습니다.")
+                shortToast("부적절한 단어! 변경 후 다시 시도해주세요")
                 return@launch
             }
 
