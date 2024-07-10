@@ -37,10 +37,16 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
             <ImageView
+                android:id="@+id/edit"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_edit"/>
+            <ImageView
                 android:id="@+id/information"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_info"/>
+                android:src="@drawable/ic_info"
+                android:layout_marginStart="16dp"/>
             <ImageView
                 android:id="@+id/notification"
                 android:layout_width="32dp"
@@ -75,6 +81,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
                     android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -93,7 +100,7 @@
                             android:fontFamily="@font/pretendard_semibold"
                             android:layout_marginStart="10dp"/>
                     </LinearLayout>
-    
+
                     <TextView
                         android:id="@+id/userName"
                         android:layout_width="wrap_content"
@@ -101,7 +108,7 @@
                         android:textSize="24sp"
                         android:fontFamily="@font/pretendard_bold"
                         android:layout_marginTop="32dp"/>
-    
+
                     <TextView
                         android:id="@+id/userEmail"
                         android:layout_width="wrap_content"
@@ -109,7 +116,7 @@
                         android:textSize="16sp"
                         android:fontFamily="@font/pretendard_bold"
                         android:layout_marginTop="16dp"/>
-    
+
                     <TextView
                         android:id="@+id/userBirthday"
                         android:layout_width="wrap_content"
@@ -117,7 +124,7 @@
                         android:textSize="16sp"
                         android:fontFamily="@font/pretendard_bold"
                         android:layout_marginTop="16dp"/>
-                    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -202,7 +209,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Palette "
+                            android:text="Palette"
                             android:textSize="16sp"
                             android:textColor="@color/darkGray"
                             android:layout_marginStart="20dp"
@@ -210,7 +217,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="서비스의 구독을 관리합니다."
+                            android:text="에서 로그아웃합니다."
                             android:textSize="16sp"
                             android:textColor="@color/darkGray"
                             android:fontFamily="@font/pretendard_medium"/>
@@ -243,7 +250,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="로그아웃"
+                            android:text="회원탈퇴"
                             android:textSize="18sp"
                             android:textColor="@color/red"
                             android:fontFamily="@font/pretendard_bold"/>
@@ -265,7 +272,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="서비스의 구독을 관리합니다."
+                            android:text="서비스에서 탈퇴합니다."
                             android:textSize="16sp"
                             android:textColor="@color/darkGray"
                             android:fontFamily="@font/pretendard_medium"/>

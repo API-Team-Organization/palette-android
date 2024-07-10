@@ -16,7 +16,9 @@ import com.example.palette.common.Constant
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentSettingBinding
+import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 
 class SettingFragment : Fragment() {
@@ -54,6 +56,17 @@ class SettingFragment : Fragment() {
         binding.logout.setOnClickListener {
             logout()
         }
+
+        binding.appResign.setOnClickListener {
+            resign()
+        }
+
+        binding.edit.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, EditUserInfoFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
     }
 
     private fun logout() {
@@ -69,5 +82,27 @@ class SettingFragment : Fragment() {
         requireActivity().startActivity(intent)
 
         activity?.finish()
+    }
+
+    private fun resign() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = AuthRequestManager.resignRequest(PaletteApplication.prefs.token)
+                if (response.isSuccessful) {
+                    // 회원 탈퇴 성공
+                    shortToast("회원 탈퇴 성공")
+                    Log.d(Constant.TAG, "Resign success")
+                } else {
+                    // 회원 탈퇴 실패
+                    Log.e(Constant.TAG, "Resign failed: ${response.code()} - ${response.message()}")
+                }
+            } catch (e: HttpException) {
+                shortToast("HttpException")
+                Log.e(Constant.TAG, "Resign HTTP error", e)
+            } catch (e: Exception) {
+                shortToast("Exception")
+                Log.e(Constant.TAG, "Resign error", e)
+            }
+        }
     }
 }

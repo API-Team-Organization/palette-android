@@ -45,8 +45,8 @@
         android:label="joinEmailFragment"
         android:name="com.example.palette.ui.register.JoinEmailFragment">
         <action
-            android:id="@+id/action_joinEmailFragment_to_joinCheckNumFragment"
-            app:destination="@id/joinCheckNumFragment"
+            android:id="@+id/action_joinEmailFragment_to_joinPasswordFragment"
+            app:destination="@id/joinPasswordFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -59,8 +59,8 @@
         android:label="joinCheckNumFragment"
         android:name="com.example.palette.ui.register.JoinCheckNumFragment">
         <action
-            android:id="@+id/action_joinCheckNumFragment_to_joinPasswordFragment"
-            app:destination="@id/joinPasswordFragment"
+            android:id="@+id/action_joinCheckNumFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -115,8 +115,8 @@
         android:label="joinCompleteFragment"
         android:name="com.example.palette.ui.register.JoinCompleteFragment">
         <action
-            android:id="@+id/action_joinCompleteFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
+            android:id="@+id/action_joinCompleteFragment_to_joinCheckNumFragment"
+            app:destination="@id/joinCheckNumFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -136,5 +136,36 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
+    <fragment
+        android:id="@+id/editUserInfoFragment"
+        android:name="com.example.palette.ui.main.settings.EditUserInfoFragment"
+        android:label="fragment_edit_user_info"
+        tools:layout="@layout/fragment_edit_user_info" >
+        <action
+            android:id="@+id/action_editUserInfoFragment_to_changeUserInfoFragment"
+            app:destination="@id/changeUserInfoFragment" />
+        <action
+            android:id="@+id/action_editUserInfoFragment_to_changeBirthDateFragment"
+            app:destination="@id/changeBirthDateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.palette.ui.main.settings.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_editUserInfoFragment"
+            app:destination="@id/editUserInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/changeUserInfoFragment"
+        android:name="com.example.palette.ui.main.settings.ChangeNameFragment"
+        android:label="fragment_change_user_info"
+        tools:layout="@layout/fragment_change_name" />
+    <fragment
+        android:id="@+id/changeBirthDateFragment"
+        android:name="com.example.palette.ui.main.settings.ChangeBirthDateFragment"
+        android:label="fragment_change_birth_date"
+        tools:layout="@layout/fragment_change_birth_date" />
 
 </navigation>

@@ -3,19 +3,13 @@ package com.example.palette
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.findFragment
-import androidx.navigation.findNavController
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.PreferenceManager
 import com.example.palette.common.Constant
 import com.example.palette.databinding.ActivityMainBinding
-import com.example.palette.ui.login.LoginFragment
 import com.example.palette.ui.main.ServiceActivity
-import com.example.palette.ui.onboarding.OnboardingDefaultFragment
 import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 
