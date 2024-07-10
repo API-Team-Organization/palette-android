@@ -56,7 +56,7 @@ class CreateMediaFragment : Fragment() {
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 log("item position is $position")
-                startChatting(roomList.data[position].id)
+                startChatting(roomList.data[position].id, roomList.data[position].title.toString())
             }
 
             override fun onItemLongClick(position: Int) {
@@ -101,9 +101,9 @@ class CreateMediaFragment : Fragment() {
         }
     }
 
-    private fun startChatting(position: Int) {
+    private fun startChatting(position: Int, title: String) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.mainContent, ChattingFragment(position))
+            .replace(R.id.mainContent, ChattingFragment(roomId = position, title = title))
             .addToBackStack(null) // 백 스택에 프래그먼트 추가
             .commitAllowingStateLoss()
     }
@@ -150,7 +150,7 @@ class CreateMediaFragment : Fragment() {
 
                 if (roomResponse.isSuccessful) {
                     shortToast("생성 성공")
-                    startChatting(roomResponse.body()!!.data.id)
+                    startChatting(roomResponse.body()!!.data.id, title = roomResponse.body()!!.data.title.toString())
                     log("생성된 roomId == ${roomResponse.body()!!.data.id}")
                 }
                 else {

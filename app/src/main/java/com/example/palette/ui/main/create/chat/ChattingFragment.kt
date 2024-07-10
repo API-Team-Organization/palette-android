@@ -28,7 +28,7 @@ import java.util.Date
 import java.util.Locale
 
 
-class ChattingFragment(private var roomId: Int) : Fragment() {
+class ChattingFragment(private var roomId: Int, private var title: String) : Fragment() {
     private lateinit var binding: FragmentChattingBinding
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
@@ -47,6 +47,8 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
     }
 
     private fun initView() {
+        binding.chattingToolbar.title = title
+
         viewLifecycleOwner.lifecycleScope.launch {
             listDemo = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
             if (listDemo.size != 0) {
@@ -116,7 +118,7 @@ class ChattingFragment(private var roomId: Int) : Fragment() {
             if (listDemo.size == 1) {
                 log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
-                log("response는 ${response.body()}")
+                binding.chattingToolbar.title = chat.message
             }
             if (response.isSuccessful) {
                 with(response.body()!!.data.received[0]) {
