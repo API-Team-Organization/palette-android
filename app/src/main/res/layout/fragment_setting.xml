@@ -37,10 +37,16 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
             <ImageView
+                android:id="@+id/edit"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_edit"/>
+            <ImageView
                 android:id="@+id/information"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_info"/>
+                android:src="@drawable/ic_info"
+                android:layout_marginStart="16dp"/>
             <ImageView
                 android:id="@+id/notification"
                 android:layout_width="32dp"

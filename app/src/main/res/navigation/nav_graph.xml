@@ -136,5 +136,19 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
+    <fragment
+        android:id="@+id/editUserInfoFragment"
+        android:name="com.example.palette.ui.main.settings.EditUserInfoFragment"
+        android:label="fragment_edit_user_info"
+        tools:layout="@layout/fragment_edit_user_info" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.palette.ui.main.settings.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_editUserInfoFragment"
+            app:destination="@id/editUserInfoFragment" />
+    </fragment>
 
 </navigation>

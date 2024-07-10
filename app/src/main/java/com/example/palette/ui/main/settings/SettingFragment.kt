@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.palette.MainActivity
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
@@ -59,6 +60,13 @@ class SettingFragment : Fragment() {
 
         binding.appResign.setOnClickListener {
             resign()
+        }
+
+        binding.edit.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, EditUserInfoFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
         }
     }
 
