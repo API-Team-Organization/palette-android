@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.controllers.RiveFileController
-import app.rive.runtime.kotlin.core.ExperimentalAssetLoader
 import app.rive.runtime.kotlin.core.RiveEvent
 import com.example.palette.MainActivity
 import com.example.palette.R
@@ -29,7 +28,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAssetLoader::class)
 class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val binding by lazy { ActivityServiceBinding.inflate(layoutInflater) }
     private val riveAnimationView: RiveAnimationView by lazy(LazyThreadSafetyMode.NONE) {
