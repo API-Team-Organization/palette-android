@@ -63,6 +63,15 @@
                 android:inputType="number"
                 android:paddingStart="10dp"/>
 
+            <TextView
+                android:id="@+id/tvResend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="인증번호 재전송"
+                android:textColor="@color/primaryColor"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"/>
+
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton

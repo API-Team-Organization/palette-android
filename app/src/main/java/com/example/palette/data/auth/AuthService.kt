@@ -35,4 +35,10 @@ interface AuthService {
         @Header("X-AUTH-Token") token: String,
         @Body verifyRequest: VerifyRequest
     ): Response<BaseVoidResponse>
+
+    @POST("/auth/resend")
+    suspend fun resend(
+        @Header("X-AUTH-Token") token: String,
+        @Header("Accept") accept: String = "*/*"
+    ): Response<BaseVoidResponse>
 }

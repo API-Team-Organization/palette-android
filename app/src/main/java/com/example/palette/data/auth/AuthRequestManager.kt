@@ -48,4 +48,10 @@ object AuthRequestManager {
 
         return response
     }
+
+    suspend fun resendRequest(token: String): Response<BaseVoidResponse> {
+        val response = authService.resend(token)
+
+        return response
+    }
 }

@@ -36,6 +36,10 @@ class JoinCheckNumFragment : Fragment() {
             verifyCode(verificationCode)
         }
 
+        binding.tvResend.setOnClickListener {
+            resendCode()
+        }
+
         return binding.root
     }
 
@@ -70,4 +74,30 @@ class JoinCheckNumFragment : Fragment() {
             }
         }
     }
+
+    private fun resendCode() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val token = PaletteApplication.prefs.token
+                Log.d("JoinCheckNumFragment", "Token: $token")
+
+                val response = AuthRequestManager.resendRequest(token)
+                Log.d("JoinCheckNumFragment", "Response code: ${response.code()}, Response body: ${response.body()}")
+
+                if (response.isSuccessful) {
+                    shortToast("인증번호가 재전송되었습니다.")
+                } else {
+                    shortToast("인증번호 재전송에 실패했습니다.")
+                    Log.d("JoinCheckNumFragment", "Response code: ${response.code()}, Response message: ${response.message()}")
+                }
+            } catch (e: HttpException) {
+                shortToast("서버 오류가 발생했습니다")
+                Log.e("JoinCheckNumFragment", "HTTP Exception: ${e.message}", e)
+            } catch (e: Exception) {
+                shortToast("알 수 없는 오류: ${e.message}")
+                Log.e("JoinCheckNumFragment", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
 }
