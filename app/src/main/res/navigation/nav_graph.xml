@@ -144,6 +144,9 @@
         <action
             android:id="@+id/action_editUserInfoFragment_to_changeUserInfoFragment"
             app:destination="@id/changeUserInfoFragment" />
+        <action
+            android:id="@+id/action_editUserInfoFragment_to_changeBirthDateFragment"
+            app:destination="@id/changeBirthDateFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
@@ -158,6 +161,11 @@
         android:id="@+id/changeUserInfoFragment"
         android:name="com.example.palette.ui.main.settings.ChangeNameFragment"
         android:label="fragment_change_user_info"
-        tools:layout="@layout/fragment_change_user_info" />
+        tools:layout="@layout/fragment_change_name" />
+    <fragment
+        android:id="@+id/changeBirthDateFragment"
+        android:name="com.example.palette.ui.main.settings.ChangeBirthDateFragment"
+        android:label="fragment_change_birth_date"
+        tools:layout="@layout/fragment_change_birth_date" />
 
 </navigation>

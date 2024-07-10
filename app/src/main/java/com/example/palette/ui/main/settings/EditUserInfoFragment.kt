@@ -31,6 +31,13 @@ class EditUserInfoFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
 
+        binding.changeBirthDate.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, ChangeBirthDateFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
+
         return binding.root
     }
 }

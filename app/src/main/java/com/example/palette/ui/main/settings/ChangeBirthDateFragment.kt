@@ -6,48 +6,55 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.info.InfoRequestManager
-import com.example.palette.databinding.FragmentChangeNameBinding
+import com.example.palette.databinding.FragmentChangeBirthDateBinding
+import com.example.palette.ui.register.RegisterViewModel
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
-class ChangeNameFragment : Fragment() {
+class ChangeBirthDateFragment : Fragment() {
 
-    private lateinit var binding: FragmentChangeNameBinding
+    private lateinit var binding: FragmentChangeBirthDateBinding
+    private val registerViewModel: RegisterViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentChangeNameBinding.inflate(inflater, container, false)
+        binding = FragmentChangeBirthDateBinding.inflate(inflater, container, false)
+        datePickerDefaultSettings()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.changeNameBtn.setOnClickListener {
-            val username = binding.etChangeName.text.toString().trim()
+        binding.changeBirthDateBtn.setOnClickListener {
+            val birthDate = getSelectedDate()
 
-            if (username.isEmpty()) {
-                shortToast("이름을 입력해주세요.")
+            if (birthDate.isEmpty()) {
+                shortToast("생년월일을 설정해주세요.")
                 return@setOnClickListener
             }
 
-            changeName(username, null)
+            changeBirthDate(null, birthDate)
         }
     }
 
-    private fun changeName(username: String, birthDate: String?) {
+    private fun changeBirthDate(username: String?, birthDate: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = InfoRequestManager.changeNameRequest(
+                val response = InfoRequestManager.changeBirthDateRequest(
                     PaletteApplication.prefs.token,
-                    username,
-                    null
+                    null,
+                    birthDate
                 )
 
                 if (response.isSuccessful) {
@@ -71,5 +78,36 @@ class ChangeNameFragment : Fragment() {
                 // 기타 예외 발생 시 처리 코드 추가
             }
         }
+    }
+
+    private fun datePickerDefaultSettings() {
+        val datePicker = binding.changeBirthDateSpinner
+        datePicker.maxDate = System.currentTimeMillis() - 1000
+
+        val calendar = Calendar.getInstance()
+        calendar.set(2000, Calendar.JANUARY, 1)
+
+        datePicker.init(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ) { view, year, monthOfYear, dayOfMonth ->
+            // 날짜가 변경될 때 실행할 작업
+            val dateOfBirth = getSelectedDate()
+            registerViewModel.setBirthdate(dateOfBirth)
+        }
+    }
+
+    private fun getSelectedDate(): String {
+        val datePicker = binding.changeBirthDateSpinner
+        val day = datePicker.dayOfMonth
+        val month = datePicker.month
+        val year = datePicker.year
+
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month, day)
+
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return format.format(calendar.time)
     }
 }
