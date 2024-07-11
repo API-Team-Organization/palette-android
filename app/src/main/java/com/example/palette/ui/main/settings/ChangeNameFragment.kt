@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
+import com.example.palette.application.UserPrefs
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentChangeNameBinding
 import com.example.palette.ui.main.ServiceActivity
@@ -40,6 +41,7 @@ class ChangeNameFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            UserPrefs.userName = null
             changeName(username, null)
         }
     }

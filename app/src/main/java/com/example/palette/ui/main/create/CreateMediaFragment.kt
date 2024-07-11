@@ -13,8 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
+import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseResponse
+import com.example.palette.data.info.InfoRequestManager.profileInfoRequest
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.RoomData
 import com.example.palette.databinding.FragmentCreateMediaBinding
@@ -37,11 +39,11 @@ class CreateMediaFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentCreateMediaBinding.inflate(inflater, container, false)
 
+        loadProfileInfo()
+
         with(binding) {
-            // 어댑터 초기화
             workAdapter = CreateMediaAdapter(itemList)
             workRecyclerView.adapter = workAdapter
             workRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -49,10 +51,8 @@ class CreateMediaFragment : Fragment() {
 
         showSampleData(isLoading = true)
 
-        // 데이터 로드
         loadData()
 
-        // 아이템 클릭 리스너 설정
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 log("item position is $position")
@@ -81,7 +81,7 @@ class CreateMediaFragment : Fragment() {
 
                     itemList.clear()
                     itemList.addAll(roomList.data)
-                    workAdapter.notifyDataSetChanged() // 데이터 변경 통지
+                    workAdapter.notifyDataSetChanged()
 
                     showSampleData(isLoading = false)
                 } else {
@@ -90,7 +90,6 @@ class CreateMediaFragment : Fragment() {
             } catch (e: HttpException) {
                 if (e.code() == 401) {
                     shortToast("인증 오류: 다시 로그인해주세요.")
-                    // 로그인 페이지로 이동 또는 로그인 상태 재설정증
                     (requireActivity() as? BaseControllable)?.sessionDialog(requireActivity())
                 } else {
                     log("HttpException & !401 에서 서버 오류가 발생했습니다: ${e.message()}")
@@ -104,7 +103,7 @@ class CreateMediaFragment : Fragment() {
     private fun startChatting(position: Int, title: String) {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.mainContent, ChattingFragment(roomId = position, title = title))
-            .addToBackStack(null) // 백 스택에 프래그먼트 추가
+            .addToBackStack(null)
             .commitAllowingStateLoss()
     }
 
@@ -114,7 +113,6 @@ class CreateMediaFragment : Fragment() {
         builder.setTitle("채팅방 삭제")
         builder.setMessage("정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?")
 
-        // "예" 버튼 추가
         builder.setPositiveButton("삭제") { dialog, _ ->
             deleteRoom(position)
             dialog.dismiss()
@@ -124,7 +122,6 @@ class CreateMediaFragment : Fragment() {
             dialog.dismiss()
         }
 
-        // 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
         builder.setCancelable(false)
 
         val dialog = builder.create()
@@ -152,12 +149,11 @@ class CreateMediaFragment : Fragment() {
                     shortToast("생성 성공")
                     startChatting(roomResponse.body()!!.data.id, title = roomResponse.body()!!.data.title.toString())
                     log("생성된 roomId == ${roomResponse.body()!!.data.id}")
-                }
-                else {
+                } else {
                     shortToast("생성 실패 errorCode: 34533")
                 }
             } catch (e: Exception) {
-                Log.e(Constant.TAG, "ChattingFragment createRoom error : ",e)
+                Log.e(Constant.TAG, "ChattingFragment createRoom error : ", e)
             }
         }
     }
@@ -179,6 +175,31 @@ class CreateMediaFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "CreateMediaFragment deleteRoom Exception error: ${e.message}")
                 shortToast("An error occurred: ${e.message}")
+            }
+        }
+    }
+
+    private fun loadProfileInfo() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val cachedUserName = UserPrefs.userName
+            if (cachedUserName != null) {
+                binding.userName.text = "$cachedUserName"+"님!"
+                binding.today.text = "오늘은 뭘 작업해볼까요?"
+            } else {
+                binding.userName.text = "..."
+                try {
+                    val profileResponse = profileInfoRequest(PaletteApplication.prefs.token)
+                    if (profileResponse != null && profileResponse.code <= 400) {
+                        val userName = profileResponse.data.name
+                        UserPrefs.userName = userName
+                        binding.userName.text = "$userName"+"님!"
+                        binding.today.text = "오늘은 뭘 작업해볼까요?"
+                    } else {
+                        log("프로필 정보를 가져오는 데 실패했습니다: ${profileResponse?.message}")
+                    }
+                } catch (e: Exception) {
+                    log("프로필 정보를 가져오는 도중 오류가 발생했습니다: ${e.message}")
+                }
             }
         }
     }

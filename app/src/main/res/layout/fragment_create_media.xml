@@ -22,17 +22,19 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/userName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="박준현님!"
+                tools:text="· · ·님!"
                 android:textSize="30sp"
                 android:fontFamily="@font/pretendard_bold"
                 android:textColor="@color/black"/>
 
             <TextView
+                android:id="@+id/today"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="오늘은 뭘 작업해볼까요?"
+                tools:text="오늘은 뭘 작업해볼까요?"
                 android:textSize="30sp"
                 android:fontFamily="@font/pretendard_bold"
                 android:textColor="@color/black"

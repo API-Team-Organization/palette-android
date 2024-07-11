@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
+import com.example.palette.application.UserPrefs
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentChangeBirthDateBinding
 import com.example.palette.ui.main.ServiceActivity
@@ -47,6 +48,7 @@ class ChangeBirthDateFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            UserPrefs.clearUserData()
             changeBirthDate(null, birthDate)
         }
     }
