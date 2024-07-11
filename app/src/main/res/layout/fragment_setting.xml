@@ -111,6 +111,9 @@
                         android:layout_height="wrap_content"
                         android:textSize="24sp"
                         android:fontFamily="@font/pretendard_bold"
+                        android:ems="10"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:layout_marginTop="32dp"/>
 
                     <TextView
