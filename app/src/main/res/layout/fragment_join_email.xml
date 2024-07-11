@@ -50,6 +50,7 @@
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="40dp"
                 android:inputType="textEmailAddress"
+                android:textColorHighlight="@color/lightBlue"
                 android:paddingStart="10dp"/>
 
             <TextView

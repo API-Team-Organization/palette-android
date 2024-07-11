@@ -91,6 +91,7 @@
                 android:fontFamily="@font/suit_medium"
                 android:hint="당신의 palette를 그려보세요"
                 android:inputType="textMultiLine"
+                android:textColorHighlight="@color/lightBlue"
                 android:maxLines="6"
                 tools:ignore="Autofill" />
 

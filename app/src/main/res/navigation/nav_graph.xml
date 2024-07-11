@@ -159,6 +159,9 @@
         <action
             android:id="@+id/action_settingFragment_to_notificationFragment"
             app:destination="@id/notificationFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_premiumFragment"
+            app:destination="@id/premiumFragment" />
     </fragment>
     <fragment
         android:id="@+id/changeUserInfoFragment"
@@ -175,5 +178,10 @@
         android:name="com.example.palette.ui.main.settings.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/premiumFragment"
+        android:name="com.example.palette.ui.main.settings.PremiumFragment"
+        android:label="fragment_premium"
+        tools:layout="@layout/fragment_premium" />
 
 </navigation>

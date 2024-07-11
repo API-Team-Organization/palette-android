@@ -6,18 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.palette.R
-import com.example.palette.databinding.FragmentNotificationBinding
+import com.example.palette.databinding.FragmentPremiumBinding
 import com.example.palette.ui.main.ServiceActivity
 
-class NotificationFragment : Fragment() {
+class PremiumFragment : Fragment() {
 
-    private lateinit var binding: FragmentNotificationBinding
+    private lateinit var binding: FragmentPremiumBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNotificationBinding.inflate(inflater, container, false)
+        binding = FragmentPremiumBinding.inflate(inflater, container, false)
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         return binding.root
