@@ -44,6 +44,7 @@ class JoinEmailFragment : Fragment() {
                 Log.d("isEmailValid", "${emailRegularExpression(email)}")
 
                 if (isEmailValid) {
+                    registerViewModel.setEmail(email)
                     saveEmail(email)
                     findNavController().navigate(R.id.action_joinEmailFragment_to_joinPasswordFragment)
                 } else {

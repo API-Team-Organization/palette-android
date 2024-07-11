@@ -62,7 +62,7 @@ class JoinCheckNumFragment : Fragment() {
                 Log.d("JoinCheckNumFragment", response.body().toString())
 
                 if (response.isSuccessful) {
-                    findNavController().navigate(R.id.action_joinCheckNumFragment_to_loginFragment)
+                    findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinCompleteFragment)
                 } else {
                     shortToast("인증번호가 일치하지 않습니다.")
                 }
