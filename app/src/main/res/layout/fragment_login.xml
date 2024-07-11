@@ -117,6 +117,7 @@
             android:text="로그인"
             android:textSize="16sp"
             android:textColor="@color/white"
+            style="?android:attr/borderlessButtonStyle"
             android:background="@drawable/bac_button"
             android:fontFamily="@font/pretendard_medium"/>
         <LinearLayout
