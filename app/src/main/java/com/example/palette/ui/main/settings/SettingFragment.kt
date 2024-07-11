@@ -111,6 +111,10 @@ class SettingFragment : Fragment() {
 
         builder.setPositiveButton("탈퇴") { dialog, _ ->
             resign()
+            val intent = Intent(activity, MainActivity::class.java)
+            requireActivity().startActivity(intent)
+
+            activity?.finish()
             dialog.dismiss()
         }
 
