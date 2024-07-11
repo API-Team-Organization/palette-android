@@ -1,5 +1,6 @@
 package com.example.palette.ui.register
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -44,14 +45,13 @@ class JoinCheckNumFragment : Fragment() {
     }
 
     private fun showEmail() {
-        val result = arguments?.getString("email")
+        val email = getEmail()
+        binding.nEtJoinEmail.setText(email)
+    }
 
-        result?.let {
-            binding.nEtJoinEmail.apply {
-                text = Editable.Factory.getInstance().newEditable(it)
-                isEnabled = false
-            }
-        }
+    private fun getEmail(): String? {
+        val sharedPref = requireActivity().getSharedPreferences("MyApp", Context.MODE_PRIVATE)
+        return sharedPref.getString("email", "")
     }
 
     private fun verifyCode(code: String) {
