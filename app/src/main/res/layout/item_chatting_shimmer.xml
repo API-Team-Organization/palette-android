@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="64dp"
     android:layout_marginBottom="64dp"
     android:layout_marginEnd="24dp"
@@ -21,7 +20,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="로딩 중 입니다."
+        android:text="제작 중.."
         android:textSize="24sp"
         android:fontFamily="@font/pretendard_semibold"
         android:layout_marginTop="16dp" />
