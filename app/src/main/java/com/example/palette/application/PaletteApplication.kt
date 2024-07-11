@@ -17,5 +17,6 @@ class PaletteApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        UserPrefs.init(this)
     }
 }

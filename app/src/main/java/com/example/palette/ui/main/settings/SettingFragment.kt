@@ -12,6 +12,7 @@ import com.example.palette.MainActivity
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.PreferenceManager
+import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.info.InfoRequestManager
@@ -20,10 +21,8 @@ import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
-
 class SettingFragment : Fragment() {
-    private lateinit var binding : FragmentSettingBinding
-//    private lateinit var anim: Animation
+    private lateinit var binding: FragmentSettingBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,22 +35,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun initView() {
-//        anim = AnimationUtils.loadAnimation(activity, R.anim.scale)
-        viewLifecycleOwner.lifecycleScope.launch {
-            Log.d(Constant.TAG, "token : ${PaletteApplication.prefs.token}")
-
-            try {
-                val profileInfo = InfoRequestManager.profileInfoRequest(PaletteApplication.prefs.token)
-                Log.d(Constant.TAG, "profileInfo: ${profileInfo!!.data}")
-
-                binding.userEmail.text = profileInfo.data.email
-                binding.userName.text = profileInfo.data.name
-                binding.userBirthday.text = profileInfo.data.birthDate
-
-            } catch (e: Exception) {
-                Log.e(Constant.TAG, "Setting profileInfo error : ",e)
-            }
-        }
+        loadProfileInfo()
 
         binding.logout.setOnClickListener {
             logout()
@@ -69,6 +53,32 @@ class SettingFragment : Fragment() {
         }
     }
 
+    private fun loadProfileInfo() {
+        // 먼저 로컬 저장소에서 데이터를 불러옵니다.
+        binding.userEmail.text = UserPrefs.userId
+        binding.userName.text = UserPrefs.userName
+        binding.userBirthday.text = UserPrefs.userBirthDate
+
+        // 네트워크 요청을 통해 데이터를 업데이트합니다.
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val profileInfo = InfoRequestManager.profileInfoRequest(PaletteApplication.prefs.token)
+                profileInfo?.data?.let { data ->
+                    binding.userEmail.text = data.email
+                    binding.userName.text = data.name
+                    binding.userBirthday.text = data.birthDate
+
+                    // 로컬 저장소에 데이터를 저장합니다.
+                    UserPrefs.userId = data.email
+                    UserPrefs.userName = data.name
+                    UserPrefs.userBirthDate = data.birthDate
+                }
+            } catch (e: Exception) {
+                Log.e(Constant.TAG, "Setting profileInfo error : ", e)
+            }
+        }
+    }
+
     private fun logout() {
         viewLifecycleOwner.lifecycleScope.launch {
             val response = AuthRequestManager.logoutRequest(PaletteApplication.prefs.token)
@@ -76,8 +86,9 @@ class SettingFragment : Fragment() {
         }
 
         PaletteApplication.prefs = PreferenceManager(requireContext().applicationContext)
-
         PaletteApplication.prefs.clearToken()
+        UserPrefs.clearUserData()
+
         val intent = Intent(activity, MainActivity::class.java)
         requireActivity().startActivity(intent)
 
