@@ -156,6 +156,9 @@
         <action
             android:id="@+id/action_settingFragment_to_editUserInfoFragment"
             app:destination="@id/editUserInfoFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/changeUserInfoFragment"
@@ -167,5 +170,10 @@
         android:name="com.example.palette.ui.main.settings.ChangeBirthDateFragment"
         android:label="fragment_change_birth_date"
         tools:layout="@layout/fragment_change_birth_date" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.palette.ui.main.settings.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
 
 </navigation>

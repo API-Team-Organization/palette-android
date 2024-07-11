@@ -51,6 +51,13 @@ class SettingFragment : Fragment() {
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
+
+        binding.notification.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, NotificationFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
     }
 
     private fun loadProfileInfo() {
