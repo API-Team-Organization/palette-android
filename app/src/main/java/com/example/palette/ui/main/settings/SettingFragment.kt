@@ -1,11 +1,13 @@
 package com.example.palette.ui.main.settings
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.MainActivity
@@ -42,7 +44,7 @@ class SettingFragment : Fragment() {
         }
 
         binding.appResign.setOnClickListener {
-            resign()
+            resignDialog(requireContext())
         }
 
         binding.edit.setOnClickListener {
@@ -93,6 +95,25 @@ class SettingFragment : Fragment() {
         requireActivity().startActivity(intent)
 
         activity?.finish()
+    }
+
+    private fun resignDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("회원탈퇴")
+        builder.setMessage("정말 탈퇴하시겠습니까?")
+
+        builder.setPositiveButton("탈퇴") { dialog, _ ->
+            resign()
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.setCancelable(false)
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun resign() {
