@@ -130,6 +130,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 }
             } else {
                 shortToast("부적절한 단어! 변경 후 다시 시도해주세요")
+                showSampleData(false)
                 return@launch
             }
             showSampleData(false)
