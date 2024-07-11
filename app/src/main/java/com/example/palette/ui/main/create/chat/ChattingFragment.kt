@@ -6,7 +6,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -58,9 +57,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             }
             else {
                 log("ChattingFragment 리스트는 비어있습니다.")
-
             }
-
         }
 
         binding.chattingToolbar.setNavigationOnClickListener {
@@ -75,7 +72,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             if (newMessage.isNotBlank()) {
                 submitText(chat)
             }
-
         }
 
         binding.chattingRecycler.apply {
@@ -86,7 +82,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 false
             )
         }
-
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
     }
 
@@ -114,7 +109,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         viewLifecycleOwner.lifecycleScope.launch {
             showSampleData(true)
             val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat)
-            showSampleData(false)
             if (listDemo.size == 1) {
                 log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
@@ -138,13 +132,12 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 shortToast("부적절한 단어! 변경 후 다시 시도해주세요")
                 return@launch
             }
+            showSampleData(false)
 
             listDemo = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
             log("/chat/{roomId}에서 어떤 값을 주는지 확인: ${listDemo}")
-            scrollToPosition()
+            binding.chattingRecycler.smoothScrollToPosition(listDemo.size - 1)
         }
-
-        scrollToPosition()
 
         val newReceived = Received(
             id = -100,
@@ -160,13 +153,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
         binding.chattingEditText.text.clear()
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-    }
-
-    private fun scrollToPosition() {
-        binding.chattingRecycler.let { recyclerView ->
-            val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
-            layoutManager?.scrollToPositionWithOffset(recyclerView.size-1, 0)
-        }
     }
 
     private fun showSampleData(isLoading: Boolean) {
