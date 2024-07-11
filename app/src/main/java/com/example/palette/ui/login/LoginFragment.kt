@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,9 +26,11 @@ import retrofit2.HttpException
 import java.net.SocketTimeoutException
 
 class LoginFragment : Fragment() {
-    private lateinit var binding : FragmentLoginBinding
+    private lateinit var binding: FragmentLoginBinding
     private lateinit var email: String
     private lateinit var pw: String
+    private var backPressedTime: Long = 0L
+    private lateinit var callback: OnBackPressedCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +38,7 @@ class LoginFragment : Fragment() {
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         initView()
+        handleOnBackPressed()
         return binding.root
     }
 
@@ -59,6 +63,7 @@ class LoginFragment : Fragment() {
                 loginRequest()
             }
             loginToJoin.setOnClickListener {
+                disableOnBackPressedCallback() // 뒤로가기 콜백 비활성화
                 findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
             }
         }
@@ -108,5 +113,29 @@ class LoginFragment : Fragment() {
                 shortToast("알 수 없는 에러")
             }
         }
+    }
+
+    private fun handleOnBackPressed() {
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime <= 2000) {
+                    activity?.finish()
+                } else {
+                    backPressedTime = System.currentTimeMillis()
+                    shortToast("한 번 더 누르면 종료됩니다.")
+                }
+            }
+        }
+
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, callback)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        callback.remove() // 뷰가 파괴될 때 콜백 해제
+    }
+
+    private fun disableOnBackPressedCallback() {
+        callback.isEnabled = false
     }
 }

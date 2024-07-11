@@ -22,7 +22,6 @@ import retrofit2.HttpException
 
 class JoinCheckNumFragment : Fragment() {
     private lateinit var binding: FragmentJoinCheckNumBinding
-    private val registerViewModel: RegisterViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

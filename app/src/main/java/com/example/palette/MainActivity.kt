@@ -3,7 +3,6 @@ package com.example.palette
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.PreferenceManager
@@ -11,7 +10,6 @@ import com.example.palette.common.Constant
 import com.example.palette.databinding.ActivityMainBinding
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.log
-import com.example.palette.ui.util.shortToast
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,9 +22,7 @@ class MainActivity : AppCompatActivity() {
         handleAuth()
 
         initView()
-        handleOnBackPressed()
     }
-    private var backPressedTime: Long = 0L
 
     private fun initView() {
         val pref = getSharedPreferences("isFirst", MODE_PRIVATE)
@@ -60,25 +56,9 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ServiceActivity::class.java)
             startActivity(intent)
             finish()
-
         }
         else {
             Log.d(Constant.TAG,"token is Empty")
         }
-    }
-
-    private fun handleOnBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (System.currentTimeMillis() - backPressedTime <= 2000) {
-                    finish()
-                } else {
-                    backPressedTime = System.currentTimeMillis()
-                    shortToast("한 번 더 누르면 종료됩니다.")
-                }
-            }
-        }
-
-        this.onBackPressedDispatcher.addCallback(this, callback)
     }
 }

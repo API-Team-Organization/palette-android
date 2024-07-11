@@ -38,9 +38,7 @@ class JoinCompleteFragment : Fragment() {
         goodGradation()
 
         binding.btnStart.setOnClickListener {
-            if (true) { // 회원가입 성공하면
-                findNavController().navigate(R.id.action_joinCompleteFragment_to_loginFragment)
-            }
+            findNavController().navigate(R.id.action_joinCompleteFragment_to_loginFragment)
         }
 
         return binding.root
