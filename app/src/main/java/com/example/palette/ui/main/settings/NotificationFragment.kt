@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.palette.R
 import com.example.palette.databinding.FragmentNotificationBinding
+import com.example.palette.ui.main.ServiceActivity
 
 class NotificationFragment : Fragment() {
 
@@ -17,7 +18,13 @@ class NotificationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentNotificationBinding.inflate(inflater, container, false)
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         return binding.root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 }
