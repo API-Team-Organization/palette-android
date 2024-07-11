@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.databinding.FragmentChangePasswordBinding
+import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -23,6 +25,7 @@ class ChangePasswordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
         return binding.root
     }
 
@@ -67,5 +70,10 @@ class ChangePasswordFragment : Fragment() {
                 Log.e("ChangePasswordFragment", "Network error", e)
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 }

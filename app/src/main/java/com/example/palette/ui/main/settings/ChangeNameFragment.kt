@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentChangeNameBinding
+import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -23,6 +25,7 @@ class ChangeNameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangeNameBinding.inflate(inflater, container, false)
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
         return binding.root
     }
 
@@ -71,5 +74,10 @@ class ChangeNameFragment : Fragment() {
                 // 기타 예외 발생 시 처리 코드 추가
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 }

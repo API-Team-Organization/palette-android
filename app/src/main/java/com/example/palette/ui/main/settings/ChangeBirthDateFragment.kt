@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentChangeBirthDateBinding
+import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.register.RegisterViewModel
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ class ChangeBirthDateFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangeBirthDateBinding.inflate(inflater, container, false)
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
         datePickerDefaultSettings()
         return binding.root
     }
@@ -109,5 +112,10 @@ class ChangeBirthDateFragment : Fragment() {
 
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return format.format(calendar.time)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 }
