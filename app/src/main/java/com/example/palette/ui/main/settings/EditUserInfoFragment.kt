@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.palette.R
 import com.example.palette.databinding.FragmentEditUserInfoBinding
+import com.example.palette.ui.main.ServiceActivity
 
 class EditUserInfoFragment : Fragment() {
 
@@ -16,6 +17,8 @@ class EditUserInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentEditUserInfoBinding.inflate(inflater, container, false)
+
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         binding.changePassword.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
@@ -39,5 +42,10 @@ class EditUserInfoFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 }
