@@ -125,6 +125,7 @@
                     <include layout="@layout/item_work_recycler_shimmer" />
                     <include layout="@layout/item_work_recycler_shimmer" />
                     <include layout="@layout/item_work_recycler_shimmer" />
+
                 </LinearLayout>
             </com.facebook.shimmer.ShimmerFrameLayout>
 
