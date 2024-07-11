@@ -60,6 +60,13 @@ class SettingFragment : Fragment() {
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
+
+        binding.premium.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, PremiumFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
     }
 
     private fun loadProfileInfo() {
