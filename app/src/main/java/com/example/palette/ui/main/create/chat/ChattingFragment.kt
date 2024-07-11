@@ -32,7 +32,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
-    private lateinit var chatList: MutableList<Received>
+    private var chatList: MutableList<Received> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -129,7 +129,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                     recyclerAdapter.addChat(newReceived2)
                 }
             } else {
-                shortToast("부적절한 단어! 변경 후 다시 시도해주세요")
+                shortToast("부적절한 단어 혹은 짧은 문장")
                 showSampleData(false)
                 return@launch
             }

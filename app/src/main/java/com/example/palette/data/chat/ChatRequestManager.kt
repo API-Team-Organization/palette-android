@@ -31,6 +31,13 @@ object ChatRequestManager {
     suspend fun getChatList(token: String, roomId: Int): BaseResponse<MutableList<Received>>? {
         val response = chatService.getChatList(token = token, roomId = roomId)
         Log.d(Constant.TAG, "getChatList is $response")
+        if (!response.isSuccessful) {
+            return BaseResponse(
+                code = response.code(), // 실패 시의 상태 코드를 설정합니다
+                message = response.message(), // 실패 시의 메시지를 설정합니다
+                data = mutableListOf() // 빈 리스트를 반환합니다
+            )
+        }
         return response.body()
     }
 }
