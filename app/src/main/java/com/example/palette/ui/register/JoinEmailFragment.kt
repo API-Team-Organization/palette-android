@@ -1,5 +1,6 @@
 package com.example.palette.ui.register
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -43,20 +44,9 @@ class JoinEmailFragment : Fragment() {
                 Log.d("isEmailValid", "${emailRegularExpression(email)}")
 
                 if (isEmailValid) {
-                    val bundle = Bundle()
-                    bundle.putString("email", email)
-
-                    val passBundleBFragment = JoinCheckNumFragment()
-                    passBundleBFragment.arguments = bundle
-
-                    registerViewModel.email.observe(viewLifecycleOwner) {
-                        binding.etJoinEmail.setText(
-                            it
-                        )
-                    }
-                    registerViewModel.setEmail(binding.etJoinEmail.text.toString())
-
-                    findNavController().navigate(R.id.action_joinEmailFragment_to_joinPasswordFragment, bundle)
+                    registerViewModel.setEmail(email)
+                    saveEmail(email)
+                    findNavController().navigate(R.id.action_joinEmailFragment_to_joinPasswordFragment)
                 } else {
                     checkEmailFailed(etJoinEmail)
                     failedEmailFormat.visibility = View.VISIBLE
@@ -77,5 +67,13 @@ class JoinEmailFragment : Fragment() {
         val pattern = Pattern.compile(emailPattern)
         val matcher = pattern.matcher(email)
         return matcher.find()
+    }
+
+    private fun saveEmail(email: String) {
+        val sharedPref = requireActivity().getSharedPreferences("MyApp", Context.MODE_PRIVATE)
+        with (sharedPref.edit()) {
+            putString("email", email)
+            apply()
+        }
     }
 }

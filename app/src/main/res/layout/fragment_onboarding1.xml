@@ -14,11 +14,11 @@
         android:weightSum="10">
 
 
-        <app.rive.runtime.kotlin.RiveAnimationView
+        <ImageView
             android:id="@+id/onBoarding1Animation"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:riveResource="@raw/swipe"
+            android:src="@drawable/onboarding1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +36,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="우와 대단해요"
+                android:text="AI 홍보물 제작 앱"
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:fontFamily="@font/pretendard_bold"/>
@@ -44,14 +44,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="나만의 홍보물 제작하거라"
+                android:text="최신 AI 기술로 당신의 아이디어를"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ai 활용하면 편리하게 가능해요"
+                android:text=" 현실로 만들어보세요!"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
