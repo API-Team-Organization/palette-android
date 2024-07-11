@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.palette.R
 import com.example.palette.databinding.FragmentAppInfoBinding
+import com.example.palette.ui.main.ServiceActivity
 
 class AppInfoFragment : Fragment() {
 
@@ -20,12 +21,18 @@ class AppInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAppInfoBinding.inflate(inflater, container, false)
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         binding.appInfo.setOnClickListener {
             goToDevAppInfoPage()
         }
 
         return binding.root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 
     private fun goToDevAppInfoPage() {
