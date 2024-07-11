@@ -101,6 +101,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_send"
+                android:background="@color/white"
                 android:textColor="@color/white" />
 
         </RelativeLayout>
