@@ -68,7 +68,7 @@
                 android:inputType="textEmailAddress"
                 android:paddingStart="10dp"
                 android:fontFamily="@font/pretendard_medium"
-                android:text="peter.co.kr@gmail.com"/>
+                android:text=""/>
             <TextView
                 android:id="@+id/emailFailedText"
                 android:layout_width="wrap_content"
@@ -90,7 +90,7 @@
                 android:inputType="textPassword"
                 android:paddingStart="10dp"
                 android:fontFamily="@font/pretendard_medium"
-                android:text="peter0987!"/>
+                android:text=""/>
             <TextView
                 android:id="@+id/passwordFailedText"
                 android:layout_width="wrap_content"

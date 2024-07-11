@@ -86,7 +86,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="50dp"
-            android:text="인증번호 받기"
+            android:text="다음으로"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_semibold"
             android:textColor="@color/white"

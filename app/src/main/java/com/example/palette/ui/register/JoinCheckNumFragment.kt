@@ -21,7 +21,6 @@ import retrofit2.HttpException
 
 class JoinCheckNumFragment : Fragment() {
     private lateinit var binding: FragmentJoinCheckNumBinding
-    private val registerViewModel: RegisterViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,6 +62,7 @@ class JoinCheckNumFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     findNavController().navigate(R.id.action_joinCheckNumFragment_to_loginFragment)
+                    activity?.finish()
                 } else {
                     shortToast("인증번호가 일치하지 않습니다.")
                 }
