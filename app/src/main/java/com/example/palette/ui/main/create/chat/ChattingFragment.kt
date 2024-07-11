@@ -32,7 +32,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
-    private lateinit var listDemo: MutableList<Received>
+    private lateinit var chatList: MutableList<Received>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,11 +49,11 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         binding.chattingToolbar.title = title
 
         viewLifecycleOwner.lifecycleScope.launch {
-            listDemo = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
-            if (listDemo.size != 0) {
+            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
+            if (chatList.size != 0) {
                 log("ChattingFragment 리스트는 비어있지 않습니다.")
-                recyclerAdapter.setData(listDemo)
-                binding.chattingRecycler.smoothScrollToPosition(listDemo.size - 1)
+                recyclerAdapter.setData(chatList)
+                binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
             }
             else {
                 log("ChattingFragment 리스트는 비어있습니다.")
@@ -109,7 +109,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         viewLifecycleOwner.lifecycleScope.launch {
             showSampleData(true)
             val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat)
-            if (listDemo.size == 1) {
+            if (chatList.size == 1) {
                 log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
                 binding.chattingToolbar.title = chat.message
@@ -118,14 +118,14 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 with(response.body()!!.data.received[0]) {
                     log("ChattingFragment submitText response.body()!!.data.received[0] : ${response.body()!!.data.received[0]}")
                     val newReceived1 = Received(id = id, isAi = isAi, message = message, datetime = datetime, roomId = roomId, userId = userId, resource = resource)
-                    listDemo.add(newReceived1)
+                    chatList.add(newReceived1)
                     recyclerAdapter.addChat(newReceived1)
                 }
 
                 with(response.body()!!.data.received[1]) {
                     log("ChattingFragment submitText response.body()!!.data.received[1] : ${response.body()!!.data.received[1]}")
                     val newReceived2 = Received(id = id, isAi = isAi, message = message, datetime = datetime, roomId = roomId, userId = userId, resource = resource)
-                    listDemo.add(newReceived2)
+                    chatList.add(newReceived2)
                     recyclerAdapter.addChat(newReceived2)
                 }
             } else {
@@ -135,9 +135,9 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             }
             showSampleData(false)
 
-            listDemo = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
-            log("/chat/{roomId}에서 어떤 값을 주는지 확인: ${listDemo}")
-            binding.chattingRecycler.smoothScrollToPosition(listDemo.size - 1)
+            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
+            log("/chat/{roomId}에서 어떤 값을 주는지 확인: ${chatList}")
+            binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
         }
 
         val newReceived = Received(
@@ -149,7 +149,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             userId = 0,
             resource = "Chat"
         )
-        listDemo.add(newReceived)
+        chatList.add(newReceived)
         recyclerAdapter.addChat(newReceived)
 
         binding.chattingEditText.text.clear()
@@ -171,7 +171,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
     override fun onDestroyView() {
         super.onDestroyView()
 
-        if (listDemo.isEmpty()) {
+        if (chatList.isEmpty()) {
             (requireActivity() as? BaseControllable)?.deleteRoom(roomId = roomId)
         }
     }
