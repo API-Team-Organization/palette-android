@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -87,12 +88,14 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                         .load(chat.message) // 이미지 URL
                         .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
                         .into(chattingCreatedImage) // ImageView 설정
+                    binding.textGchatMessagePalette.visibility = View.GONE
 
                     chattingCreatedImage.setOnLongClickListener {
                         showDownloadDialog(itemView.context, chat.message)
                         true
                     }
                 } else {
+                    binding.textGchatMessagePalette.visibility = View.VISIBLE
                     textGchatMessagePalette.text = chat.message // 텍스트 설정
                     textGchatTimePalette.text = formatChatTime(chat.datetime) // 텍스트 설정
                 }
