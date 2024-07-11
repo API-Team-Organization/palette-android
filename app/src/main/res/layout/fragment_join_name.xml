@@ -48,7 +48,8 @@
                 android:fontFamily="@font/pretendard_semibold"
                 android:textColorHint="@color/semiDarkGray"
                 android:layout_marginTop="40dp"
-                android:inputType="textEmailAddress"
+                android:inputType="textPersonName"
+                android:textColorHighlight="@color/lightBlue"
                 android:paddingStart="10dp"/>
 
             <TextView
