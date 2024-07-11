@@ -46,7 +46,7 @@
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"
                 android:layout_gravity="end"
-                android:gravity="end"/>
+                android:gravity="start"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
