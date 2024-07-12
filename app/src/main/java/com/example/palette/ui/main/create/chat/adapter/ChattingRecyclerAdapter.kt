@@ -1,5 +1,7 @@
 package com.example.palette.ui.main.create.chat.adapter
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
@@ -98,6 +100,11 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                     binding.textGchatMessagePalette.visibility = View.VISIBLE
                     textGchatMessagePalette.text = chat.message // 텍스트 설정
                     textGchatTimePalette.text = formatChatTime(chat.datetime) // 텍스트 설정
+
+                    binding.textGchatMessagePalette.setOnLongClickListener {
+                        showCopyDialog(itemView.context, binding)
+                        true
+                    }
                 }
             }
         }
@@ -156,6 +163,21 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 setNegativeButton("아니오", null)
                 show()
             }
+        }
+    }
+
+    private fun showCopyDialog(context: Context, binding: ItemChattingPaletteBoxBinding) {
+        AlertDialog.Builder(context).apply {
+            setTitle("설명 복사")
+            setMessage("홍보물 설명을 복사하시겠습니까?")
+            setPositiveButton("예") { _, _ ->
+                val clipboardManager = binding.cardGchatMessagePalette.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                val clipData = ClipData.newPlainText("Palette", binding.textGchatMessagePalette.text)
+                clipboardManager?.setPrimaryClip(clipData)
+                Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            setNegativeButton("아니오", null)
+            show()
         }
     }
 
