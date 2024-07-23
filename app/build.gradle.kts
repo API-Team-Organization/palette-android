@@ -43,7 +43,7 @@ dependencies {
 
     // glide 이미지 로딩
     implementation ("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.9.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
 
     // shimmer 로딩뷰
     implementation("com.facebook.shimmer:shimmer:0.5.0")
