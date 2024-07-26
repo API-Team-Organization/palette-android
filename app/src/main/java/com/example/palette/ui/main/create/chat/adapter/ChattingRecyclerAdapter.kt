@@ -7,16 +7,20 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.palette.R
 import com.example.palette.data.chat.Received
 import com.example.palette.databinding.ItemChattingMeBoxBinding
@@ -206,12 +210,17 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         val dialog = Dialog(context)
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_image, null)
 
-        val imageView = dialogView.findViewById<ImageView>(R.id.zoomedImageView)
+        val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.zoomedImageView)
 
         Glide.with(context)
+            .asBitmap()
             .load(imageUrl)
-            .override(900, 1200)
-            .into(imageView)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    imageView.setImage(ImageSource.bitmap(resource))
+                }
+                override fun onLoadCleared(placeholder: Drawable?) {}
+            })
 
         dialog.setContentView(dialogView)
         dialog.show()
