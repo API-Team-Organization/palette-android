@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 class ChattingFragment(private var roomId: Int, private var title: String) : Fragment() {
     private lateinit var binding: FragmentChattingBinding
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
@@ -51,12 +50,11 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         viewLifecycleOwner.lifecycleScope.launch {
             chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
             if (chatList.size != 0) {
-                log("ChattingFragment 리스트는 비어있지 않습니다.")
                 recyclerAdapter.setData(chatList)
                 binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
             }
             else {
-                log("ChattingFragment 리스트는 비어있습니다.")
+                log("ChattingFragment 리스트가 비어있습니다.")
             }
         }
 
@@ -96,12 +94,8 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                     binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_ok)
                 }
             }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // 텍스트가 변경되기 전 호출됩니다. 여기서는 사용하지 않습니다.
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // 텍스트가 변경되는 동안 호출됩니다. 여기서는 사용하지 않습니다.
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
@@ -115,18 +109,13 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 binding.chattingToolbar.title = chat.message
             }
             if (response.isSuccessful) {
-                with(response.body()!!.data.received[0]) {
-                    log("ChattingFragment submitText response.body()!!.data.received[0] : ${response.body()!!.data.received[0]}")
-                    val newReceived1 = Received(id = id, isAi = isAi, message = message, datetime = datetime, roomId = roomId, userId = userId, resource = resource)
-                    chatList.add(newReceived1)
-                    recyclerAdapter.addChat(newReceived1)
-                }
-
-                with(response.body()!!.data.received[1]) {
-                    log("ChattingFragment submitText response.body()!!.data.received[1] : ${response.body()!!.data.received[1]}")
-                    val newReceived2 = Received(id = id, isAi = isAi, message = message, datetime = datetime, roomId = roomId, userId = userId, resource = resource)
-                    chatList.add(newReceived2)
-                    recyclerAdapter.addChat(newReceived2)
+                for(i in 0..1) {
+                    with(response.body()!!.data.received[i]) {
+                        log("ChattingFragment submitText response.body()!!.data.received[0] : ${response.body()!!.data.received[i]}")
+                        val newReceived1 = Received(id = id, isAi = isAi, message = message, datetime = datetime, roomId = roomId, userId = userId, resource = resource)
+                        chatList.add(newReceived1)
+                        recyclerAdapter.addChat(newReceived1)
+                    }
                 }
             } else {
                 shortToast("부적절한 단어 혹은 짧은 문장")
@@ -151,7 +140,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         )
         chatList.add(newReceived)
         recyclerAdapter.addChat(newReceived)
-
         binding.chattingEditText.text.clear()
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
@@ -167,7 +155,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             binding.sflSample.visibility = View.GONE
             binding.chattingRecycler.visibility = View.VISIBLE
             binding.chattingEditText.visibility = View.VISIBLE
-
         }
     }
 

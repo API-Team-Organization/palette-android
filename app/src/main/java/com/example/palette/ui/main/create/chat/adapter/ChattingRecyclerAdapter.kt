@@ -1,11 +1,13 @@
 package com.example.palette.ui.main.create.chat.adapter
 
+import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -15,6 +17,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.example.palette.R
 import com.example.palette.data.chat.Received
 import com.example.palette.databinding.ItemChattingMeBoxBinding
 import com.example.palette.databinding.ItemChattingPaletteBoxBinding
@@ -36,7 +43,6 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     }
 
     override fun getItemViewType(position: Int): Int {
-//        return super.getItemViewType(position)
         return if (listOfChat[position].isAi) VIEW_TYPE_LEFT else VIEW_TYPE_RIGHT
     }
 
@@ -96,13 +102,17 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                         showDownloadDialog(itemView.context, chat.message)
                         true
                     }
+
+                    chattingCreatedImage.setOnClickListener {
+                        showZoomedImageDialog(itemView.context, chat.message)
+                    }
                 } else {
                     binding.textGchatMessagePalette.visibility = View.VISIBLE
                     textGchatMessagePalette.text = chat.message // 텍스트 설정
                     textGchatTimePalette.text = formatChatTime(chat.datetime) // 텍스트 설정
 
                     binding.textGchatMessagePalette.setOnLongClickListener {
-                        showCopyDialog(itemView.context, binding)
+                        showCopyPaletteDialog(itemView.context, binding)
                         true
                     }
                 }
@@ -166,7 +176,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         }
     }
 
-    private fun showCopyDialog(context: Context, binding: ItemChattingPaletteBoxBinding) {
+    private fun showCopyPaletteDialog(context: Context, binding: ItemChattingPaletteBoxBinding) {
         AlertDialog.Builder(context).apply {
             setTitle("설명 복사")
             setMessage("홍보물 설명을 복사하시겠습니까?")
@@ -181,10 +191,52 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         }
     }
 
+    private fun showCopyMeDialog(context: Context, binding: ItemChattingMeBoxBinding) {
+        AlertDialog.Builder(context).apply {
+            setTitle("글 복사")
+            setMessage("글을 복사하시겠습니까?")
+            setPositiveButton("예") { _, _ ->
+                val clipboardManager = binding.cardGchatMessageMe.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                val clipData = ClipData.newPlainText("Palette", binding.textGchatMessageMe.text)
+                clipboardManager?.setPrimaryClip(clipData)
+                Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            setNegativeButton("아니오", null)
+            show()
+        }
+    }
+
+    private fun showZoomedImageDialog(context: Context, imageUrl: String) {
+        val dialog = Dialog(context)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_image, null)
+
+        val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.zoomedImageView)
+
+        Glide.with(context)
+            .asBitmap()
+            .load(imageUrl)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    imageView.setImage(ImageSource.bitmap(resource))
+                }
+                override fun onLoadCleared(placeholder: Drawable?) {}
+            })
+
+        dialog.setContentView(dialogView)
+        dialog.show()
+    }
+
     inner class RightViewHolder(private val binding: ItemChattingMeBoxBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(chat: Received) {
-            binding.textGchatMessageMe.text = chat.message // 텍스트 설정
-            binding.textGchatTimeMe.text = formatChatTime(chat.datetime) // 텍스트 초기화
+            binding.apply {
+                textGchatMessageMe.text = chat.message // 텍스트 설정
+                textGchatTimeMe.text = formatChatTime(chat.datetime) // 텍스트 초기화
+
+                layoutGchatContainerMe.setOnLongClickListener {
+                    showCopyMeDialog(itemView.context, binding)
+                    true
+                }
+            }
         }
     }
 
