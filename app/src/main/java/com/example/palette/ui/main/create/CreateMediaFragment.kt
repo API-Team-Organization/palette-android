@@ -192,7 +192,7 @@ class CreateMediaFragment : Fragment() {
                     if (profileResponse != null && profileResponse.code <= 400) {
                         val userName = profileResponse.data.name
                         UserPrefs.userName = userName
-                        binding.userName.text = "$userName"
+                        binding.userName.text = userName
                         binding.today.text = "오늘은 뭘 작업해볼까요?"
                     } else {
                         log("프로필 정보를 가져오는 데 실패했습니다: ${profileResponse?.message}")

@@ -97,6 +97,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                         .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
                         .into(chattingCreatedImage) // ImageView 설정
                     binding.textGchatMessagePalette.visibility = View.GONE
+                    binding.chattingCreatedImage.visibility = View.VISIBLE
 
                     chattingCreatedImage.setOnLongClickListener {
                         showDownloadDialog(itemView.context, chat.message)
@@ -108,6 +109,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                     }
                 } else {
                     binding.textGchatMessagePalette.visibility = View.VISIBLE
+                    binding.chattingCreatedImage.visibility = View.GONE
                     textGchatMessagePalette.text = chat.message // 텍스트 설정
                     textGchatTimePalette.text = formatChatTime(chat.datetime) // 텍스트 설정
 
