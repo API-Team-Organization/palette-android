@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object InfoRequestManager {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://paletteapp.xyz/backend")
+        .baseUrl("https://paletteapp.xyz/backend/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     private val infoService: InfoService = retrofit.create(InfoService::class.java)

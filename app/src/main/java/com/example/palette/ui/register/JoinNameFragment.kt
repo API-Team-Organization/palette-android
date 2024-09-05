@@ -93,8 +93,17 @@ class JoinNameFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch(supervisorJob) {
                     try {
                         val response = RegisterRequestManager.registerRequest(request)
-                        Log.d(Constant.TAG, "response.header : ${response.code()}")
+                        Log.d(Constant.TAG, "response.header : ${response.headers()}")
+                        Log.d(Constant.TAG, "response.code : ${response.code()}")
+                        Log.d(Constant.TAG, "response : $response")
+                        Log.d(Constant.TAG, "response.message : ${response.code()}")
+                        Log.d(Constant.TAG, "response.body : ${response.body()}")
 
+                        if (!response.isSuccessful) {
+                            shortToast("중복된 이메일이 존재합니다")
+                            Log.d(Constant.TAG, response.message())
+                            return@launch
+                        }
                         val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
                         Log.d(Constant.TAG, "token is $token")
 
@@ -107,7 +116,6 @@ class JoinNameFragment : Fragment() {
 
                     } catch (e: HttpException) {
                         Log.e(Constant.TAG, "HTTP error: ${e.code()}", e)
-                        Log.e(Constant.TAG, "HTTP error: ${e.response()?.raw()?.request()}", e)
                         shortToast("http 문제 발생")
                         findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
 

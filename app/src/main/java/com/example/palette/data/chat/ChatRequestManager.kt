@@ -11,12 +11,12 @@ import java.util.concurrent.TimeUnit
 
 object ChatRequestManager {
     private val client: OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
         .build()
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://paletteapp.xyz/backend")
+        .baseUrl("https://paletteapp.xyz/backend/")
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

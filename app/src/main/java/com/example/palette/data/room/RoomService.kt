@@ -13,26 +13,26 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface RoomService {
-    @POST("/room")
+    @POST("room")
     suspend fun createRoom(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
     ): Response<BaseResponse<RoomData>>
 
-    @GET("/room/list")
+    @GET("room/list")
     suspend fun getRoomList(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*"
     ): BaseResponse<List<RoomData>>
 
-    @DELETE("/room/{roomId}")
+    @DELETE("room/{roomId}")
     suspend fun deleteRoom(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Path("roomId") roomId: Int
     ): Response<BaseVoidResponse>
 
-    @PATCH("/room/title")
+    @PATCH("room/title")
     suspend fun setRoomTitle(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",

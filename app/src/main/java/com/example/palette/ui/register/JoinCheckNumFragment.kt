@@ -16,6 +16,7 @@ import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.auth.VerifyRequest
 import com.example.palette.databinding.FragmentJoinCheckNumBinding
+import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -64,6 +65,7 @@ class JoinCheckNumFragment : Fragment() {
                     findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinCompleteFragment)
                 } else {
                     shortToast("인증번호가 일치하지 않습니다.")
+                    log("JoinCheckNumFragment verifyCode response: $response")
                 }
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다")

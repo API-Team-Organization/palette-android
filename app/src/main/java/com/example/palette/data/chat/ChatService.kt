@@ -9,14 +9,14 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ChatService {
-    @POST("/chat")
+    @POST("chat")
     suspend fun chat(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Body postChat: ChatData
     ): Response<BaseResponse<PaletteChat>>
 
-    @GET("/chat/{roomId}")
+    @GET("chat/{roomId}")
     suspend fun getChatList(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",

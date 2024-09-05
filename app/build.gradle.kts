@@ -40,6 +40,9 @@ android {
 }
 
 dependencies {
+    // OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
     // 이미지 확대
     implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.0.0")

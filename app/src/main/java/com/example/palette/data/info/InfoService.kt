@@ -9,13 +9,13 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 
 interface InfoService {
-    @GET("/info/me")
+    @GET("info/me")
     suspend fun profileInfo(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*"
     ): Response<BaseResponse<ProfileData>>
 
-    @PATCH("/info/me")
+    @PATCH("info/me")
     suspend fun changeInfo(
         @Header("X-AUTH-Token") token: String,
         @Body changeInfoRequest: ChangeInfoRequest
