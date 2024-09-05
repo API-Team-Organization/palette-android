@@ -92,7 +92,7 @@ class CreateMediaFragment : Fragment() {
                     shortToast("인증 오류: 다시 로그인해주세요.")
                     (requireActivity() as? BaseControllable)?.sessionDialog(requireActivity())
                 } else {
-                    log("HttpException & !401 에서 서버 오류가 발생했습니다: ${e.message()}")
+                    log("HttpException & !401 에서 서버 오류가 발생했습니다: ${e.message()} \n서버응답: ${e.response()?.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 log("CreateMediaFragment loadData 알 수 없는 오류가 발생했습니다: ${e.message}")

@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.palette.R
+import com.example.palette.common.Constant
 import com.example.palette.data.chat.Received
 import com.example.palette.databinding.ItemChattingMeBoxBinding
 import com.example.palette.databinding.ItemChattingPaletteBoxBinding
@@ -92,6 +94,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 textGchatTimePalette.text = null // 텍스트 초기화
 
                 if (chat.resource == "IMAGE") {
+                    Log.d(Constant.TAG, "ChattingRecyclerAdapter bind: imageUrl : ${chat.message}")
                     Glide.with(itemView)
                         .load(chat.message) // 이미지 URL
                         .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
