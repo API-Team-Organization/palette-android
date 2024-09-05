@@ -16,7 +16,7 @@ object ChatRequestManager {
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://paletteapp.xyz/")
+        .baseUrl("https://paletteapp.xyz/backend")
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

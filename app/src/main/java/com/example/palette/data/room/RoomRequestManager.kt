@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RoomRequestManager {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://paletteapp.xyz/")
+        .baseUrl("https://paletteapp.xyz/backend")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

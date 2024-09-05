@@ -1,5 +1,7 @@
 package com.example.palette.data.auth
 
+import android.util.Log
+import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseVoidResponse
 import retrofit2.HttpException
 import retrofit2.Response
@@ -8,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object AuthRequestManager {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://paletteapp.xyz/")
+        .baseUrl("https://paletteapp.xyz/backend")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
@@ -38,6 +40,7 @@ object AuthRequestManager {
 
     suspend fun verifyRequest(token: String, verifyData: VerifyRequest): Response<BaseVoidResponse> {
         val response = authService.verify(token, verifyData)
+        Log.d(Constant.TAG, "verifyRequest: ${response.headers()}")
         if (response.code() >= 500)
             throw HttpException(response)
 
