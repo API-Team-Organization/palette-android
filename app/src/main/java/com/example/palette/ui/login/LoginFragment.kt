@@ -100,7 +100,7 @@ class LoginFragment : Fragment() {
                 shortToast("로그인 성공")
                 val intent = Intent(activity, ServiceActivity::class.java)
                 requireActivity().startActivity(intent)
-                activity?.finish()
+                requireActivity().finish()
 
             } catch (e: HttpException) {
                 shortToast("이메일과 비밀번호를 다시 확인해주세요")
