@@ -94,7 +94,6 @@ class LoginFragment : Fragment() {
             try {
                 val response = AuthRequestManager.loginRequest(loginRequest)
                 Log.d(TAG, "LoginFragment response : $response")
-                // TODO: session이었나 뭔가 한 번 더 요청해야함. 주영이한테 물어보기.
                 val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
                 Log.d(TAG, "token is $token")
                 PaletteApplication.prefs.token = token ?: ""
