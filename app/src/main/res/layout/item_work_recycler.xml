@@ -10,7 +10,8 @@
     android:paddingBottom="18dp"
     android:paddingStart="20dp"
     android:paddingEnd="15dp"
-    android:layout_marginTop="10dp">
+    android:layout_marginTop="10dp"
+    android:backgroundTint="@color/default_gray">
 
     <ImageView
         android:id="@+id/iv_logo"
