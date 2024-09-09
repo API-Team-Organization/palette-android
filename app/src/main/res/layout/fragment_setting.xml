@@ -19,6 +19,7 @@
             android:layout_marginTop="50dp"
             android:layout_marginBottom="30dp"/>
         <LinearLayout
+            android:id="@+id/ll_my"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -59,6 +60,7 @@
             android:layout_marginBottom="40dp"
             android:background="@color/dividerLine"/>
         <LinearLayout
+            android:id="@+id/ll_notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -93,6 +95,7 @@
             android:layout_marginBottom="40dp"
             android:background="@color/dividerLine"/>
         <LinearLayout
+            android:id="@+id/ll_privacy_policy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -126,6 +129,7 @@
             android:layout_marginBottom="40dp"
             android:background="@color/dividerLine"/>
         <LinearLayout
+            android:id="@+id/ll_premium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -159,6 +163,7 @@
             android:layout_marginVertical="15dp"
             android:background="@color/dividerLine"/>
         <LinearLayout
+            android:id="@+id/ll_app_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -193,6 +198,7 @@
             android:layout_marginBottom="40dp"
             android:background="@color/dividerLine"/>
         <LinearLayout
+            android:id="@+id/ll_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -219,6 +225,7 @@
             android:layout_marginVertical="15dp"
             android:background="@color/dividerLine"/>
         <LinearLayout
+            android:id="@+id/ll_resign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
