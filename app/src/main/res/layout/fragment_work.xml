@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.main.work.WorkFragment">
+    tools:context=".ui.main.work.WorkFragment"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="45dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginTop="70dp"
+            android:layout_marginStart="4dp"
             android:text="내 작업물"
-            android:fontFamily="@font/pretendard_bold"
-            android:textSize="30sp"/>
+            android:fontFamily="@font/pretendard_semibold"
+            android:textSize="22sp"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/workTabLayout"
@@ -29,9 +25,10 @@
             android:layout_height="48dp"
             android:background="@drawable/bac_tab_layout"
             app:tabBackground="@drawable/bac_tab"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="15dp"
             app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/darkGray">
+            app:tabTextColor="@color/darkGray"
+            app:tabIndicatorHeight="0dp">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="0dp"
@@ -50,8 +47,4 @@
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-
-    </LinearLayout>
-
-
-</FrameLayout>
+</LinearLayout>
