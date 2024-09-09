@@ -1,5 +1,7 @@
 package com.example.palette.ui.main.settings
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +19,9 @@ import com.example.palette.common.Constant
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentSettingBinding
+import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class SettingFragment : Fragment() {
 
@@ -33,6 +37,10 @@ class SettingFragment : Fragment() {
 
         binding.llLogout.setOnClickListener {
             logout()
+        }
+
+        binding.llResign.setOnClickListener {
+            resignDialog(requireContext())
         }
 
         binding.llMy.setOnClickListener {
@@ -75,5 +83,50 @@ class SettingFragment : Fragment() {
         requireActivity().startActivity(intent)
 
         activity?.finish()
+    }
+
+    private fun resignDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("회원탈퇴")
+        builder.setMessage("정말 탈퇴하시겠습니까?")
+
+        builder.setPositiveButton("탈퇴") { dialog, _ ->
+            resign()
+            val intent = Intent(activity, MainActivity::class.java)
+            requireActivity().startActivity(intent)
+
+            activity?.finish()
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.setCancelable(false)
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun resign() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = AuthRequestManager.resignRequest(PaletteApplication.prefs.token)
+                if (response.isSuccessful) {
+                    // 회원 탈퇴 성공
+                    shortToast("회원 탈퇴 성공")
+                    Log.d(Constant.TAG, "Resign success")
+                } else {
+                    // 회원 탈퇴 실패
+                    Log.e(Constant.TAG, "Resign failed: ${response.code()} - ${response.message()}")
+                }
+            } catch (e: HttpException) {
+                shortToast("HttpException")
+                Log.e(Constant.TAG, "Resign HTTP error", e)
+            } catch (e: Exception) {
+                shortToast("Exception")
+                Log.e(Constant.TAG, "Resign error", e)
+            }
+        }
     }
 }
