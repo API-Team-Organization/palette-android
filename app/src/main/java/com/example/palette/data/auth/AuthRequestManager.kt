@@ -25,6 +25,14 @@ object AuthRequestManager {
 
     private val authService: AuthService = retrofit.create(AuthService::class.java)
 
+    suspend fun registerRequest(registerData: RegisterRequest): Response<BaseVoidResponse> {
+        val response = authService.register(registerData)
+        if (!response.isSuccessful)
+            throw HttpException(response)
+
+        return response
+    }
+
     suspend fun loginRequest(loginData: LoginRequest): Response<BaseVoidResponse> {
         val response = authService.login(loginData)
         if (!response.isSuccessful)
