@@ -2,25 +2,12 @@ package com.example.palette.data.chat
 
 import android.util.Log
 import com.example.palette.common.Constant
+import com.example.palette.data.ApiClient
 import com.example.palette.data.base.BaseResponse
-import okhttp3.OkHttpClient
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 object ChatRequestManager {
-    private val client: OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(60, TimeUnit.SECONDS)
-        .writeTimeout(60, TimeUnit.SECONDS)
-        .readTimeout(60, TimeUnit.SECONDS)
-        .build()
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://paletteapp.xyz/backend/")
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val chatService: ChatService = retrofit.create(ChatService::class.java)
+    private val chatService: ChatService = ApiClient.retrofit.create(ChatService::class.java)
 
     suspend fun createChat(token: String, chat: ChatData): Response<BaseResponse<PaletteChat>> {
         val response = chatService.chat(token = token, postChat = chat)

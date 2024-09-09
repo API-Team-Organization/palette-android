@@ -2,10 +2,13 @@ package com.example.palette.ui.main.create.chat
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,6 +63,10 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
         binding.chattingToolbar.setNavigationOnClickListener {
             requireActivity().supportFragmentManager.popBackStack() // 백 스택에서 프래그먼트 제거
+        }
+
+        binding.chattingToolbar.setOnClickListener {
+            showChangeTitleDialog()
         }
 
         binding.chattingSubmitButton.setOnClickListener {
@@ -156,6 +163,38 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             binding.chattingRecycler.visibility = View.VISIBLE
             binding.chattingEditText.visibility = View.VISIBLE
         }
+    }
+
+    private fun showChangeTitleDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setTitle("제목 변경")
+        builder.setMessage("제목을 변경해주세요")
+
+// EditText 생성
+        val input = EditText(requireContext())
+        input.hint = "새 제목 입력"
+        input.inputType = InputType.TYPE_CLASS_TEXT
+
+// EditText를 다이얼로그에 추가
+        builder.setView(input)
+
+        builder.setPositiveButton("확인") { dialog, _ ->
+            val newTitle = input.text.toString()
+
+             viewLifecycleOwner.lifecycleScope.launch {
+                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, newTitle))
+                 binding.chattingToolbar.title = newTitle
+             }
+
+            dialog.dismiss()
+        }
+
+// 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
+        builder.setCancelable(false)
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     override fun onDestroyView() {

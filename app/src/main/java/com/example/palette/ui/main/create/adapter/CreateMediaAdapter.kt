@@ -23,9 +23,7 @@ class CreateMediaAdapter(
         holder.tv_poster_title.text = itemList[position].title
     }
 
-    override fun getItemCount(): Int {
-        return itemList.count()
-    }
+    override fun getItemCount(): Int = itemList.size
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
