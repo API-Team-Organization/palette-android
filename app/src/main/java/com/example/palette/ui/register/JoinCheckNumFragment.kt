@@ -2,13 +2,12 @@ package com.example.palette.ui.register
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
@@ -39,6 +38,16 @@ class JoinCheckNumFragment : Fragment() {
 
         binding.tvResend.setOnClickListener {
             resendCode()
+        }
+
+        binding.etJoinCheckNum.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etJoinCheckNum.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etJoinCheckNum.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
         }
 
         return binding.root

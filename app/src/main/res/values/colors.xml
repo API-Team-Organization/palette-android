@@ -7,8 +7,10 @@
     <color name="lightBlue">#FFD5EEFF</color>
     <color name="blue">#FF555FE8</color>
     <color name="red">#FFFF0000</color>
+    <color name="tossBlue">#FF4880EE</color>
 
     <color name="darkGray">#7E7E7E</color>
     <color name="lightGray">#E6E6E6</color>
     <color name="semiDarkGray">#B2B2B2</color>
+    <color name="semiLightGray">#BDBDBD</color>
 </resources>

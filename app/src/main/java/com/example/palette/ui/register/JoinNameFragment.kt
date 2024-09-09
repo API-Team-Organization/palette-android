@@ -39,6 +39,16 @@ class JoinNameFragment : Fragment() {
             checkName()
         }
 
+        binding.etJoinName.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etJoinName.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etJoinName.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
         return binding.root
     }
 

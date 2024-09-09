@@ -28,6 +28,16 @@ class JoinEmailFragment : Fragment() {
             checkEmail()
         }
 
+        binding.etJoinEmail.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etJoinEmail.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etJoinEmail.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
         return binding.root
     }
 

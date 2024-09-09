@@ -43,15 +43,13 @@
                 android:id="@+id/etJoinEmail"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_auth"
                 android:hint="이메일"
-                android:fontFamily="@font/suit_semibold"
+                android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black"
-                android:textColorHint="@color/semiDarkGray"
+                android:textColorHint="@color/semiLightGray"
                 android:layout_marginTop="40dp"
                 android:inputType="textEmailAddress"
-                android:textColorHighlight="@color/lightBlue"
-                android:paddingStart="10dp"/>
+                android:textColorHighlight="@color/lightBlue"/>
 
             <TextView
                 android:id="@+id/failedEmailEmpty"
