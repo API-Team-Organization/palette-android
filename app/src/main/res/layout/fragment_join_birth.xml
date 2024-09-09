@@ -25,17 +25,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="생년월일을 선택해주세요"
-                android:textSize="27sp"
-                android:fontFamily="@font/pretendard_extrabold"
+                android:textSize="24sp"
+                android:fontFamily="@font/pretendard_bold"
                 android:textColor="@color/black" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="당신의 나이가 궁금해요!"
-                android:fontFamily="@font/pretendard_bold"
+                android:fontFamily="@font/pretendard_medium"
                 android:textSize="15sp"
-                android:textColor="@color/darkGray"
+                android:textColor="@color/gray"
                 android:layout_marginTop="3dp"
                 android:layout_marginStart="3dp"/>
 
