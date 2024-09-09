@@ -3,6 +3,7 @@ package com.example.palette.ui.main.settings
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -41,6 +42,11 @@ class SettingFragment : Fragment() {
 
         binding.llResign.setOnClickListener {
             resignDialog(requireContext())
+        }
+
+        binding.llAppInfo.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://4-rne5.notion.site/Team-API-2100356bfe554cf58df89b204b3afb8d"))
+            startActivity(intent)
         }
 
         binding.llMy.setOnClickListener {
