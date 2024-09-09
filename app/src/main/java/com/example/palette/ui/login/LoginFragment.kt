@@ -94,14 +94,13 @@ class LoginFragment : Fragment() {
             try {
                 val response = AuthRequestManager.loginRequest(loginRequest)
                 Log.d(TAG, "LoginFragment response : $response")
-                // TODO: session이었나 뭔가 한 번 더 요청해야함. 주영이한테 물어보기.
                 val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
                 Log.d(TAG, "token is $token")
                 PaletteApplication.prefs.token = token ?: ""
                 shortToast("로그인 성공")
                 val intent = Intent(activity, ServiceActivity::class.java)
                 requireActivity().startActivity(intent)
-                activity?.finish()
+                requireActivity().finish()
 
             } catch (e: HttpException) {
                 shortToast("이메일과 비밀번호를 다시 확인해주세요")
