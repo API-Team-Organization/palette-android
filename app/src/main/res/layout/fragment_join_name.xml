@@ -50,7 +50,8 @@
                 android:textColorHint="@color/semiLightGray"
                 android:layout_marginTop="50dp"
                 android:inputType="textPersonName"
-                android:textColorHighlight="@color/lightBlue"/>
+                android:textColorHighlight="@color/lightBlue"
+                android:textCursorDrawable="@drawable/cursor_drawable"/>
 
             <TextView
                 android:id="@+id/failedNameEmpty"

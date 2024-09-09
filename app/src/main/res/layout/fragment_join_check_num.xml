@@ -60,7 +60,8 @@
                 android:textColorHint="@color/semiLightGray"
                 android:layout_marginTop="20dp"
                 android:inputType="number"
-                android:textColorHighlight="@color/lightBlue"/>
+                android:textColorHighlight="@color/lightBlue"
+                android:textCursorDrawable="@drawable/cursor_drawable"/>
 
             <TextView
                 android:id="@+id/tvResend"
