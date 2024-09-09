@@ -16,6 +16,7 @@
             android:layout_marginTop="70dp"
             android:layout_marginStart="4dp"
             android:text="내 작업물"
+            android:textColor="@color/black"
             android:fontFamily="@font/pretendard_semibold"
             android:textSize="22sp"/>
 
