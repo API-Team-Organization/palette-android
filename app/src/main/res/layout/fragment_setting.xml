@@ -16,7 +16,7 @@
             android:textSize="22sp"
             android:textColor="@color/black"
             android:fontFamily="@font/pretendard_semibold"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="70dp"
             android:layout_marginBottom="30dp"/>
         <LinearLayout
             android:id="@+id/ll_my"
