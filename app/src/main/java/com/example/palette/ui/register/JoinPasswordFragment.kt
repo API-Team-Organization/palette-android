@@ -28,6 +28,26 @@ class JoinPasswordFragment : Fragment() {
             checkPassword()
         }
 
+        binding.etPassword.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etPassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etPassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
+        binding.etCheckPassword.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etCheckPassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etCheckPassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
         return binding.root
     }
 

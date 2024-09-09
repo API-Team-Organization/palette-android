@@ -24,18 +24,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="인증번호를 보내드렸어요"
-                android:textSize="27sp"
-                android:fontFamily="@font/pretendard_extrabold"
+                android:text="인증번호를 보내드렸어요!"
+                android:textSize="24sp"
+                android:fontFamily="@font/pretendard_bold"
                 android:textColor="@color/black" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="이메일로 전송된 인증번호를 입력해주세요!"
-                android:fontFamily="@font/pretendard_bold"
+                android:fontFamily="@font/pretendard_medium"
                 android:textSize="15sp"
-                android:textColor="@color/darkGray"
+                android:textColor="@color/gray"
                 android:layout_marginTop="3dp"
                 android:layout_marginStart="1dp"/>
 
@@ -43,26 +43,25 @@
                 android:id="@+id/n_etJoinEmail"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_auth"
-                android:fontFamily="@font/suit_semibold"
+                android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="50dp"
                 android:inputType="textEmailAddress"
-                android:paddingStart="8dp"
                 android:enabled="false"/>
 
             <EditText
                 android:id="@+id/etJoinCheckNum"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_auth"
                 android:hint="인증번호"
                 android:maxLength="6"
-                android:textColorHint="@color/semiDarkGray"
+                android:fontFamily="@font/pretendard_medium"
+                android:textColor="@color/black"
+                android:textColorHint="@color/semiLightGray"
                 android:layout_marginTop="20dp"
                 android:inputType="number"
                 android:textColorHighlight="@color/lightBlue"
-                android:paddingStart="10dp"/>
+                android:textCursorDrawable="@drawable/cursor_drawable"/>
 
             <TextView
                 android:id="@+id/tvResend"
@@ -84,7 +83,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="30dp"
             android:text="인증하기"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_semibold"

@@ -15,8 +15,8 @@ import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
 import com.example.palette.common.HeaderUtil
+import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.auth.RegisterRequest
-import com.example.palette.data.auth.RegisterRequestManager
 import com.example.palette.databinding.FragmentJoinNameBinding
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.SupervisorJob
@@ -37,6 +37,16 @@ class JoinNameFragment : Fragment() {
 
         binding.btnComplete.setOnClickListener {
             checkName()
+        }
+
+        binding.etJoinName.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etJoinName.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etJoinName.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
         }
 
         return binding.root
@@ -92,7 +102,7 @@ class JoinNameFragment : Fragment() {
                 val supervisorJob = SupervisorJob()
                 viewLifecycleOwner.lifecycleScope.launch(supervisorJob) {
                     try {
-                        val response = RegisterRequestManager.registerRequest(request)
+                        val response = AuthRequestManager.registerRequest(request)
                         Log.d(Constant.TAG, "response.header : ${response.headers()}")
                         Log.d(Constant.TAG, "response.code : ${response.code()}")
                         Log.d(Constant.TAG, "response : $response")
