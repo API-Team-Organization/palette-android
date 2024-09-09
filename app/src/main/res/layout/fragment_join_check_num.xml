@@ -45,7 +45,7 @@
                 android:layout_height="55dp"
                 android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="50dp"
                 android:inputType="textEmailAddress"
                 android:enabled="false"/>
 

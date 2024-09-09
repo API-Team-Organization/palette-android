@@ -48,7 +48,7 @@
                 android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black"
                 android:textColorHint="@color/semiLightGray"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="50dp"
                 android:inputType="textPersonName"
                 android:textColorHighlight="@color/lightBlue"/>
 
