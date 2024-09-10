@@ -78,10 +78,14 @@ class CreateMediaFragment : Fragment() {
                 roomList = RoomRequestManager.roomList(PaletteApplication.prefs.token)
                 if (roomList.code <= 400) {
                     log("CreateMediaFragment <= 400 check data ${roomList.data}")
-
-                    itemList.clear()
-                    itemList.addAll(roomList.data)
-                    workAdapter.notifyDataSetChanged()
+                    if (roomList.data.isEmpty()) {
+                        binding.roomListEmptyText.visibility = View.VISIBLE
+                    } else {
+                        binding.roomListEmptyText.visibility = View.GONE
+                        itemList.clear()
+                        itemList.addAll(roomList.data)
+                        workAdapter.notifyDataSetChanged()
+                    }
 
                     showSampleData(isLoading = false)
                 } else {
@@ -166,6 +170,9 @@ class CreateMediaFragment : Fragment() {
                     itemList.removeAt(position)
                     workAdapter.notifyItemRemoved(position)
                     shortToast("삭제되었습니다")
+                    if (itemList.isEmpty()) {
+                        binding.roomListEmptyText.visibility = View.VISIBLE
+                    }
                 } else {
                     shortToast("삭제 실패: ${response.message()}")
                 }

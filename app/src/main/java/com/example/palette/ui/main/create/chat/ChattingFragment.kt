@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.chat.ChatData
@@ -35,6 +36,8 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         ChattingRecyclerAdapter()
     }
     private var chatList: MutableList<Received> = mutableListOf()
+    private var isLoading = false
+    private var loadPage = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,10 +54,11 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         binding.chattingToolbar.title = title
 
         viewLifecycleOwner.lifecycleScope.launch {
-            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
+            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)!!.data
             if (chatList.size != 0) {
+                chatList.reverse()
                 recyclerAdapter.setData(chatList)
-                binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
+                binding.chattingRecycler.scrollToPosition(chatList.size - 1)
             }
             else {
                 log("ChattingFragment 리스트가 비어있습니다.")
@@ -72,12 +76,38 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         binding.chattingSubmitButton.setOnClickListener {
             val newMessage = binding.chattingEditText.text.toString()
 
-            val chat = ChatData(roomId, newMessage)
+            val chat = ChatData(newMessage)
 
             if (newMessage.isNotBlank()) {
                 submitText(chat)
             }
         }
+
+        binding.chattingRecycler.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!binding.chattingRecycler.canScrollVertically(-1) && !isLoading) {
+                    isLoading = true // 데이터를 로드 중으로 설정
+
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        loadPage += 1
+                        val temporaryList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)?.data
+
+                        if (temporaryList.isNullOrEmpty()) {
+                            shortToast("채팅 내역이 더 없습니다")
+                            loadPage -= 1
+                        } else {
+                            chatList.reverse()
+                            chatList += temporaryList
+                            chatList.reverse()
+                            recyclerAdapter.setData(chatList)
+                            binding.chattingRecycler.scrollToPosition(chatList.size - loadPage*10)
+                        }
+
+                        isLoading = false // 데이터 로드가 끝났으므로 플래그 초기화
+                    }
+                }
+            }
+        })
 
         binding.chattingRecycler.apply {
             adapter = recyclerAdapter
@@ -109,7 +139,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
     private fun submitText(chat: ChatData) {
         viewLifecycleOwner.lifecycleScope.launch {
             showSampleData(true)
-            val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat)
+            val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat, roomId = roomId)
             if (chatList.size == 1) {
                 log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
@@ -131,7 +161,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             }
             showSampleData(false)
 
-            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
+            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)!!.data
             log("/chat/{roomId}에서 어떤 값을 주는지 확인: ${chatList}")
             binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
         }
@@ -157,11 +187,13 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             binding.sflSample.visibility = View.VISIBLE
             binding.chattingRecycler.visibility = View.GONE
             binding.chattingEditText.visibility = View.GONE
+            binding.chattingSubmitButton.visibility = View.GONE
         } else {
             binding.sflSample.stopShimmer()
             binding.sflSample.visibility = View.GONE
             binding.chattingRecycler.visibility = View.VISIBLE
             binding.chattingEditText.visibility = View.VISIBLE
+            binding.chattingSubmitButton.visibility = View.VISIBLE
         }
     }
 
@@ -171,16 +203,21 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         builder.setTitle("제목 변경")
         builder.setMessage("제목을 변경해주세요")
 
-// EditText 생성
+        // EditText 생성
         val input = EditText(requireContext())
         input.hint = "새 제목 입력"
         input.inputType = InputType.TYPE_CLASS_TEXT
 
-// EditText를 다이얼로그에 추가
+        // EditText를 다이얼로그에 추가
         builder.setView(input)
 
         builder.setPositiveButton("확인") { dialog, _ ->
             val newTitle = input.text.toString()
+
+            if (newTitle.isBlank()) {
+                shortToast("제목을 입력해주세요")
+                return@setPositiveButton
+            }
 
              viewLifecycleOwner.lifecycleScope.launch {
                  RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, newTitle))
@@ -189,8 +226,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
             dialog.dismiss()
         }
-
-// 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
         builder.setCancelable(false)
 
         val dialog = builder.create()

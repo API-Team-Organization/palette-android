@@ -14,7 +14,6 @@ import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.RiveEvent
 import com.example.palette.MainActivity
-import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.room.RoomRequestManager
@@ -23,6 +22,7 @@ import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.create.CreateMediaFragment
 import com.example.palette.ui.main.settings.SettingFragment
 import com.example.palette.ui.main.work.WorkFragment
+import com.example.palette.ui.util.changeFragment
 import com.example.palette.ui.util.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,10 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val riveAnimationView: RiveAnimationView by lazy(LazyThreadSafetyMode.NONE) {
         binding.bottomBar
     }
-    private var bottomFlags = arrayOf(0,0,0)
+    private var currentTabIndex = -1
+    private val createMediaFragment = CreateMediaFragment()
+    private val workFragment = WorkFragment()
+    private val settingFragment = SettingFragment()
 
     val eventListener = object : RiveFileController.RiveEventListener {
         override fun notifyEvent(event: RiveEvent) {
@@ -47,37 +50,16 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
             }
 
             when (event.name) {
-                "click_home" -> {
-                    if (bottomFlags[0] == 0) {
-                        bottomFlags[0] = 1
-                        bottomFlags[1] = 0
-                        bottomFlags[2] = 0
-                        changeFragment(CreateMediaFragment())
-                    }
-                }
-                "click_search" -> {
-                    if (bottomFlags[1] == 0) {
-                        bottomFlags[0] = 0
-                        bottomFlags[1] = 1
-                        bottomFlags[2] = 0
-                        changeFragment(WorkFragment())
-                    }
-                }
-                "click_setting" -> {
-                    if (bottomFlags[2] == 0) {
-                        bottomFlags[0] = 0
-                        bottomFlags[1] = 0
-                        bottomFlags[2] = 1
-                        changeFragment(SettingFragment())
-                    }
-                }
+                "click_home" -> handleTabClick(0, createMediaFragment)
+                "click_search" -> handleTabClick(1, workFragment)
+                "click_setting" -> handleTabClick(2, settingFragment)
             }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        changeFragment(CreateMediaFragment())
+        changeFragment(createMediaFragment, supportFragmentManager)
 
         // RiveAnimationView에서 click_home 이벤트를 강제로 실행
         riveAnimationView.addEventListener(eventListener)
@@ -85,12 +67,11 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         setContentView(binding.root)
     }
 
-    private fun changeFragment(fragment: Fragment) {
-        val fragmentManager = this.supportFragmentManager // 또는 requireActivity().supportFragmentManager (Fragment 내에서)
-        val transaction = fragmentManager.beginTransaction()
-        transaction.replace(R.id.mainContent, fragment)
-
-        transaction.commit()
+    private fun handleTabClick(tabIndex: Int, fragment: Fragment) {
+        if (currentTabIndex != tabIndex) {
+            currentTabIndex = tabIndex
+            changeFragment(fragment, supportFragmentManager)
+        }
     }
 
     // bottomVisible 메서드 정의
