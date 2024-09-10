@@ -35,6 +35,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         ChattingRecyclerAdapter()
     }
     private var chatList: MutableList<Received> = mutableListOf()
+    private var loadPage = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +52,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         binding.chattingToolbar.title = title
 
         viewLifecycleOwner.lifecycleScope.launch {
-            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
+            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)!!.data
             if (chatList.size != 0) {
                 recyclerAdapter.setData(chatList)
                 binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
@@ -72,7 +73,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         binding.chattingSubmitButton.setOnClickListener {
             val newMessage = binding.chattingEditText.text.toString()
 
-            val chat = ChatData(roomId, newMessage)
+            val chat = ChatData(newMessage)
 
             if (newMessage.isNotBlank()) {
                 submitText(chat)
@@ -109,7 +110,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
     private fun submitText(chat: ChatData) {
         viewLifecycleOwner.lifecycleScope.launch {
             showSampleData(true)
-            val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat)
+            val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat, roomId = roomId)
             if (chatList.size == 1) {
                 log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
@@ -131,7 +132,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             }
             showSampleData(false)
 
-            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId)!!.data
+            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)!!.data
             log("/chat/{roomId}에서 어떤 값을 주는지 확인: ${chatList}")
             binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
         }

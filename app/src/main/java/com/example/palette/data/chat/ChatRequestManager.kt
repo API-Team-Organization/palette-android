@@ -9,14 +9,14 @@ import retrofit2.Response
 object ChatRequestManager {
     private val chatService: ChatService = ApiClient.retrofit.create(ChatService::class.java)
 
-    suspend fun createChat(token: String, chat: ChatData): Response<BaseResponse<PaletteChat>> {
-        val response = chatService.chat(token = token, postChat = chat)
+    suspend fun createChat(token: String, chat: ChatData, roomId: Int): Response<BaseResponse<PaletteChat>> {
+        val response = chatService.chat(token = token, roomId = roomId, postChat = chat)
         Log.d(Constant.TAG, "ChatRequestManager createChat response is $response")
         return response
     }
 
-    suspend fun getChatList(token: String, roomId: Int): BaseResponse<MutableList<Received>>? {
-        val response = chatService.getChatList(token = token, roomId = roomId)
+    suspend fun getChatList(token: String, roomId: Int, page: Int): BaseResponse<MutableList<Received>>? {
+        val response = chatService.getChatList(token = token, roomId = roomId, page = page, size = 10)
         Log.d(Constant.TAG, "getChatList is $response")
         if (!response.isSuccessful) {
             return BaseResponse(
