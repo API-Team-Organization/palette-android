@@ -14,7 +14,7 @@
     <color name="semiDarkGray">#B2B2B2</color>
     <color name="semiLightGray">#BDBDBD</color>
     <color name="gray">#7E7E7E</color>
+    <color name="default_gray">#EEF0F2</color>
     <color name="tossGray">#202632</color>
-
     <color name="dividerLine">#EEF0F2</color>
 </resources>
