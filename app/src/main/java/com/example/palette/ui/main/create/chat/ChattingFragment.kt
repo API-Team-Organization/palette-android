@@ -54,6 +54,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         viewLifecycleOwner.lifecycleScope.launch {
             chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)!!.data
             if (chatList.size != 0) {
+                chatList.reverse()
                 recyclerAdapter.setData(chatList)
                 binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
             }
@@ -172,16 +173,21 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         builder.setTitle("제목 변경")
         builder.setMessage("제목을 변경해주세요")
 
-// EditText 생성
+        // EditText 생성
         val input = EditText(requireContext())
         input.hint = "새 제목 입력"
         input.inputType = InputType.TYPE_CLASS_TEXT
 
-// EditText를 다이얼로그에 추가
+        // EditText를 다이얼로그에 추가
         builder.setView(input)
 
         builder.setPositiveButton("확인") { dialog, _ ->
             val newTitle = input.text.toString()
+
+            if (newTitle.isBlank()) {
+                shortToast("제목을 입력해주세요")
+                return@setPositiveButton
+            }
 
              viewLifecycleOwner.lifecycleScope.launch {
                  RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, newTitle))
@@ -191,7 +197,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             dialog.dismiss()
         }
 
-// 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
+        // 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
         builder.setCancelable(false)
 
         val dialog = builder.create()
