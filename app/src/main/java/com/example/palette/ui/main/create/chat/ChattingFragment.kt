@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.chat.ChatData
@@ -35,6 +36,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
         ChattingRecyclerAdapter()
     }
     private var chatList: MutableList<Received> = mutableListOf()
+    private var isLoading = false
     private var loadPage = 0
 
     override fun onCreateView(
@@ -56,7 +58,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             if (chatList.size != 0) {
                 chatList.reverse()
                 recyclerAdapter.setData(chatList)
-                binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
+                binding.chattingRecycler.scrollToPosition(chatList.size - 1)
             }
             else {
                 log("ChattingFragment 리스트가 비어있습니다.")
@@ -80,6 +82,32 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 submitText(chat)
             }
         }
+
+        binding.chattingRecycler.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!binding.chattingRecycler.canScrollVertically(-1) && !isLoading) {
+                    isLoading = true // 데이터를 로드 중으로 설정
+
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        loadPage += 1
+                        val temporaryList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)?.data
+
+                        if (temporaryList.isNullOrEmpty()) {
+                            shortToast("채팅 내역이 더 없습니다")
+                            loadPage -= 1
+                        } else {
+                            chatList.reverse()
+                            chatList += temporaryList
+                            chatList.reverse()
+                            recyclerAdapter.setData(chatList)
+                            binding.chattingRecycler.scrollToPosition(chatList.size - loadPage*10)
+                        }
+
+                        isLoading = false // 데이터 로드가 끝났으므로 플래그 초기화
+                    }
+                }
+            }
+        })
 
         binding.chattingRecycler.apply {
             adapter = recyclerAdapter
@@ -198,8 +226,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
             dialog.dismiss()
         }
-
-        // 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
         builder.setCancelable(false)
 
         val dialog = builder.create()
