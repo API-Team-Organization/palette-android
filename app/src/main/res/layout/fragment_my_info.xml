@@ -18,38 +18,6 @@
             android:textColor="@color/black"
             android:fontFamily="@font/pretendard_semibold"
             android:layout_marginTop="70dp"/>
-        <LinearLayout
-            android:id="@+id/ll_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="30dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="성명"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/pretendard_semibold"/>
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-            <TextView
-                android:id="@+id/tv_user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="서승훈"
-                android:textSize="18sp"
-                android:textColor="@color/primaryColor"
-                android:fontFamily="@font/pretendard_medium"
-                android:layout_marginEnd="5dp"/>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_chevron_right_gray"
-                android:layout_gravity="bottom"/>
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_email"
@@ -73,6 +41,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="seoseunghun3@gmail.com"
+                android:textSize="18sp"
+                android:textColor="@color/primaryColor"
+                android:fontFamily="@font/pretendard_medium"
+                android:layout_marginEnd="5dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="성명"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_semibold"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/tv_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="서승훈"
                 android:textSize="18sp"
                 android:textColor="@color/primaryColor"
                 android:fontFamily="@font/pretendard_medium"
