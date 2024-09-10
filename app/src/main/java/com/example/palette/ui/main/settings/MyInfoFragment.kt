@@ -25,33 +25,31 @@ class MyInfoFragment : Fragment() {
     ): View {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
 
+        initView()
         loadProfileInfo()
-        screenNavigation()
 
         return binding.root
     }
 
-    private fun screenNavigation() {
+    private fun initView() {
         binding.llUsername.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContent, ChangeNameFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            changeFragment(ChangeNameFragment())
         }
 
         binding.llBirthdate.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContent, ChangeBirthDateFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            changeFragment(ChangeBirthDateFragment())
         }
 
         binding.llPassword.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContent, ChangePasswordFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            changeFragment(ChangePasswordFragment())
         }
+    }
+
+    private fun changeFragment(fragment: Fragment) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.mainContent, fragment)
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
     }
 
     private fun loadProfileInfo() {
