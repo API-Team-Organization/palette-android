@@ -33,8 +33,8 @@ class ChangePasswordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.changePasswordBtn.setOnClickListener {
-            val beforePassword = binding.beforePassword.text.toString().trim()
-            val afterPassword = binding.afterPassword.text.toString().trim()
+            val beforePassword = binding.etBeforePassword.text.toString().trim()
+            val afterPassword = binding.etAfterPassword.text.toString().trim()
 
             if (beforePassword.isEmpty() || afterPassword.isEmpty()) {
                 shortToast("이전 비밀번호와 변경할 비밀번호를 입력해주세요.")

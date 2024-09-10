@@ -37,7 +37,7 @@
                 android:layout_marginTop="3dp"/>
 
             <EditText
-                android:id="@+id/etJoinName"
+                android:id="@+id/etChangeName"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:hint="변경할 이름"
