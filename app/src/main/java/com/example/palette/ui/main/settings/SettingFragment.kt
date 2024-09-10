@@ -1,6 +1,7 @@
 package com.example.palette.ui.main.settings
 
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -44,6 +45,10 @@ class SettingFragment : Fragment() {
             resignDialog(requireContext())
         }
 
+        binding.llPrivacyPolicy.setOnClickListener {
+            goToPrivacyPolicyPage()
+        }
+
         binding.llAppInfo.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://4-rne5.notion.site/Team-API-2100356bfe554cf58df89b204b3afb8d"))
             startActivity(intent)
@@ -69,6 +74,15 @@ class SettingFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "Setting UserNameInfo error : ", e)
             }
+        }
+    }
+
+    private fun goToPrivacyPolicyPage() {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://dgsw-team-api.notion.site/cc32c87f614e4798893293abfe5ca72a"))
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
         }
     }
 
