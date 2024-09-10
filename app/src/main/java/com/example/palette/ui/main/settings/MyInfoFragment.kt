@@ -14,7 +14,6 @@ import com.example.palette.common.Constant
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentMyInfoBinding
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
 
 class MyInfoFragment : Fragment() {
 
@@ -27,7 +26,12 @@ class MyInfoFragment : Fragment() {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
 
         loadProfileInfo()
+        screenNavigation()
 
+        return binding.root
+    }
+
+    private fun screenNavigation() {
         binding.llUsername.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.mainContent, ChangeNameFragment())
@@ -48,8 +52,6 @@ class MyInfoFragment : Fragment() {
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
-
-        return binding.root
     }
 
     private fun loadProfileInfo() {
