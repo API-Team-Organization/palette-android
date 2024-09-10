@@ -44,25 +44,25 @@ class LoginFragment : Fragment() {
 
     private fun initView() {
         with(binding) {
-            loginButton.setOnClickListener {
-                if (loginEmailEdit.text.isEmpty()) {
-                    handleLoginFailure(loginEmailEdit)
+            btnLogin.setOnClickListener {
+                if (etLoginEmail.text.isEmpty()) {
+                    handleLoginFailure(etLoginEmail)
                     binding.emailFailedText.visibility = View.VISIBLE
                     passwordFailedText.visibility = View.GONE
-                    loginPasswordEdit.background = ContextCompat.getDrawable(loginPasswordEdit.context, R.drawable.bac_object)
+                    etLoginPassword.background = ContextCompat.getDrawable(etLoginPassword.context, R.drawable.bac_object)
                     return@setOnClickListener
                 }
-                if (loginPasswordEdit.text.isEmpty()) {
-                    handleLoginFailure(loginPasswordEdit)
+                if (etLoginPassword.text.isEmpty()) {
+                    handleLoginFailure(etLoginPassword)
                     binding.passwordFailedText.visibility = View.VISIBLE
                     emailFailedText.visibility = View.GONE
-                    loginEmailEdit.background = ContextCompat.getDrawable(loginEmailEdit.context, R.drawable.bac_object)
+                    etLoginEmail.background = ContextCompat.getDrawable(etLoginEmail.context, R.drawable.bac_object)
                     return@setOnClickListener
                 }
                 updateLoginView()
                 loginRequest()
             }
-            loginToJoin.setOnClickListener {
+            tvRegister.setOnClickListener {
                 disableOnBackPressedCallback() // 뒤로가기 콜백 비활성화
                 findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
             }
@@ -72,9 +72,9 @@ class LoginFragment : Fragment() {
     private fun updateLoginView() {
         with(binding) {
             emailFailedText.visibility = View.GONE
-            loginEmailEdit.background = ContextCompat.getDrawable(binding.loginEmailEdit.context, R.drawable.bac_object)
+            etLoginEmail.background = ContextCompat.getDrawable(binding.etLoginEmail.context, R.drawable.bac_object)
             passwordFailedText.visibility = View.GONE
-            loginPasswordEdit.background = ContextCompat.getDrawable(binding.loginPasswordEdit.context, R.drawable.bac_object)
+            etLoginPassword.background = ContextCompat.getDrawable(binding.etLoginPassword.context, R.drawable.bac_object)
         }
     }
 
@@ -85,8 +85,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun loginRequest() {
-        email = binding.loginEmailEdit.text.toString()
-        pw = binding.loginPasswordEdit.text.toString()
+        email = binding.etLoginEmail.text.toString()
+        pw = binding.etLoginPassword.text.toString()
 
         val loginRequest = LoginRequest(email, pw)
 

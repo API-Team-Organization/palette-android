@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
@@ -24,9 +25,31 @@ class MyInfoFragment : Fragment() {
     ): View {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
 
+        initView()
         loadProfileInfo()
 
         return binding.root
+    }
+
+    private fun initView() {
+        binding.llUsername.setOnClickListener {
+            changeFragment(ChangeNameFragment())
+        }
+
+        binding.llBirthdate.setOnClickListener {
+            changeFragment(ChangeBirthDateFragment())
+        }
+
+        binding.llPassword.setOnClickListener {
+            changeFragment(ChangePasswordFragment())
+        }
+    }
+
+    private fun changeFragment(fragment: Fragment) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.mainContent, fragment)
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
     }
 
     private fun loadProfileInfo() {
