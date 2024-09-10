@@ -184,7 +184,7 @@ class CreateMediaFragment : Fragment() {
             val cachedUserName = UserPrefs.userName
             if (cachedUserName != null) {
                 binding.userName.text = "$cachedUserName"
-                binding.today.text = "오늘은 뭘 작업해볼까요?"
+                binding.today.text = "환영합니다!"
             } else {
                 binding.userName.text = "..."
                 try {
@@ -193,7 +193,7 @@ class CreateMediaFragment : Fragment() {
                         val userName = profileResponse.data.name
                         UserPrefs.userName = userName
                         binding.userName.text = userName
-                        binding.today.text = "오늘은 뭘 작업해볼까요?"
+                        binding.today.text = "환영합니다!"
                     } else {
                         log("프로필 정보를 가져오는 데 실패했습니다: ${profileResponse?.message}")
                     }

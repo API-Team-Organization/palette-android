@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.main.create.CreateMediaFragment">
+    tools:context=".ui.main.create.CreateMediaFragment"
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,112 +19,92 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="75dp"
+            android:layout_marginTop="20dp"
             android:orientation="vertical">
+            
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/logo"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="4dp">
                 <TextView
                     android:id="@+id/userName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="· · ·"
                     android:maxLength="10"
-                    android:textSize="30sp"
-                    android:fontFamily="@font/pretendard_bold"
+                    android:textSize="22sp"
+                    android:fontFamily="@font/pretendard_semibold"
                     android:textColor="@color/black"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="님!"
-                    android:textSize="30sp"
-                    android:fontFamily="@font/pretendard_bold"
+                    android:text="님 "
+                    android:textSize="22sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/today"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="환영합니다!"
+                    android:textSize="22sp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:textColor="@color/black"/>
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/today"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="오늘은 뭘 작업해볼까요?"
-                android:textSize="30sp"
-                android:fontFamily="@font/pretendard_bold"
-                android:textColor="@color/black"
-                android:layout_marginBottom="25dp"/>
 
             <LinearLayout
                 android:id="@+id/ll_start_new_work"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/bac_object"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:src="@drawable/plus"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="20dp" />
-
-                <LinearLayout
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/default_gray">
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="새 작업 시작하기"
-                        android:textSize="26sp"
-                        android:fontFamily="@font/pretendard_bold"
-                        android:textColor="@color/black"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginStart="16dp"/>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Palette AI"
-                            android:textSize="18sp"
-                            android:fontFamily="@font/suit_bold"
-                            android:textColor="@color/darkGray"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginStart="16dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="와 당신만의"
-                            android:textSize="18sp"
-                            android:fontFamily="@font/pretendard_semibold"
-                            android:textColor="@color/darkGray"
-                            android:layout_marginTop="10dp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="새로운 홍보물을 만들어보세요."
-                        android:textSize="18sp"
-                        android:fontFamily="@font/pretendard_semibold"
-                        android:textColor="@color/darkGray"
-                        android:layout_marginStart="16dp"/>
-
-                </LinearLayout>
+                    android:text="새 포스터 만들기"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="17dp"
+                    android:layout_marginBottom="17dp"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow"
+                    android:layout_marginEnd="15dp"/>
             </LinearLayout>
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="내가 만든 홍보물"
+                android:fontFamily="@font/pretendard_semibold"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="4dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/work_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                tools:listitem="@layout/item_work_recycler" />
+                tools:listitem="@layout/item_work_recycler"/>
 
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/sfl_sample"
