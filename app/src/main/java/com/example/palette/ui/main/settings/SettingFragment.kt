@@ -50,8 +50,7 @@ class SettingFragment : Fragment() {
         }
 
         binding.llAppInfo.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://4-rne5.notion.site/Team-API-2100356bfe554cf58df89b204b3afb8d"))
-            startActivity(intent)
+            goToAppInfoPage()
         }
 
         binding.llMy.setOnClickListener {
@@ -80,6 +79,15 @@ class SettingFragment : Fragment() {
     private fun goToPrivacyPolicyPage() {
         try {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://dgsw-team-api.notion.site/cc32c87f614e4798893293abfe5ca72a"))
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun goToAppInfoPage() {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://4-rne5.notion.site/Team-API-2100356bfe554cf58df89b204b3afb8d"))
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
