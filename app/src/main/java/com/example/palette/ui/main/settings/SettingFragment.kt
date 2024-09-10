@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.MainActivity
-import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.PreferenceManager
 import com.example.palette.application.UserPrefs
@@ -20,6 +19,7 @@ import com.example.palette.common.Constant
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentSettingBinding
+import com.example.palette.ui.util.changeFragment
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -50,10 +50,7 @@ class SettingFragment : Fragment() {
         }
 
         binding.llMy.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContent, MyInfoFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            changeFragment(MyInfoFragment())
         }
 
         return binding.root

@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
@@ -23,6 +22,7 @@ import com.example.palette.databinding.FragmentCreateMediaBinding
 import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.create.adapter.CreateMediaAdapter
 import com.example.palette.ui.main.create.chat.ChattingFragment
+import com.example.palette.ui.util.changeFragment
 import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
@@ -101,10 +101,7 @@ class CreateMediaFragment : Fragment() {
     }
 
     private fun startChatting(position: Int, title: String) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.mainContent, ChattingFragment(roomId = position, title = title))
-            .addToBackStack(null)
-            .commitAllowingStateLoss()
+        changeFragment(ChattingFragment(roomId = position, title = title))
     }
 
     private fun deleteChatDialog(context: Context, position: Int) {
