@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
@@ -25,7 +26,29 @@ class ChangePasswordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
+
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
+
+        binding.etBeforePassword.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etBeforePassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etBeforePassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
+        binding.etAfterPassword.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etAfterPassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etAfterPassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
         return binding.root
     }
 

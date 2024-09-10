@@ -37,8 +37,30 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
+
         initView()
         handleOnBackPressed()
+
+        binding.etLoginEmail.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etLoginEmail.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etLoginEmail.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
+        binding.etLoginPassword.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etLoginPassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etLoginPassword.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
         return binding.root
     }
 
