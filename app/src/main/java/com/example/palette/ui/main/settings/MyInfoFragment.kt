@@ -71,8 +71,8 @@ class MyInfoFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 }

@@ -41,25 +41,8 @@ class LoginFragment : Fragment() {
         initView()
         handleOnBackPressed()
 
-        binding.etLoginEmail.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.etLoginEmail.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
-            } else {
-                binding.etLoginEmail.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.black)
-            }
-        }
-
-        binding.etLoginPassword.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.etLoginPassword.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
-            } else {
-                binding.etLoginPassword.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.black)
-            }
-        }
+        changeEditTextFocusColor(binding.etLoginEmail)
+        changeEditTextFocusColor(binding.etLoginPassword)
 
         return binding.root
     }
@@ -87,6 +70,18 @@ class LoginFragment : Fragment() {
             tvRegister.setOnClickListener {
                 disableOnBackPressedCallback() // 뒤로가기 콜백 비활성화
                 findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
+            }
+        }
+    }
+
+    private fun changeEditTextFocusColor(editTextId: EditText) {
+        editTextId.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                editTextId.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                editTextId.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
             }
         }
     }
