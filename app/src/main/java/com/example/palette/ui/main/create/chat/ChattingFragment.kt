@@ -159,11 +159,13 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             binding.sflSample.visibility = View.VISIBLE
             binding.chattingRecycler.visibility = View.GONE
             binding.chattingEditText.visibility = View.GONE
+            binding.chattingSubmitButton.visibility = View.GONE
         } else {
             binding.sflSample.stopShimmer()
             binding.sflSample.visibility = View.GONE
             binding.chattingRecycler.visibility = View.VISIBLE
             binding.chattingEditText.visibility = View.VISIBLE
+            binding.chattingSubmitButton.visibility = View.VISIBLE
         }
     }
 
