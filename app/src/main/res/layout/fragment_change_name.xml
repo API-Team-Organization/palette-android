@@ -19,7 +19,6 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="100dp"
             android:orientation="vertical">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -32,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="개명하셨다면?"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:textColor="@color/darkGray"
                 android:fontFamily="@font/pretendard_medium"
                 android:layout_marginTop="3dp"/>
@@ -68,6 +67,7 @@
             android:textColor="@color/white"
             style="?android:attr/borderlessButtonStyle"
             android:background="@drawable/bac_button"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
