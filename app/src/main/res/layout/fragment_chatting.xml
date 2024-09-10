@@ -90,6 +90,8 @@
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/suit_medium"
                 android:hint="당신의 palette를 그려보세요"
+                android:textColorHint="@color/semiDarkGray"
+                android:textColor="@color/black"
                 android:inputType="textMultiLine"
                 android:textColorHighlight="@color/lightBlue"
                 android:maxLines="6"

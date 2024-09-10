@@ -7,12 +7,14 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ChatService {
     @POST("chat")
     suspend fun chat(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
+        @Query("roomId") roomId: Int,
         @Body postChat: ChatData
     ): Response<BaseResponse<PaletteChat>>
 
@@ -20,6 +22,8 @@ interface ChatService {
     suspend fun getChatList(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
-        @Path("roomId") roomId: Int
+        @Path("roomId") roomId: Int,
+        @Query("page") page: Int,
+        @Query("size") size: Int
     ): Response<BaseResponse<MutableList<Received>>>
 }
