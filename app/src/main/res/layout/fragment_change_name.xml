@@ -16,41 +16,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginHorizontal="20dp"
             android:layout_marginTop="100dp"
             android:orientation="vertical">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="이름 변경"
-                android:textSize="27sp"
-                android:fontFamily="@font/pretendard_extrabold"
-                android:textColor="@color/black" />
+                android:textSize="24sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="개명하셨다면?"
-                android:fontFamily="@font/pretendard_bold"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:textColor="@color/darkGray"
-                android:layout_marginTop="3dp"
-                android:layout_marginStart="1dp"/>
+                android:fontFamily="@font/pretendard_medium"
+                android:layout_marginTop="3dp"/>
 
             <EditText
                 android:id="@+id/etChangeName"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/bac_auth"
                 android:hint="변경할 이름"
-                android:fontFamily="@font/suit_semibold"
+                android:importantForAutofill="no"
+                android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black"
-                android:textColorHint="@color/semiDarkGray"
-                android:layout_marginTop="40dp"
-                android:inputType="textEmailAddress"
-                android:paddingStart="10dp"/>
+                android:textColorHint="@color/semiLightGray"
+                android:layout_marginTop="50dp"
+                android:inputType="textPersonName"
+                android:textColorHighlight="@color/lightBlue"
+                android:textCursorDrawable="@drawable/cursor_drawable"/>
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -62,13 +60,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="30dp"
             android:text="변경하기"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_semibold"
             android:textColor="@color/white"
             style="?android:attr/borderlessButtonStyle"
             android:background="@drawable/bac_button"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

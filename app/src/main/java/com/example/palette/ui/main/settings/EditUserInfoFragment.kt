@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.example.palette.R
 import com.example.palette.databinding.FragmentEditUserInfoBinding
 import com.example.palette.ui.main.ServiceActivity
+import com.example.palette.ui.util.changeFragment
 
 class EditUserInfoFragment : Fragment() {
 
@@ -21,24 +22,15 @@ class EditUserInfoFragment : Fragment() {
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         binding.changePassword.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContent, ChangePasswordFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            changeFragment(ChangePasswordFragment())
         }
 
         binding.changeName.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContent, ChangeNameFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            changeFragment(ChangeNameFragment())
         }
 
         binding.changeBirthDate.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContent, ChangeBirthDateFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            changeFragment(ChangeBirthDateFragment())
         }
 
         return binding.root

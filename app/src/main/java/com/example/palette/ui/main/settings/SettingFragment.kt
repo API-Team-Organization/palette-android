@@ -12,14 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.MainActivity
-import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.PreferenceManager
 import com.example.palette.application.UserPrefs
-import com.example.palette.common.Constant
+import com.example.palette.common.Constant.TAG
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentSettingBinding
+import com.example.palette.ui.util.changeFragment
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -44,16 +44,16 @@ class SettingFragment : Fragment() {
             resignDialog(requireContext())
         }
 
+        binding.llPrivacyPolicy.setOnClickListener {
+            goToPrivacyPolicyPage()
+        }
+
         binding.llAppInfo.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://4-rne5.notion.site/Team-API-2100356bfe554cf58df89b204b3afb8d"))
-            startActivity(intent)
+            goToAppInfoPage()
         }
 
         binding.llMy.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContent, MyInfoFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            changeFragment(MyInfoFragment())
         }
 
         return binding.root
@@ -70,15 +70,33 @@ class SettingFragment : Fragment() {
                     UserPrefs.userName = data.name
                 }
             } catch (e: Exception) {
-                Log.e(Constant.TAG, "Setting UserNameInfo error : ", e)
+                Log.e(TAG, "Setting UserNameInfo error : ", e)
             }
+        }
+    }
+
+    private fun goToPrivacyPolicyPage() {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://dgsw-team-api.notion.site/cc32c87f614e4798893293abfe5ca72a"))
+            startActivity(intent)
+        } catch (e: Exception) {
+            Log.e(TAG, e.stackTraceToString())
+        }
+    }
+
+    private fun goToAppInfoPage() {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://4-rne5.notion.site/Team-API-2100356bfe554cf58df89b204b3afb8d"))
+            startActivity(intent)
+        } catch (e: Exception) {
+            Log.e(TAG, e.stackTraceToString())
         }
     }
 
     private fun logout() {
         viewLifecycleOwner.lifecycleScope.launch {
             val response = AuthRequestManager.logoutRequest(PaletteApplication.prefs.token)
-            Log.d(Constant.TAG, "Logout response.header code : ${response.code()}")
+            Log.d(TAG, "Logout response.header code : ${response.code()}")
         }
 
         PaletteApplication.prefs = PreferenceManager(requireContext().applicationContext)
@@ -121,17 +139,17 @@ class SettingFragment : Fragment() {
                 if (response.isSuccessful) {
                     // 회원 탈퇴 성공
                     shortToast("회원 탈퇴 성공")
-                    Log.d(Constant.TAG, "Resign success")
+                    Log.d(TAG, "Resign success")
                 } else {
                     // 회원 탈퇴 실패
-                    Log.e(Constant.TAG, "Resign failed: ${response.code()} - ${response.message()}")
+                    Log.e(TAG, "Resign failed: ${response.code()} - ${response.message()}")
                 }
             } catch (e: HttpException) {
                 shortToast("HttpException")
-                Log.e(Constant.TAG, "Resign HTTP error", e)
+                Log.e(TAG, "Resign HTTP error", e)
             } catch (e: Exception) {
                 shortToast("Exception")
-                Log.e(Constant.TAG, "Resign error", e)
+                Log.e(TAG, "Resign error", e)
             }
         }
     }

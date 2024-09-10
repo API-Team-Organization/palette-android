@@ -32,8 +32,10 @@ class ChangeBirthDateFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangeBirthDateBinding.inflate(inflater, container, false)
+
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
         datePickerDefaultSettings()
+
         return binding.root
     }
 

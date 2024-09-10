@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
@@ -26,7 +27,19 @@ class ChangeNameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangeNameBinding.inflate(inflater, container, false)
+
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
+
+        binding.etChangeName.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etChangeName.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                binding.etChangeName.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
+
         return binding.root
     }
 

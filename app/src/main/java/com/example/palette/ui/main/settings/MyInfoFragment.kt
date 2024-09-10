@@ -13,6 +13,8 @@ import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentMyInfoBinding
+import com.example.palette.ui.main.ServiceActivity
+import com.example.palette.ui.util.changeFragment
 import kotlinx.coroutines.launch
 
 class MyInfoFragment : Fragment() {
@@ -24,6 +26,7 @@ class MyInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         initView()
         loadProfileInfo()
@@ -43,13 +46,6 @@ class MyInfoFragment : Fragment() {
         binding.llPassword.setOnClickListener {
             changeFragment(ChangePasswordFragment())
         }
-    }
-
-    private fun changeFragment(fragment: Fragment) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.mainContent, fragment)
-            .addToBackStack(null)
-            .commitAllowingStateLoss()
     }
 
     private fun loadProfileInfo() {
@@ -73,5 +69,10 @@ class MyInfoFragment : Fragment() {
                 Log.e(Constant.TAG, "Setting profileInfo error : ", e)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 }
