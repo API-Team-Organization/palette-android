@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentMyInfoBinding
+import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.changeFragment
 import kotlinx.coroutines.launch
 
@@ -24,6 +26,7 @@ class MyInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         initView()
         loadProfileInfo()
@@ -66,5 +69,10 @@ class MyInfoFragment : Fragment() {
                 Log.e(Constant.TAG, "Setting profileInfo error : ", e)
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
     }
 }
