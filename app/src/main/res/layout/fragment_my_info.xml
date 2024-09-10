@@ -19,6 +19,7 @@
             android:fontFamily="@font/pretendard_semibold"
             android:layout_marginTop="70dp"/>
         <LinearLayout
+            android:id="@+id/ll_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -51,6 +52,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -83,6 +85,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_birthdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -115,6 +118,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

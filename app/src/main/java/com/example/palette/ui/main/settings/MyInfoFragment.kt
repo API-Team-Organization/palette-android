@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentMyInfoBinding
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 
 class MyInfoFragment : Fragment() {
 
@@ -25,6 +27,27 @@ class MyInfoFragment : Fragment() {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
 
         loadProfileInfo()
+
+        binding.llUsername.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, ChangeNameFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
+
+        binding.llBirthdate.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, ChangeBirthDateFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
+
+        binding.llPassword.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContent, ChangePasswordFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
 
         return binding.root
     }
