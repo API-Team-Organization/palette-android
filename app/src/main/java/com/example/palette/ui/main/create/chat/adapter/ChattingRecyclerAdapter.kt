@@ -91,13 +91,32 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 textGchatMessagePalette.text = null // 텍스트 초기화
                 textGchatTimePalette.text = null // 텍스트 초기화
 
+                if (chat.id == -1) {
+                    // 로딩 애니메이션을 표시할 뷰
+                    chattingLoadImage.visibility = View.VISIBLE
+                    textGchatMessagePalette.visibility = View.GONE
+                    return
+                }
+
+                if (chat.id == -2) {
+                    chattingLoadImage.visibility = View.GONE
+                    textGchatMessagePalette.visibility = View.VISIBLE
+                    textGchatMessagePalette.text = "로딩 중..."
+                    return
+                }
+
+                // 실제 데이터를 표시할 뷰
+                chattingLoadImage.visibility = View.GONE
+                textGchatMessagePalette.visibility = View.VISIBLE
+                textGchatMessagePalette.text = chat.message
+
                 if (chat.resource == "IMAGE") {
                     Glide.with(itemView)
                         .load(chat.message) // 이미지 URL
                         .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
                         .into(chattingCreatedImage) // ImageView 설정
-                    binding.textGchatMessagePalette.visibility = View.GONE
-                    binding.chattingCreatedImage.visibility = View.VISIBLE
+                    textGchatMessagePalette.visibility = View.GONE
+                    chattingCreatedImage.visibility = View.VISIBLE
 
                     chattingCreatedImage.setOnLongClickListener {
                         showDownloadDialog(itemView.context, chat.message)
@@ -108,12 +127,12 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                         showZoomedImageDialog(itemView.context, chat.message)
                     }
                 } else {
-                    binding.textGchatMessagePalette.visibility = View.VISIBLE
-                    binding.chattingCreatedImage.visibility = View.GONE
+                    textGchatMessagePalette.visibility = View.VISIBLE
+                    chattingCreatedImage.visibility = View.GONE
                     textGchatMessagePalette.text = chat.message // 텍스트 설정
                     textGchatTimePalette.text = formatChatTime(chat.datetime) // 텍스트 설정
 
-                    binding.textGchatMessagePalette.setOnLongClickListener {
+                    textGchatMessagePalette.setOnLongClickListener {
                         showCopyPaletteDialog(itemView.context, binding)
                         true
                     }
