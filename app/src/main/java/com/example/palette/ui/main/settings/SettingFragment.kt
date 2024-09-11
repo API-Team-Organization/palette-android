@@ -20,6 +20,7 @@ import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentSettingBinding
 import com.example.palette.ui.util.changeFragment
+import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -107,6 +108,7 @@ class SettingFragment : Fragment() {
         requireActivity().startActivity(intent)
 
         activity?.finish()
+        log(PaletteApplication.prefs.token)
     }
 
     private fun resignDialog(context: Context) {

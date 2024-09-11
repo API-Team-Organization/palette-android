@@ -64,7 +64,7 @@ class LoginFragment : Fragment() {
                     etLoginEmail.background = ContextCompat.getDrawable(etLoginEmail.context, R.drawable.bac_object)
                     return@setOnClickListener
                 }
-                updateLoginView()
+//                updateLoginView()
                 loginRequest()
             }
             tvRegister.setOnClickListener {
@@ -86,14 +86,14 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun updateLoginView() {
-        with(binding) {
-            emailFailedText.visibility = View.GONE
-            etLoginEmail.background = ContextCompat.getDrawable(binding.etLoginEmail.context, R.drawable.bac_object)
-            passwordFailedText.visibility = View.GONE
-            etLoginPassword.background = ContextCompat.getDrawable(binding.etLoginPassword.context, R.drawable.bac_object)
-        }
-    }
+//    private fun updateLoginView() {
+//        with(binding) {
+//            emailFailedText.visibility = View.GONE
+//            etLoginEmail.background = ContextCompat.getDrawable(binding.etLoginEmail.context, R.drawable.bac_object)
+//            passwordFailedText.visibility = View.GONE
+//            etLoginPassword.background = ContextCompat.getDrawable(binding.etLoginPassword.context, R.drawable.bac_object)
+//        }
+//    }
 
     private fun handleLoginFailure(loginText: EditText) {
         loginText.background = ContextCompat.getDrawable(loginText.context, R.drawable.bac_edit_text_failed)
