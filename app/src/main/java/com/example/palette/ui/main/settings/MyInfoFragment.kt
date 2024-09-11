@@ -13,6 +13,7 @@ import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentMyInfoBinding
+import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.changeFragment
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ class MyInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
-        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
+        (requireActivity() as? BaseControllable)?.bottomVisible(false)
 
         initView()
         loadProfileInfo()
