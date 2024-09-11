@@ -13,6 +13,7 @@ import com.example.palette.application.PaletteApplication
 import com.example.palette.application.UserPrefs
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentChangeNameBinding
+import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ class ChangeNameFragment : Fragment() {
     ): View {
         binding = FragmentChangeNameBinding.inflate(inflater, container, false)
 
-        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
+        (requireActivity() as BaseControllable).bottomVisible(false)
 
         binding.etChangeName.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -55,11 +56,11 @@ class ChangeNameFragment : Fragment() {
             }
 
             UserPrefs.userName = null
-            changeName(username, null)
+            changeName(username)
         }
     }
 
-    private fun changeName(username: String, birthDate: String?) {
+    private fun changeName(username: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = InfoRequestManager.changeNameRequest(
