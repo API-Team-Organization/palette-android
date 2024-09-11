@@ -13,6 +13,7 @@ import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.databinding.FragmentChangePasswordBinding
 import com.example.palette.ui.main.ServiceActivity
+import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -56,8 +57,8 @@ class ChangePasswordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.changePasswordBtn.setOnClickListener {
-            val beforePassword = binding.etBeforePassword.text.toString().trim()
-            val afterPassword = binding.etAfterPassword.text.toString().trim()
+            val beforePassword = binding.etBeforePassword.text.toString()
+            val afterPassword = binding.etAfterPassword.text.toString()
 
             if (beforePassword.isEmpty() || afterPassword.isEmpty()) {
                 shortToast("이전 비밀번호와 변경할 비밀번호를 입력해주세요.")
@@ -69,6 +70,9 @@ class ChangePasswordFragment : Fragment() {
     }
 
     private fun changePassword(beforePassword: String, afterPassword: String) {
+        log(PaletteApplication.prefs.token)
+        log(beforePassword)
+        log(afterPassword)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = AuthRequestManager.changePasswordRequest(
@@ -83,7 +87,7 @@ class ChangePasswordFragment : Fragment() {
 
                 } else {
                     shortToast("비밀번호 변경에 실패했습니다.")
-                    Log.e("ChangePasswordFragment", "Failed to change password: ${response.code()} - ${response.message()}")
+                    Log.e("ChangePasswordFragment", "Failed to change password: ${response.code()} - ${response.message()} [${response.errorBody()?.string()}]")
                 }
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다.")
