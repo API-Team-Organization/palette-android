@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.create.chat.ChattingFragment">
+    tools:context=".ui.main.create.chat.ChattingFragment"
+    android:background="@color/default_gray">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -104,8 +105,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_send"
-                android:background="@color/white"
-                android:textColor="@color/white" />
+                android:background="@color/default_gray"
+                android:textColor="@color/default_gray" />
 
         </RelativeLayout>
 
