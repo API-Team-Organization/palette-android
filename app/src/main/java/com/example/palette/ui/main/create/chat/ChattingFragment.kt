@@ -121,7 +121,6 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
     }
 
     private fun initEditText() {
-        showSampleData(false)
         binding.chattingEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 // EditText 내용이 변경된 후 호출됩니다.
@@ -138,62 +137,51 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
     private fun submitText(chat: ChatData) {
         viewLifecycleOwner.lifecycleScope.launch {
-            showSampleData(true)
+            val newReceived = Received(
+                id = -100,
+                isAi = false,
+                message = chat.message,
+                datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date()),
+                roomId = roomId,
+                userId = 0,
+                resource = "Chat"
+            )
+            chatList.add(newReceived)
+            recyclerAdapter.addChat(newReceived)
+            binding.chattingEditText.text.clear()
+
+            // 플레이스홀더 아이템 두 개 추가
+            val placeholderReceived = Received(
+                id = -1,
+                isAi = true,
+                message = "로딩 중...",
+                datetime = "",
+                roomId = roomId,
+                userId = 0,
+                resource = ""
+            )
+            chatList.add(placeholderReceived)
+            chatList.add(placeholderReceived.copy(id = -2))
+            recyclerAdapter.addChat(placeholderReceived)
+            recyclerAdapter.addChat(placeholderReceived.copy(id = -2))
+
+            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+
+            // 데이터 요청 및 처리
             val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat, roomId = roomId)
-            if (chatList.size == 1) {
-                log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
-                RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
-                binding.chattingToolbar.title = chat.message
-            }
             if (response.isSuccessful) {
-                for(i in 0..1) {
-                    with(response.body()!!.data.received[i]) {
-                        log("ChattingFragment submitText response.body()!!.data.received[0] : ${response.body()!!.data.received[i]}")
-                        val newReceived1 = Received(id = id, isAi = isAi, message = message, datetime = datetime, roomId = roomId, userId = userId, resource = resource)
-                        chatList.add(newReceived1)
-                        recyclerAdapter.addChat(newReceived1)
-                    }
+                val receivedData = response.body()!!.data.received
+                for (i in receivedData.indices) {
+                    chatList[chatList.size - 2 + i] = receivedData[i]
                 }
+                recyclerAdapter.setData(chatList)
             } else {
                 shortToast("부적절한 단어 혹은 짧은 문장")
-                showSampleData(false)
-                return@launch
+                for (i in 0..< 2) {
+                    chatList.removeAt(chatList.size - 2 + i)
+                }
+                recyclerAdapter.setData(chatList)
             }
-            showSampleData(false)
-
-            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)!!.data
-            log("/chat/{roomId}에서 어떤 값을 주는지 확인: ${chatList}")
-            binding.chattingRecycler.smoothScrollToPosition(chatList.size - 1)
-        }
-
-        val newReceived = Received(
-            id = -100,
-            isAi = false,
-            message = chat.message,
-            datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date()),
-            roomId = roomId,
-            userId = 0,
-            resource = "Chat"
-        )
-        chatList.add(newReceived)
-        recyclerAdapter.addChat(newReceived)
-        binding.chattingEditText.text.clear()
-        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-    }
-
-    private fun showSampleData(isLoading: Boolean) {
-        if (isLoading) {
-            binding.sflSample.startShimmer()
-            binding.sflSample.visibility = View.VISIBLE
-            binding.chattingRecycler.visibility = View.GONE
-            binding.chattingEditText.visibility = View.GONE
-            binding.chattingSubmitButton.visibility = View.GONE
-        } else {
-            binding.sflSample.stopShimmer()
-            binding.sflSample.visibility = View.GONE
-            binding.chattingRecycler.visibility = View.VISIBLE
-            binding.chattingEditText.visibility = View.VISIBLE
-            binding.chattingSubmitButton.visibility = View.VISIBLE
         }
     }
 

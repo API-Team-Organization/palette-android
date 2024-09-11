@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.create.chat.ChattingFragment">
+    tools:context=".ui.main.create.chat.ChattingFragment"
+    android:background="@color/default_gray">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -41,20 +42,6 @@
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/text_gchat_indicator"
             app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout" />
-
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/sfl_sample"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <include layout="@layout/item_chatting_shimmer" />
-            </LinearLayout>
-        </com.facebook.shimmer.ShimmerFrameLayout>
 
         <TextView
             android:id="@+id/text_gchat_indicator"
@@ -104,8 +91,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_send"
-                android:background="@color/white"
-                android:textColor="@color/white" />
+                android:background="@color/default_gray"
+                android:textColor="@color/default_gray" />
 
         </RelativeLayout>
 

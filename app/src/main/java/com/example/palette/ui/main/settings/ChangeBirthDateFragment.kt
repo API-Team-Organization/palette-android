@@ -13,6 +13,7 @@ import com.example.palette.application.PaletteApplication
 import com.example.palette.application.UserPrefs
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentChangeBirthDateBinding
+import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.register.RegisterViewModel
 import com.example.palette.ui.util.shortToast
@@ -33,7 +34,7 @@ class ChangeBirthDateFragment : Fragment() {
     ): View {
         binding = FragmentChangeBirthDateBinding.inflate(inflater, container, false)
 
-        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
+        (requireActivity() as? BaseControllable)?.bottomVisible(false)
         datePickerDefaultSettings()
 
         return binding.root
@@ -51,11 +52,11 @@ class ChangeBirthDateFragment : Fragment() {
             }
 
             UserPrefs.clearUserData()
-            changeBirthDate(null, birthDate)
+            changeBirthDate(birthDate)
         }
     }
 
-    private fun changeBirthDate(username: String?, birthDate: String) {
+    private fun changeBirthDate(birthDate: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = InfoRequestManager.changeBirthDateRequest(

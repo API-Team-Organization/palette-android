@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.palette.R
 import com.example.palette.databinding.FragmentEditUserInfoBinding
+import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.changeFragment
 
@@ -19,7 +20,7 @@ class EditUserInfoFragment : Fragment() {
     ): View {
         binding = FragmentEditUserInfoBinding.inflate(inflater, container, false)
 
-        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
+        (requireActivity() as? BaseControllable)?.bottomVisible(false)
 
         binding.changePassword.setOnClickListener {
             changeFragment(ChangePasswordFragment())
