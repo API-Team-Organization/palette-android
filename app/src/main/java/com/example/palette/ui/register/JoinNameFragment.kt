@@ -143,7 +143,7 @@ class JoinNameFragment : Fragment() {
     }
 
     private fun checkNameFailed(name: EditText) {
-        name.background = ContextCompat.getDrawable(name.context, R.drawable.bac_edit_text_failed)
+        name.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
         name.requestFocus()
         name.selectAll()
     }

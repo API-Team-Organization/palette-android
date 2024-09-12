@@ -67,7 +67,7 @@ class JoinEmailFragment : Fragment() {
     }
 
     private fun checkEmailFailed(email: EditText) {
-        email.background = ContextCompat.getDrawable(email.context, R.drawable.bac_edit_text_failed)
+        email.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
         email.requestFocus()
         email.selectAll()
     }

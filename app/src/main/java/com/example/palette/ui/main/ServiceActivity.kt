@@ -61,6 +61,8 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         super.onCreate(savedInstanceState)
         changeFragment(createMediaFragment, supportFragmentManager)
 
+        log(PaletteApplication.prefs.token)
+
         // RiveAnimationView에서 click_home 이벤트를 강제로 실행
         riveAnimationView.addEventListener(eventListener)
 

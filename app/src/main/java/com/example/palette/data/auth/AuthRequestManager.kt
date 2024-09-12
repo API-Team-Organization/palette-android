@@ -61,7 +61,10 @@ object AuthRequestManager {
 
     suspend fun changePasswordRequest(token: String, beforePassword: String, afterPassword: String): Response<BaseVoidResponse> {
         val request = ChangePasswordRequest(beforePassword, afterPassword)
-        val response = authService.changePassword(token, request)
+        val response = authService.changePassword(
+            token = token,
+            request = request
+        )
 
         if (response.code() >= 500)
             throw HttpException(response)

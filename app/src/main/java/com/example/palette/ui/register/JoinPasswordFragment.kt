@@ -62,21 +62,21 @@ class JoinPasswordFragment : Fragment() {
                 failedCheckPasswordEmpty.visibility = View.GONE
                 failedCheckPasswordDiff.visibility = View.GONE
                 failedPasswordFormat.visibility = View.GONE
-                etCheckPassword.background = ContextCompat.getDrawable(etCheckPassword.context, R.drawable.bac_object)
+                etCheckPassword.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
             } else if (checkedPassword.isEmpty()) {
                 checkPasswordFailed(etCheckPassword)
                 failedCheckPasswordEmpty.visibility = View.VISIBLE
                 failedPasswordEmpty.visibility = View.GONE
                 failedCheckPasswordDiff.visibility = View.GONE
                 failedPasswordFormat.visibility = View.GONE
-                etPassword.background = ContextCompat.getDrawable(etPassword.context, R.drawable.bac_object)
+                etPassword.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
             } else if (password!=checkedPassword){
                 checkPasswordFailed(etCheckPassword)
                 failedCheckPasswordDiff.visibility = View.VISIBLE
                 failedPasswordEmpty.visibility = View.GONE
                 failedCheckPasswordEmpty.visibility = View.GONE
                 failedPasswordFormat.visibility = View.GONE
-                etPassword.background = ContextCompat.getDrawable(etPassword.context, R.drawable.bac_object)
+                etPassword.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
             } else {
                 val isPasswordValid = passwordRegularExpression(password)
                 Log.d("isPasswordValid", "${passwordRegularExpression(password)}")
@@ -96,16 +96,16 @@ class JoinPasswordFragment : Fragment() {
                     failedPasswordEmpty.visibility = View.GONE
                     failedCheckPasswordEmpty.visibility = View.GONE
                     failedCheckPasswordDiff.visibility = View.GONE
-                    etCheckPassword.background = ContextCompat.getDrawable(etCheckPassword.context, R.drawable.bac_object)
+                    etCheckPassword.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
                 }
             }
         }
     }
 
-    private fun checkPasswordFailed(passord: EditText) {
-        passord.background = ContextCompat.getDrawable(passord.context, R.drawable.bac_edit_text_failed)
-        passord.requestFocus()
-        passord.selectAll()
+    private fun checkPasswordFailed(password: EditText) {
+        password.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
+        password.requestFocus()
+        password.selectAll()
     }
 
     private fun passwordRegularExpression(password: String): Boolean {

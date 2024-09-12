@@ -52,6 +52,6 @@ interface AuthService {
     @PATCH("auth/password")
     suspend fun changePassword(
         @Header("X-AUTH-Token") token: String,
-        @Body changePasswordRequest: ChangePasswordRequest
+        @Body request: ChangePasswordRequest
     ): Response<BaseVoidResponse>
 }
