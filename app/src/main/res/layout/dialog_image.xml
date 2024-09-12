@@ -5,8 +5,10 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+    <ImageView
         android:id="@+id/zoomedImageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"/>
 </LinearLayout>
