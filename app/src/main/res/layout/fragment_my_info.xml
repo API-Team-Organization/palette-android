@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 tools:text="seoseunghun3@gmail.com"
                 android:textSize="18sp"
-                android:textColor="@color/primaryColor"
+                android:textColor="@color/darkBlue"
                 android:fontFamily="@font/pretendard_medium"
                 android:layout_marginEnd="5dp"/>
         </LinearLayout>
