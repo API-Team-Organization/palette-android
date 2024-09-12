@@ -1,7 +1,5 @@
 package com.example.palette.ui.main.work
 
-import android.app.Dialog
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +17,6 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
             Glide.with(itemView.context)
                 .load(imageUrl)
                 .into(imageView)
-
-            imageView.setOnClickListener {
-                showZoomedImageDialog(itemView.context, imageUrl)
-            }
         }
     }
 
@@ -40,20 +34,5 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
     fun updateImages(newImages: List<String>) {
         images = newImages
         notifyDataSetChanged()
-    }
-
-    private fun showZoomedImageDialog(context: Context, imageUrl: String) {
-        val dialog = Dialog(context)
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_image, null)
-
-        val imageView = dialogView.findViewById<ImageView>(R.id.zoomedImageView)
-
-        Glide.with(context)
-            .load(imageUrl)
-            .override(900, 1200)
-            .into(imageView)
-
-        dialog.setContentView(dialogView)
-        dialog.show()
     }
 }

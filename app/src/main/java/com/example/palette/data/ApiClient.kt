@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private const val BASE_URL = "https://paletteapp.xyz/backend/"
+    private const val BASE_URL = "https://api.paletteapp.xyz/"
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
