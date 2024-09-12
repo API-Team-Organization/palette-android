@@ -93,7 +93,9 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                         val temporaryList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)?.data
 
                         if (temporaryList.isNullOrEmpty()) {
-                            shortToast("채팅 내역이 더 없습니다")
+                            if (loadPage != 1) {
+                                shortToast("채팅 내역이 더 없습니다")
+                            }
                             loadPage -= 1
                         } else {
                             chatList.reverse()
@@ -137,6 +139,11 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
     private fun submitText(chat: ChatData) {
         viewLifecycleOwner.lifecycleScope.launch {
+            if (chatList.size == 0) {
+                log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
+                RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
+                binding.chattingToolbar.title = chat.message
+            }
             val newReceived = Received(
                 id = -100,
                 isAi = false,
