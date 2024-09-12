@@ -34,5 +34,5 @@ interface ChatService {
         @Query("page") page: Int,
         @Query("size") size: Int,
         @Query("sort") sort: List<String>
-    ): Response<GetImageListResponse>
+    ): Response<BaseResponse<List<String>>>
 }

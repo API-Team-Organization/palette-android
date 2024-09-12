@@ -32,14 +32,14 @@ object ChatRequestManager {
         }
     }
 
-    suspend fun getImageList(token: String, page: Int, size: Int, sort: List<String>): GetImageListResponse? {
+    suspend fun getImageList(token: String, page: Int, size: Int, sort: List<String>): BaseResponse<List<String>>? {
         val response = chatService.getImageList(token = token, page = page, size = size, sort = sort)
 
         return if (response.isSuccessful) {
             response.body()
         } else {
             log("코드: ${response.code()}, 메시지: ${response.message()}")
-            GetImageListResponse(
+            BaseResponse(
                 code = response.code(),
                 message = response.message(),
                 data = mutableListOf()
