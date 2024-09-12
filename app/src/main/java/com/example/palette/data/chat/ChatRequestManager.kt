@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.palette.common.Constant
 import com.example.palette.data.ApiClient
 import com.example.palette.data.base.BaseResponse
+import com.example.palette.ui.util.log
 import retrofit2.Response
 
 object ChatRequestManager {
@@ -27,6 +28,21 @@ object ChatRequestManager {
                 code = response.code(), // 실패 시의 상태 코드를 설정합니다
                 message = response.message(), // 실패 시의 메시지를 설정합니다
                 data = mutableListOf() // 빈 리스트를 반환합니다
+            )
+        }
+    }
+
+    suspend fun getImageList(token: String, page: Int, size: Int, sort: List<String>): GetImageListResponse? {
+        val response = chatService.getImageList(token = token, page = page, size = size, sort = sort)
+
+        return if (response.isSuccessful) {
+            response.body()
+        } else {
+            log("코드: ${response.code()}, 메시지: ${response.message()}")
+            GetImageListResponse(
+                code = response.code(),
+                message = response.message(),
+                data = mutableListOf()
             )
         }
     }
