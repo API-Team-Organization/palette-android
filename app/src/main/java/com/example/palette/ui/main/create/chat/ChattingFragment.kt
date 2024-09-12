@@ -137,6 +137,11 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
     private fun submitText(chat: ChatData) {
         viewLifecycleOwner.lifecycleScope.launch {
+            if (chatList.size == 0) {
+                log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
+                RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
+                binding.chattingToolbar.title = chat.message
+            }
             val newReceived = Received(
                 id = -100,
                 isAi = false,
