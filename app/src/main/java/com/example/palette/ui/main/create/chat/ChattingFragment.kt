@@ -1,14 +1,17 @@
 package com.example.palette.ui.main.create.chat
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -127,9 +130,9 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             override fun afterTextChanged(s: Editable?) {
                 // EditText 내용이 변경된 후 호출됩니다.
                 if (s.isNullOrBlank()) {
-                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_arrow_upward_gray)
                 } else {
-                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_ok)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_arrow_upward)
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -195,35 +198,43 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
     private fun showChangeTitleDialog() {
         val builder = AlertDialog.Builder(requireContext())
 
-        builder.setTitle("제목 변경")
-        builder.setMessage("제목을 변경해주세요")
+        val inflater = LayoutInflater.from(requireContext())
+        val dialogView = inflater.inflate(R.layout.dialog_edit_text, null)
 
-        // EditText 생성
-        val input = EditText(requireContext())
-        input.hint = "새 제목 입력"
-        input.inputType = InputType.TYPE_CLASS_TEXT
+        val input = dialogView.findViewById<EditText>(R.id.etChangeTitle)
+        val applyButton = dialogView.findViewById<TextView>(R.id.tv_apply)
 
-        // EditText를 다이얼로그에 추가
-        builder.setView(input)
+        input.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                input.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                input.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
 
-        builder.setPositiveButton("확인") { dialog, _ ->
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+
+        applyButton.setOnClickListener {
             val newTitle = input.text.toString()
 
             if (newTitle.isBlank()) {
                 shortToast("제목을 입력해주세요")
-                return@setPositiveButton
+                return@setOnClickListener
+            } else {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, newTitle))
+                    binding.chattingToolbar.title = newTitle
+                }
+                dialog.dismiss()
             }
-
-             viewLifecycleOwner.lifecycleScope.launch {
-                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, newTitle))
-                 binding.chattingToolbar.title = newTitle
-             }
-
-            dialog.dismiss()
         }
-        builder.setCancelable(false)
 
-        val dialog = builder.create()
+        dialog.setCancelable(false)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
     }
 

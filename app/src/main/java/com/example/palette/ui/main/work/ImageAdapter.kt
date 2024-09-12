@@ -1,12 +1,18 @@
 package com.example.palette.ui.main.work
 
 import android.app.Dialog
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -14,6 +20,12 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.palette.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
 
 class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
@@ -26,6 +38,7 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
                 .load(imageUrl)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        imageView.clipToOutline = true
                         imageView.setImage(ImageSource.bitmap(resource))
                     }
 
@@ -34,6 +47,11 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
 
             imageView.setOnClickListener {
                 showZoomedImageDialog(itemView.context, imageUrl)
+            }
+
+            imageView.setOnLongClickListener {
+                showDownloadDialog(itemView.context, imageUrl)
+                true
             }
         }
     }
@@ -72,5 +90,61 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
 
         dialog.setContentView(dialogView)
         dialog.show()
+    }
+
+    private fun showDownloadDialog(context: Context, imageUrl: String) {
+        AlertDialog.Builder(context).apply {
+            setTitle("이미지 다운로드")
+            setMessage("이미지를 다운로드하시겠습니까?")
+            setPositiveButton("예") { _, _ ->
+                CoroutineScope(Dispatchers.Main).launch {
+                    val bitmap = downloadBitmap(imageUrl)
+                    bitmap?.let {
+                        saveImageToGallery(context, it)
+                    }
+                    Toast.makeText(context, "다운로드되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            setNegativeButton("아니오", null)
+            show()
+        }
+    }
+
+    private suspend fun downloadBitmap(urlString: String): Bitmap? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val url = URL(urlString)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.doInput = true
+                connection.connect()
+                val inputStream = connection.inputStream
+                BitmapFactory.decodeStream(inputStream)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    private fun saveImageToGallery(context: Context, bitmap: Bitmap) {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val resolver = context.contentResolver
+        val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+        uri?.let {
+            resolver.openOutputStream(it).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream!!)
+            }
+
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+        }
     }
 }
