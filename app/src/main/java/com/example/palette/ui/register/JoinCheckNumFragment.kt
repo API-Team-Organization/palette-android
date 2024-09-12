@@ -74,9 +74,6 @@ class JoinCheckNumFragment : Fragment() {
                     findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinCompleteFragment)
                 } else {
                     shortToast("인증번호가 일치하지 않습니다.")
-//                    binding.etJoinCheckNum.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
-//                    binding.etJoinCheckNum.requestFocus()
-//                    binding.etJoinCheckNum.selectAll()
                     log("JoinCheckNumFragment verifyCode response: $response")
                 }
             } catch (e: HttpException) {
