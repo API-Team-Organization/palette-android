@@ -20,10 +20,13 @@ import com.example.palette.data.chat.ChatRequestManager
 import com.example.palette.data.chat.Received
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.RoomData
+import com.example.palette.data.socket.BaseResponseMessage
+import com.example.palette.data.socket.WebSocketManager
 import com.example.palette.databinding.FragmentChattingBinding
 import com.example.palette.ui.base.BaseControllable
 import com.example.palette.ui.main.create.chat.adapter.ChattingRecyclerAdapter
 import com.example.palette.ui.util.log
+import com.example.palette.ui.util.logE
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -38,12 +41,24 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
     private var chatList: MutableList<Received> = mutableListOf()
     private var isLoading = false
     private var loadPage = 0
+    private lateinit var webSocketManager: WebSocketManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChattingBinding.inflate(inflater, container, false)
+
+        // WebSocket 연결
+        webSocketManager = WebSocketManager(token = PaletteApplication.prefs.token, roomId)
+        webSocketManager.setOnMessageReceivedListener { chatMessage ->
+            // UI 스레드에서 안전하게 업데이트
+            viewLifecycleOwner.lifecycleScope.launch {
+                log("ChattingFragment onCreateView handleChatMessage 호출됨")
+                handleChatMessage(chatMessage)
+            }
+        }
+        webSocketManager.start()
 
         initView()
         initEditText()
@@ -144,10 +159,37 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
                 binding.chattingToolbar.title = chat.message
             }
+            sendMessage(roomId, chat.message) // Retrofit으로 채팅 메시지 전송
+            binding.chattingEditText.text.clear()
+
+//
+//            // 데이터 요청 및 처리
+//            val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat, roomId = roomId)
+//            if (response.isSuccessful) {
+//                val receivedData = response.body()!!.data.received
+//                for (i in receivedData.indices) {
+//                    chatList[chatList.size - 2 + i] = receivedData[i]
+//                }
+//                recyclerAdapter.setData(chatList)
+//            } else {
+//                shortToast("부적절한 단어 혹은 짧은 문장")
+//                for (i in 0..< 2) {
+//                    chatList.removeAt(chatList.size - 2 + i)
+//                }
+//                recyclerAdapter.setData(chatList)
+//            }
+        }
+    }
+
+    private suspend fun sendMessage(roomId: Int, message: String) {
+        val chatRequest = ChatData(message = message)
+        val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, roomId = roomId, chat = chatRequest)
+
+        if (response.isSuccessful) {
             val newReceived = Received(
                 id = -100,
                 isAi = false,
-                message = chat.message,
+                message = message,
                 datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date()),
                 roomId = roomId,
                 userId = 0,
@@ -158,8 +200,8 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
             binding.chattingEditText.text.clear()
 
             // 플레이스홀더 아이템 두 개 추가
-            val placeholderReceived = Received(
-                id = -1,
+            val placeholder1 = Received(
+                id = -2,
                 isAi = true,
                 message = "로딩 중...",
                 datetime = "",
@@ -167,29 +209,61 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 userId = 0,
                 resource = ""
             )
-            chatList.add(placeholderReceived)
-            chatList.add(placeholderReceived.copy(id = -2))
-            recyclerAdapter.addChat(placeholderReceived)
-            recyclerAdapter.addChat(placeholderReceived.copy(id = -2))
+            val placeholder2 = placeholder1.copy(id = -1)
+
+            chatList.add(placeholder1)
+            chatList.add(placeholder2)
+            recyclerAdapter.addChat(placeholder1)
+            recyclerAdapter.addChat(placeholder2)
 
             binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+            log("ChattingFragment sendMessage response.isSuccessful $response")
+        } else {
+            log("ChattingFragment sendMessage response.error $response")
+        }
+    }
 
-            // 데이터 요청 및 처리
-            val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat, roomId = roomId)
-            if (response.isSuccessful) {
-                val receivedData = response.body()!!.data.received
-                for (i in receivedData.indices) {
-                    chatList[chatList.size - 2 + i] = receivedData[i]
-                }
+    private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
+        val receivedMessage = chatMessage.data?.message
+        val newReceived = Received(
+            id = receivedMessage?.id,
+            isAi = true,
+            message = receivedMessage?.message ?: "값이 비어있음",
+            datetime = receivedMessage?.timestamp ?: SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date()),
+            roomId = roomId,
+            userId = receivedMessage?.userId ?: -1,
+            resource = receivedMessage?.resource ?: "CHAT"
+        )
+        log("Chatting handleChatMessage chatMessage is $chatMessage")
+
+        val action = chatMessage.data?.action ?: return
+        // action에 따라 처리
+        when (action) {
+            "START" -> {}
+            "TEXT" -> {
+                log("TEXT 리턴 값입니다!")
+                chatList[chatList.size - 2] = (newReceived)
                 recyclerAdapter.setData(chatList)
-            } else {
-                shortToast("부적절한 단어 혹은 짧은 문장")
+
+            }
+            "IMAGE" -> {
+                log("IMAGE 리턴 값입니다!")
+                chatList[chatList.size - 1] = (newReceived)
+                recyclerAdapter.setData(chatList)
+            }
+            "END" -> if (chatMessage.data.message != null) {
+                shortToast(chatMessage.data.message.message!!)
                 for (i in 0..< 2) {
                     chatList.removeAt(chatList.size - 2 + i)
                 }
                 recyclerAdapter.setData(chatList)
             }
+            else -> {
+                logE("알 수 없는 action: $action")
+            }
         }
+
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
 
     private fun showChangeTitleDialog() {
@@ -214,10 +288,10 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 return@setPositiveButton
             }
 
-             viewLifecycleOwner.lifecycleScope.launch {
-                 RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, newTitle))
-                 binding.chattingToolbar.title = newTitle
-             }
+            viewLifecycleOwner.lifecycleScope.launch {
+                RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, newTitle))
+                binding.chattingToolbar.title = newTitle
+            }
 
             dialog.dismiss()
         }
@@ -229,6 +303,7 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
     override fun onDestroyView() {
         super.onDestroyView()
+        webSocketManager.stop() // 프래그먼트 종료 시 WebSocket 연결 해제
 
         if (chatList.isEmpty()) {
             (requireActivity() as? BaseControllable)?.deleteRoom(roomId = roomId)
