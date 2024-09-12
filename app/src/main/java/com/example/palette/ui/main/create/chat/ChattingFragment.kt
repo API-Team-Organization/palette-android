@@ -93,7 +93,9 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                         val temporaryList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)?.data
 
                         if (temporaryList.isNullOrEmpty()) {
-                            shortToast("채팅 내역이 더 없습니다")
+                            if (loadPage != 1) {
+                                shortToast("채팅 내역이 더 없습니다")
+                            }
                             loadPage -= 1
                         } else {
                             chatList.reverse()
