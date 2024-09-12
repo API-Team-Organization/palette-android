@@ -26,4 +26,13 @@ interface ChatService {
         @Query("page") page: Int,
         @Query("size") size: Int
     ): Response<BaseResponse<MutableList<Received>>>
+
+    @GET("chat/my-image")
+    suspend fun getImageList(
+        @Header("X-AUTH-Token") token: String,
+        @Header("Accept") accept: String = "*/*",
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Query("sort") sort: List<String>
+    ): Response<BaseResponse<List<String>>>
 }
