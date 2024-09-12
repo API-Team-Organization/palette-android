@@ -13,7 +13,6 @@ import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.databinding.FragmentChangePasswordBinding
 import com.example.palette.ui.main.ServiceActivity
-import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -27,38 +26,38 @@ class ChangePasswordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
-
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
-
-        binding.etBeforePassword.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.etBeforePassword.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
-            } else {
-                binding.etBeforePassword.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.black)
-            }
-        }
-
-        binding.etAfterPassword.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.etAfterPassword.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
-            } else {
-                binding.etAfterPassword.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.black)
-            }
-        }
-
+        initView()
         return binding.root
+    }
+
+    private fun initView() {
+        with(binding.etBeforePassword) {
+            setOnFocusChangeListener { _, hasFocus ->
+                backgroundTintList = ContextCompat.getColorStateList(
+                    requireContext(),
+                    if (hasFocus) R.color.blue else R.color.black
+                )
+            }
+        }
+
+        with(binding.etAfterPassword) {
+            setOnFocusChangeListener { _, hasFocus ->
+                backgroundTintList =
+                    ContextCompat.getColorStateList(
+                        requireContext(),
+                        if (hasFocus) R.color.blue else R.color.blue
+                    )
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.changePasswordBtn.setOnClickListener {
-            val beforePassword = binding.etBeforePassword.text.toString()
-            val afterPassword = binding.etAfterPassword.text.toString()
+            val beforePassword = binding.etBeforePassword.text.toString().trim()
+            val afterPassword = binding.etAfterPassword.text.toString().trim()
 
             if (beforePassword.isEmpty() || afterPassword.isEmpty()) {
                 shortToast("이전 비밀번호와 변경할 비밀번호를 입력해주세요.")
@@ -70,9 +69,6 @@ class ChangePasswordFragment : Fragment() {
     }
 
     private fun changePassword(beforePassword: String, afterPassword: String) {
-        log(PaletteApplication.prefs.token)
-        log(beforePassword)
-        log(afterPassword)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = AuthRequestManager.changePasswordRequest(
@@ -87,7 +83,10 @@ class ChangePasswordFragment : Fragment() {
 
                 } else {
                     shortToast("비밀번호 변경에 실패했습니다.")
-                    Log.e("ChangePasswordFragment", "Failed to change password: ${response.code()} - ${response.message()} [${response.errorBody()?.string()}]")
+                    Log.e(
+                        "ChangePasswordFragment",
+                        "Failed to change password: ${response.code()} - ${response.message()}"
+                    )
                 }
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다.")
