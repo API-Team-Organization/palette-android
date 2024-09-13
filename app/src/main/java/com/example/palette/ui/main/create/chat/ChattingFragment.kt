@@ -1,14 +1,17 @@
 package com.example.palette.ui.main.create.chat
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -72,7 +75,10 @@ class ChattingFragment(
         binding.chattingToolbar.title = title
 
         viewLifecycleOwner.lifecycleScope.launch {
-            chatList = ChatRequestManager.getChatList(token = PaletteApplication.prefs.token, roomId = roomId)!!.data
+            chatList = ChatRequestManager.getChatList(
+                token = PaletteApplication.prefs.token,
+                roomId = roomId
+            )!!.data
             if (chatList.size != 0) {
                 chatList.reverse()
                 recyclerAdapter.setData(chatList)
@@ -104,11 +110,15 @@ class ChattingFragment(
                 if (!binding.chattingRecycler.canScrollVertically(-1) && !isLoading) {
                     isLoading = true // 데이터를 로드 중으로 설정
 
-                    val millis: Long? = stringToMillis(chatList[chatList.size -1].datetime)
+                    val millis: Long? = stringToMillis(chatList[chatList.size - 1].datetime)
                     loadPage = millis ?: 0
                     viewLifecycleOwner.lifecycleScope.launch {
                         if (millis == null) return@launch
-                        val temporaryList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId = roomId, before = millis)?.data
+                        val temporaryList = ChatRequestManager.getChatList(
+                            PaletteApplication.prefs.token,
+                            roomId = roomId,
+                            before = millis
+                        )?.data
 
                         if (temporaryList.isNullOrEmpty()) {
                             shortToast("채팅 내역이 더 없습니다")
@@ -140,11 +150,12 @@ class ChattingFragment(
             override fun afterTextChanged(s: Editable?) {
                 // EditText 내용이 변경된 후 호출됩니다.
                 if (s.isNullOrBlank()) {
-                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_arrow_upward_gray)
                 } else {
-                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_ok)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_arrow_upward)
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -154,7 +165,10 @@ class ChattingFragment(
         viewLifecycleOwner.lifecycleScope.launch {
             if (chatList.size == 0) {
                 log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
-                RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, chat.message))
+                RoomRequestManager.setRoomTitle(
+                    PaletteApplication.prefs.token,
+                    RoomData(roomId, chat.message)
+                )
                 binding.chattingToolbar.title = chat.message
             }
             sendMessage(roomId, chat.message) // Retrofit으로 채팅 메시지 전송
@@ -181,14 +195,20 @@ class ChattingFragment(
 
     private suspend fun sendMessage(roomId: Int, message: String) {
         val chatRequest = ChatData(message = message)
-        val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, roomId = roomId, chat = chatRequest)
+        val response = ChatRequestManager.createChat(
+            PaletteApplication.prefs.token,
+            roomId = roomId,
+            chat = chatRequest
+        )
 
         if (response.isSuccessful) {
             val newReceived = Received(
                 id = -100,
                 isAi = false,
                 message = message,
-                datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date()),
+                datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(
+                    Date()
+                ),
                 roomId = roomId,
                 userId = 0,
                 resource = "Chat"
@@ -227,7 +247,10 @@ class ChattingFragment(
             id = receivedMessage?.id,
             isAi = true,
             message = receivedMessage?.message ?: "값이 비어있음",
-            datetime = receivedMessage?.timestamp ?: SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date()),
+            datetime = receivedMessage?.timestamp ?: SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss",
+                Locale.getDefault()
+            ).format(Date()),
             roomId = roomId,
             userId = receivedMessage?.userId ?: -1,
             resource = receivedMessage?.resource ?: "CHAT"
@@ -244,15 +267,17 @@ class ChattingFragment(
                 recyclerAdapter.setData(chatList)
 
             }
+
             "IMAGE" -> {
                 log("IMAGE 리턴 값입니다!")
                 chatList[chatList.size - 1] = (newReceived)
                 recyclerAdapter.setData(chatList)
             }
+
             "END" -> {
                 if (chatMessage.data.message == null) return
                 shortToast(chatMessage.data.message.message!!)
-                for (i in 0..< 2) {
+                for (i in 0..<2) {
                     chatList.removeAt(chatList.size - 2 + i)
                 }
                 recyclerAdapter.setData(chatList)
@@ -269,35 +294,46 @@ class ChattingFragment(
     private fun showChangeTitleDialog() {
         val builder = AlertDialog.Builder(requireContext())
 
-        builder.setTitle("제목 변경")
-        builder.setMessage("제목을 변경해주세요")
+        val inflater = LayoutInflater.from(requireContext())
+        val dialogView = inflater.inflate(R.layout.dialog_edit_text, null)
 
-        // EditText 생성
-        val input = EditText(requireContext())
-        input.hint = "새 제목 입력"
-        input.inputType = InputType.TYPE_CLASS_TEXT
+        val input = dialogView.findViewById<EditText>(R.id.etChangeTitle)
+        val applyButton = dialogView.findViewById<TextView>(R.id.tv_apply)
 
-        // EditText를 다이얼로그에 추가
-        builder.setView(input)
+        input.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                input.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
+            } else {
+                input.backgroundTintList =
+                    ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
+        }
 
-        builder.setPositiveButton("확인") { dialog, _ ->
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+
+        applyButton.setOnClickListener {
             val newTitle = input.text.toString()
 
             if (newTitle.isBlank()) {
                 shortToast("제목을 입력해주세요")
-                return@setPositiveButton
+                return@setOnClickListener
+            } else {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    RoomRequestManager.setRoomTitle(
+                        PaletteApplication.prefs.token,
+                        RoomData(roomId, newTitle)
+                    )
+                    binding.chattingToolbar.title = newTitle
+                }
+                dialog.dismiss()
             }
 
-            viewLifecycleOwner.lifecycleScope.launch {
-                RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, RoomData(roomId, newTitle))
-                binding.chattingToolbar.title = newTitle
-            }
-
-            dialog.dismiss()
         }
-        builder.setCancelable(false)
-
-        val dialog = builder.create()
+        dialog.setCancelable(false)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
     }
 
