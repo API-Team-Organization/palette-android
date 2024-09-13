@@ -110,6 +110,7 @@ class ChattingFragment(
                 if (!binding.chattingRecycler.canScrollVertically(-1) && !isLoading) {
                     isLoading = true // 데이터를 로드 중으로 설정
 
+                    if (chatList.isEmpty()) return
                     val millis: Long? = stringToMillis(chatList[chatList.size - 1].datetime)
                     loadPage = millis ?: 0
                     viewLifecycleOwner.lifecycleScope.launch {
