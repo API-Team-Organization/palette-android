@@ -16,8 +16,8 @@ object ChatRequestManager {
         return response
     }
 
-    suspend fun getChatList(token: String, roomId: Int, page: Int): BaseResponse<MutableList<Received>>? {
-        val response = chatService.getChatList(token = token, roomId = roomId, page = page, size = 10)
+    suspend fun getChatList(token: String, roomId: Int, before: Long = System.currentTimeMillis()): BaseResponse<MutableList<Received>>? {
+        val response = chatService.getChatList(token = token, roomId = roomId, before = before, size = 10)
         Log.d(Constant.TAG, "getChatList response: $response")
 
         return if (response.isSuccessful) {

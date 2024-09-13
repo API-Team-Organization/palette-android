@@ -40,6 +40,17 @@ android {
 }
 
 dependencies {
+    //gson
+    implementation("com.google.code.gson:gson:2.10.1")
+    
+    // rx
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+
+    // scarlet
+    implementation("com.tinder.scarlet:scarlet:0.1.12")
+
     // OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")

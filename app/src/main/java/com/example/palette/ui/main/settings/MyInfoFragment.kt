@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentMyInfoBinding
@@ -50,9 +49,10 @@ class MyInfoFragment : Fragment() {
     }
 
     private fun loadProfileInfo() {
-        binding.tvEmail.text = UserPrefs.userId
-        binding.tvUserName.text = UserPrefs.userName
-        binding.tvBirthDate.text = UserPrefs.userBirthDate
+        val prefs = PaletteApplication.prefs
+        binding.tvEmail.text = prefs.userId
+        binding.tvUserName.text = prefs.username
+        binding.tvBirthDate.text = prefs.userBirthDate
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -62,9 +62,9 @@ class MyInfoFragment : Fragment() {
                     binding.tvUserName.text = data.name
                     binding.tvBirthDate.text = data.birthDate
 
-                    UserPrefs.userId = data.email
-                    UserPrefs.userName = data.name
-                    UserPrefs.userBirthDate = data.birthDate
+                    prefs.userId = data.email
+                    prefs.username = data.name
+                    prefs.userBirthDate = data.birthDate
                 }
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "Setting profileInfo error : ", e)

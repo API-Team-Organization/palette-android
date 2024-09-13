@@ -12,7 +12,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
+import com.example.palette.application.PaletteApplication
 import com.example.palette.databinding.FragmentJoinEmailBinding
+import com.example.palette.ui.main.settings.PremiumFragment
 import java.util.regex.Pattern
 
 class JoinEmailFragment : Fragment() {
@@ -55,7 +57,7 @@ class JoinEmailFragment : Fragment() {
 
                 if (isEmailValid) {
                     registerViewModel.setEmail(email)
-                    saveEmail(email)
+                    PaletteApplication.prefs.userId = email
                     findNavController().navigate(R.id.action_joinEmailFragment_to_joinPasswordFragment)
                 } else {
                     checkEmailFailed(etJoinEmail)
@@ -77,13 +79,5 @@ class JoinEmailFragment : Fragment() {
         val pattern = Pattern.compile(emailPattern)
         val matcher = pattern.matcher(email)
         return matcher.find()
-    }
-
-    private fun saveEmail(email: String) {
-        val sharedPref = requireActivity().getSharedPreferences("MyApp", Context.MODE_PRIVATE)
-        with (sharedPref.edit()) {
-            putString("email", email)
-            apply()
-        }
     }
 }

@@ -7,16 +7,24 @@ class PreferenceManager(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PALETTE_APP, Context.MODE_PRIVATE)
 
-    var token: String by PreferenceDelegate(TOKEN, "")
+    var token: String by PreferenceDelegate("TOKEN", "")
+    var isFirst: Boolean by PreferenceDelegate("IS_FIRST", true)
+    var username: String by PreferenceDelegate("USERNAME", "")
+    var userId: String by PreferenceDelegate("USER_ID", "")
+    var userBirthDate: String by PreferenceDelegate("USER_BIRTH_DATE", "")
 
     fun clearToken() {
         token = ""
     }
 
+    fun clearUser() {
+        username = ""
+        userId = ""
+        userBirthDate = ""
+    }
+
     companion object {
         private const val PALETTE_APP = "PALETTE_APP"
-        
-        private const val TOKEN = "TOKEN"
     }
 
     private inner class PreferenceDelegate<T>(

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
+import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
 import com.example.palette.databinding.FragmentOnboardingDefaultBinding
 
@@ -24,15 +25,14 @@ class OnboardingDefaultFragment : Fragment() {
     }
 
     private fun initView() {
-        val pref = requireActivity().getSharedPreferences("notFirst", MODE_PRIVATE)
-        val notFirst = pref.getBoolean("notFirst", true)
+        val isFirst = PaletteApplication.prefs.isFirst
 
-        if (notFirst) {
-            Log.d(Constant.TAG, "OnboardingDefaultFragment notFirst: ${notFirst}")
+        if (!isFirst) {
             findNavController().navigate(R.id.action_onboardingDefaultFragment_to_startFragment)
         }
 
-        binding.registerViewpager.adapter = RegisterPagerAdapter(requireActivity().supportFragmentManager, binding)
+        binding.registerViewpager.adapter =
+            RegisterPagerAdapter(requireActivity().supportFragmentManager)
         binding.registerViewpager.offscreenPageLimit = 2
         binding.dotsIndicator.attachTo(binding.registerViewpager)
     }

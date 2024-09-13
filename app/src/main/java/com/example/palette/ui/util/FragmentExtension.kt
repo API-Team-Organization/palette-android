@@ -3,9 +3,13 @@ package com.example.palette.ui.util
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.palette.R
+import com.google.android.material.snackbar.BaseTransientBottomBar
 
-fun Fragment.shortToast(message: String) {
-    Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
+fun Fragment.shortToast(
+    message: String,
+    @BaseTransientBottomBar.Duration duration: Int = Toast.LENGTH_SHORT
+) {
+    requireActivity().shortToast(message, duration)
 }
 
 fun Fragment.changeFragment(fragment: Fragment) {

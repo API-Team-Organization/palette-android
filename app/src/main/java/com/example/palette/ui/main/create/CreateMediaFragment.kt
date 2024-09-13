@@ -2,23 +2,16 @@ package com.example.palette.ui.main.create
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseResponse
 import com.example.palette.data.info.InfoRequestManager.profileInfoRequest
@@ -52,7 +45,8 @@ class CreateMediaFragment : Fragment() {
         with(binding) {
             workAdapter = CreateMediaAdapter(itemList)
             workRecyclerView.adapter = workAdapter
-            workRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            workRecyclerView.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
 
         showSampleData(isLoading = true)
@@ -102,7 +96,11 @@ class CreateMediaFragment : Fragment() {
                     shortToast("인증 오류: 다시 로그인해주세요.")
                     (requireActivity() as? BaseControllable)?.sessionDialog(requireActivity())
                 } else {
-                    log("HttpException & !401 에서 서버 오류가 발생했습니다: ${e.message()} \n서버응답: ${e.response()?.errorBody()?.string()}")
+                    log(
+                        "HttpException & !401 에서 서버 오류가 발생했습니다: ${e.message()} \n서버응답: ${
+                            e.response()?.errorBody()?.string()
+                        }"
+                    )
                 }
             } catch (e: Exception) {
                 log("CreateMediaFragment loadData 알 수 없는 오류가 발생했습니다: ${e.message}")
@@ -115,35 +113,24 @@ class CreateMediaFragment : Fragment() {
     }
 
     private fun deleteChatDialog(context: Context, position: Int) {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_confirm, null)
         val builder = AlertDialog.Builder(context)
-        builder.setView(dialogView)
-        val dialog = builder.create()
 
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
+        builder.setTitle("채팅방 삭제")
+        builder.setMessage("정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?")
 
-        val titleTextView = dialogView.findViewById<TextView>(R.id.confirmTextView)
-        val noButton = dialogView.findViewById<TextView>(R.id.noTextView)
-        val yesButton = dialogView.findViewById<TextView>(R.id.yesTextView)
-
-        titleTextView.text = "정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?"
-
-        noButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        yesButton.setOnClickListener {
+        builder.setPositiveButton("삭제") { dialog, _ ->
             deleteRoom(position)
             dialog.dismiss()
         }
 
-        dialog.show()
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+        }
 
-        dialog.window?.setLayout(
-            (context.resources.displayMetrics.widthPixels * 0.9).toInt(),
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        builder.setCancelable(false)
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun showSampleData(isLoading: Boolean) {
@@ -165,7 +152,10 @@ class CreateMediaFragment : Fragment() {
 
                 if (roomResponse.isSuccessful) {
                     shortToast("생성 성공")
-                    startChatting(roomResponse.body()!!.data.id, title = roomResponse.body()!!.data.title.toString())
+                    startChatting(
+                        roomResponse.body()!!.data.id,
+                        title = roomResponse.body()!!.data.title.toString()
+                    )
                     log("생성된 roomId == ${roomResponse.body()!!.data.id}")
                 } else {
                     shortToast("생성 실패 errorCode: 34533")
@@ -179,7 +169,10 @@ class CreateMediaFragment : Fragment() {
     private fun deleteRoom(position: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = RoomRequestManager.deleteRoom(PaletteApplication.prefs.token, itemList[position].id)
+                val response = RoomRequestManager.deleteRoom(
+                    PaletteApplication.prefs.token,
+                    itemList[position].id
+                )
                 if (response.isSuccessful) {
                     itemList.removeAt(position)
                     workAdapter.notifyItemRemoved(position)
@@ -191,7 +184,12 @@ class CreateMediaFragment : Fragment() {
                     shortToast("삭제 실패: ${response.message()}")
                 }
             } catch (e: HttpException) {
-                Log.e(Constant.TAG, "CreateMediaFragment deleteRoom Http error: ${e.response()?.errorBody()?.string()}")
+                Log.e(
+                    Constant.TAG,
+                    "CreateMediaFragment deleteRoom Http error: ${
+                        e.response()?.errorBody()?.string()
+                    }"
+                )
                 shortToast("Failed to delete item: ${e.message()}")
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "CreateMediaFragment deleteRoom Exception error: ${e.message}")
@@ -202,18 +200,15 @@ class CreateMediaFragment : Fragment() {
 
     private fun loadProfileInfo() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val cachedUserName = UserPrefs.userName
-            if (cachedUserName != null) {
-                binding.userName.text = "$cachedUserName"
-                binding.today.text = "환영합니다!"
-            } else {
+            val username = PaletteApplication.prefs.username
+            if (username.isEmpty()) {
                 binding.userName.text = "..."
                 try {
                     val profileResponse = profileInfoRequest(PaletteApplication.prefs.token)
                     if (profileResponse != null && profileResponse.code <= 400) {
-                        val userName = profileResponse.data.name
-                        UserPrefs.userName = userName
-                        binding.userName.text = userName
+                        val username = profileResponse.data.name
+                        PaletteApplication.prefs.username = username
+                        binding.userName.text = username
                         binding.today.text = "환영합니다!"
                     } else {
                         log("프로필 정보를 가져오는 데 실패했습니다: ${profileResponse?.message}")
@@ -221,6 +216,9 @@ class CreateMediaFragment : Fragment() {
                 } catch (e: Exception) {
                     log("프로필 정보를 가져오는 도중 오류가 발생했습니다: ${e.message}")
                 }
+            } else {
+                binding.userName.text = username
+                binding.today.text = "환영합니다!"
             }
         }
     }
