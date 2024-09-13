@@ -72,13 +72,12 @@ class ChattingFragment(
         binding.chattingToolbar.title = title
 
         viewLifecycleOwner.lifecycleScope.launch {
-            chatList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)!!.data
+            chatList = ChatRequestManager.getChatList(token = PaletteApplication.prefs.token, roomId = roomId)!!.data
             if (chatList.size != 0) {
                 chatList.reverse()
                 recyclerAdapter.setData(chatList)
                 binding.chattingRecycler.scrollToPosition(chatList.size - 1)
-            }
-            else {
+            } else {
                 log("ChattingFragment 리스트가 비어있습니다.")
             }
         }
@@ -93,7 +92,6 @@ class ChattingFragment(
 
         binding.chattingSubmitButton.setOnClickListener {
             val newMessage = binding.chattingEditText.text.toString()
-
             val chat = ChatData(newMessage)
 
             if (newMessage.isNotBlank()) {
@@ -115,9 +113,7 @@ class ChattingFragment(
                         if (temporaryList.isNullOrEmpty()) {
                             shortToast("채팅 내역이 더 없습니다")
                         } else {
-                            chatList.reverse()
-                            chatList += temporaryList
-                            chatList.reverse()
+                            chatList.addAll(0, temporaryList)
                             recyclerAdapter.setData(chatList)
 //                            binding.chattingRecycler.scrollToPosition(chatList.size - loadPage*10)
                         }
@@ -253,13 +249,15 @@ class ChattingFragment(
                 chatList[chatList.size - 1] = (newReceived)
                 recyclerAdapter.setData(chatList)
             }
-            "END" -> if (chatMessage.data.message != null) {
+            "END" -> {
+                if (chatMessage.data.message == null) return
                 shortToast(chatMessage.data.message.message!!)
                 for (i in 0..< 2) {
                     chatList.removeAt(chatList.size - 2 + i)
                 }
                 recyclerAdapter.setData(chatList)
             }
+
             else -> {
                 logE("알 수 없는 action: $action")
             }
@@ -305,7 +303,7 @@ class ChattingFragment(
 
     fun stringToMillis(dateString: String): Long? {
         // 날짜 포맷을 설정합니다. 밀리초 이하의 숫자는 무시하기 위해 .SSS까지만 사용합니다.
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val date = inputFormat.parse(dateString)
         return date?.time // Long 형태의 밀리초 반환
     }

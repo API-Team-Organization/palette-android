@@ -9,7 +9,7 @@ fun Fragment.shortToast(
     message: String,
     @BaseTransientBottomBar.Duration duration: Int = Toast.LENGTH_SHORT
 ) {
-    Toast.makeText(requireActivity(), message, duration).show()
+    requireActivity().shortToast(message, duration)
 }
 
 fun Fragment.changeFragment(fragment: Fragment) {
