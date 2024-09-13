@@ -33,14 +33,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class ChattingFragment(private var roomId: Int, private var title: String) : Fragment() {
+class ChattingFragment(
+    private var roomId: Int,
+    private var title: String
+) : Fragment() {
     private lateinit var binding: FragmentChattingBinding
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
     private var chatList: MutableList<Received> = mutableListOf()
     private var isLoading = false
-    private var loadPage = 0
+    private var loadPage = 0L
     private lateinit var webSocketManager: WebSocketManager
 
     override fun onCreateView(
@@ -103,21 +106,20 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
                 if (!binding.chattingRecycler.canScrollVertically(-1) && !isLoading) {
                     isLoading = true // 데이터를 로드 중으로 설정
 
+                    val millis: Long? = stringToMillis(chatList[chatList.size -1].datetime)
+                    loadPage = millis ?: 0
                     viewLifecycleOwner.lifecycleScope.launch {
-                        loadPage += 1
-                        val temporaryList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId, loadPage)?.data
+                        if (millis == null) return@launch
+                        val temporaryList = ChatRequestManager.getChatList(PaletteApplication.prefs.token, roomId = roomId, before = millis)?.data
 
                         if (temporaryList.isNullOrEmpty()) {
-                            if (loadPage != 1) {
-                                shortToast("채팅 내역이 더 없습니다")
-                            }
-                            loadPage -= 1
+                            shortToast("채팅 내역이 더 없습니다")
                         } else {
                             chatList.reverse()
                             chatList += temporaryList
                             chatList.reverse()
                             recyclerAdapter.setData(chatList)
-                            binding.chattingRecycler.scrollToPosition(chatList.size - loadPage*10)
+//                            binding.chattingRecycler.scrollToPosition(chatList.size - loadPage*10)
                         }
 
                         isLoading = false // 데이터 로드가 끝났으므로 플래그 초기화
@@ -299,6 +301,13 @@ class ChattingFragment(private var roomId: Int, private var title: String) : Fra
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+    fun stringToMillis(dateString: String): Long? {
+        // 날짜 포맷을 설정합니다. 밀리초 이하의 숫자는 무시하기 위해 .SSS까지만 사용합니다.
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+        return date?.time // Long 형태의 밀리초 반환
     }
 
     override fun onDestroyView() {

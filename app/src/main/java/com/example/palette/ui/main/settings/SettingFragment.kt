@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.palette.MainActivity
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.PreferenceManager
-import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant.TAG
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.info.InfoRequestManager
@@ -61,14 +60,15 @@ class SettingFragment : Fragment() {
     }
 
     private fun loadUserNameInfo() {
-        binding.tvUserName.text = UserPrefs.userName
+        val prefs = PaletteApplication.prefs
+        binding.tvUserName.text = prefs.username
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val profileInfo = InfoRequestManager.profileInfoRequest(PaletteApplication.prefs.token)
                 profileInfo?.data?.let { data ->
                     binding.tvUserName.text = data.name
-                    UserPrefs.userName = data.name
+                    prefs.username = data.name
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Setting UserNameInfo error : ", e)
@@ -100,9 +100,8 @@ class SettingFragment : Fragment() {
             Log.d(TAG, "Logout response.header code : ${response.code()}")
         }
 
-        PaletteApplication.prefs = PreferenceManager(requireContext().applicationContext)
         PaletteApplication.prefs.clearToken()
-        UserPrefs.clearUserData()
+        PaletteApplication.prefs.clearUser()
 
         val intent = Intent(activity, MainActivity::class.java)
         requireActivity().startActivity(intent)
@@ -112,26 +111,24 @@ class SettingFragment : Fragment() {
     }
 
     private fun resignDialog(context: Context) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("회원탈퇴")
-        builder.setMessage("정말 탈퇴하시겠습니까?")
+        val builder = AlertDialog.Builder(context).apply {
+            setTitle("회원탈퇴")
+            setMessage("정말 탈퇴하시겠습니까?")
+            setPositiveButton("탈퇴") { dialog, _ ->
+                resign()
+                val intent = Intent(activity, MainActivity::class.java)
+                requireActivity().startActivity(intent)
 
-        builder.setPositiveButton("탈퇴") { dialog, _ ->
-            resign()
-            val intent = Intent(activity, MainActivity::class.java)
-            requireActivity().startActivity(intent)
-
-            activity?.finish()
-            dialog.dismiss()
+                activity?.finish()
+                dialog.dismiss()
+            }
+            setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            setCancelable(false)
         }
 
-        builder.setNegativeButton("취소") { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.setCancelable(false)
-
-        val dialog = builder.create()
-        dialog.show()
+        builder.create().show()
     }
 
     private fun resign() {

@@ -42,19 +42,17 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         const val VIEW_TYPE_RIGHT = 2
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (listOfChat[position].isAi) VIEW_TYPE_LEFT else VIEW_TYPE_RIGHT
-    }
+    override fun getItemViewType(position: Int) =
+        if (listOfChat[position].isAi) VIEW_TYPE_LEFT else VIEW_TYPE_RIGHT
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             VIEW_TYPE_LEFT -> {
-                val inflater = LayoutInflater.from(parent.context)
                 val binding = ItemChattingPaletteBoxBinding.inflate(inflater, parent, false)
                 LeftViewHolder(binding)
             }
             else -> {
-                val inflater = LayoutInflater.from(parent.context)
                 val binding = ItemChattingMeBoxBinding.inflate(inflater, parent, false)
                 RightViewHolder(binding)
             }
@@ -83,7 +81,8 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         notifyItemInserted(listOfChat.size - 1)
     }
 
-    inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(chat: Received) {
             binding.apply {
                 // 초기화
@@ -202,8 +201,10 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
             setTitle("설명 복사")
             setMessage("홍보물 설명을 복사하시겠습니까?")
             setPositiveButton("예") { _, _ ->
-                val clipboardManager = binding.cardGchatMessagePalette.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                val clipData = ClipData.newPlainText("Palette", binding.textGchatMessagePalette.text)
+                val clipboardManager =
+                    binding.cardGchatMessagePalette.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                val clipData =
+                    ClipData.newPlainText("Palette", binding.textGchatMessagePalette.text)
                 clipboardManager?.setPrimaryClip(clipData)
                 Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
             }
@@ -217,7 +218,8 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
             setTitle("글 복사")
             setMessage("글을 복사하시겠습니까?")
             setPositiveButton("예") { _, _ ->
-                val clipboardManager = binding.cardGchatMessageMe.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                val clipboardManager =
+                    binding.cardGchatMessageMe.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                 val clipData = ClipData.newPlainText("Palette", binding.textGchatMessageMe.text)
                 clipboardManager?.setPrimaryClip(clipData)
                 Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
@@ -240,6 +242,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     imageView.setImage(ImageSource.bitmap(resource))
                 }
+
                 override fun onLoadCleared(placeholder: Drawable?) {}
             })
 
@@ -247,7 +250,8 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         dialog.show()
     }
 
-    inner class RightViewHolder(private val binding: ItemChattingMeBoxBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class RightViewHolder(private val binding: ItemChattingMeBoxBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(chat: Received) {
             binding.apply {
                 textGchatMessageMe.text = chat.message // 텍스트 설정

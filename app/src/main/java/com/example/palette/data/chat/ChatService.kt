@@ -23,7 +23,7 @@ interface ChatService {
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Path("roomId") roomId: Int,
-        @Query("page") page: Int,
+        @Query("before") before: Long,
         @Query("size") size: Int
     ): Response<BaseResponse<MutableList<Received>>>
 

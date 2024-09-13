@@ -44,19 +44,20 @@ class WorkPosterFragment : Fragment() {
             try {
                 val token = PaletteApplication.prefs.token
                 val page = 0
-                val size = 20
+                val size = 20 // TODO: Constants 로 분리
                 val sort = listOf("createdDate,asc")
 
-                val response = ChatRequestManager.getImageList(token, page, size, sort)
+                val response =
+                    ChatRequestManager.getImageList(token, page, size, sort) ?: return@launch
 
-                if (response != null && response.code == 200) {
-                    val imageList = response.data
-
-                    withContext(Dispatchers.Main) {
-                        imageAdapter.updateImages(imageList)
-                    }
-                } else {
+                if (response.code != 200) {
                     logE("Failed to load images: ${response?.code}")
+                    return@launch
+                }
+                val imageList = response.data
+
+                withContext(Dispatchers.Main) {
+                    imageAdapter.updateImages(imageList)
                 }
             } catch (e: Exception) {
                 logE("Error: ${e.message}")

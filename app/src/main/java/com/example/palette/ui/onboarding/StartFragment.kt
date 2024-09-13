@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
+import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
 import com.example.palette.databinding.FragmentStartBinding
 
@@ -27,11 +28,8 @@ class StartFragment : Fragment() {
     }
 
     private fun initView() {
-        val pref = requireActivity().getSharedPreferences("notFirst", Context.MODE_PRIVATE)
-        val notFirst = pref.getBoolean("notFirst", true)
-
-        if (notFirst) {
-            Log.d(Constant.TAG, "StartFragment notFirst: ${notFirst}")
+        val isFirst = PaletteApplication.prefs.isFirst
+        if (!isFirst) {
             findNavController().navigate(R.id.action_startFragment_to_loginFragment)
         }
         binding.signInText.setOnClickListener {

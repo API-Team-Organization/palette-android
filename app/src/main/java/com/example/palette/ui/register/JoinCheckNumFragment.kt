@@ -54,13 +54,8 @@ class JoinCheckNumFragment : Fragment() {
     }
 
     private fun showEmail() {
-        val email = getEmail()
+        val email = PaletteApplication.prefs.userId
         binding.nEtJoinEmail.setText(email)
-    }
-
-    private fun getEmail(): String? {
-        val sharedPref = requireActivity().getSharedPreferences("MyApp", Context.MODE_PRIVATE)
-        return sharedPref.getString("email", "")
     }
 
     private fun verifyCode(code: String) {

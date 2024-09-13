@@ -28,17 +28,29 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+enum class BottomTab(
+    val eventName: String
+) {
+    HOME("click_home"),
+    SEARCH("click_search"),
+    SETTING("click_setting");
+
+    companion object {
+        fun from(eventName: String) = entries.find { it.eventName == eventName }
+    }
+}
+
 class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val binding by lazy { ActivityServiceBinding.inflate(layoutInflater) }
     private val riveAnimationView: RiveAnimationView by lazy(LazyThreadSafetyMode.NONE) {
         binding.bottomBar
     }
-    private var currentTabIndex = -1
+    private var currentTab: BottomTab? = null
     private val createMediaFragment = CreateMediaFragment()
     private val workFragment = WorkFragment()
     private val settingFragment = SettingFragment()
 
-    val eventListener = object : RiveFileController.RiveEventListener {
+    private val eventListener = object : RiveFileController.RiveEventListener {
         override fun notifyEvent(event: RiveEvent) {
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
@@ -49,11 +61,8 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
                     sessionDialog(this@ServiceActivity)
             }
 
-            when (event.name) {
-                "click_home" -> handleTabClick(0, createMediaFragment)
-                "click_search" -> handleTabClick(1, workFragment)
-                "click_setting" -> handleTabClick(2, settingFragment)
-            }
+            val tab = BottomTab.from(event.name) ?: return
+            handleTabClick(tab)
         }
     }
 
@@ -69,11 +78,17 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         setContentView(binding.root)
     }
 
-    private fun handleTabClick(tabIndex: Int, fragment: Fragment) {
-        if (currentTabIndex != tabIndex) {
-            currentTabIndex = tabIndex
-            changeFragment(fragment, supportFragmentManager)
+    private fun handleTabClick(event: BottomTab) {
+        if (currentTab != event) {
+            currentTab = event
+            changeFragment(getFragment(event), supportFragmentManager)
         }
+    }
+
+    private fun getFragment(event: BottomTab) = when (event) {
+        BottomTab.HOME -> createMediaFragment
+        BottomTab.SEARCH -> workFragment
+        BottomTab.SETTING -> settingFragment
     }
 
     // bottomVisible 메서드 정의

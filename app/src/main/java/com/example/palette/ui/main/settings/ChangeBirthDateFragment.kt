@@ -10,7 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.application.UserPrefs
 import com.example.palette.data.info.InfoRequestManager
 import com.example.palette.databinding.FragmentChangeBirthDateBinding
 import com.example.palette.ui.base.BaseControllable
@@ -51,7 +50,7 @@ class ChangeBirthDateFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            UserPrefs.clearUserData()
+            PaletteApplication.prefs.clearUser()
             changeBirthDate(birthDate)
         }
     }
@@ -112,8 +111,9 @@ class ChangeBirthDateFragment : Fragment() {
         val month = datePicker.month
         val year = datePicker.year
 
-        val calendar = Calendar.getInstance()
-        calendar.set(year, month, day)
+        val calendar = Calendar.getInstance().apply {
+            set(year, month, day)
+        }
 
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return format.format(calendar.time)
