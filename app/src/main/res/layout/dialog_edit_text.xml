@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_dialog_background"
+    android:minWidth="300dp"
+    android:orientation="vertical"
+    android:padding="20dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="채팅방 제목 변경"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pretendard_semibold"/>
+    <EditText
+        android:id="@+id/etChangeTitle"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:hint="변경할 제목"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/black"
+        android:textColorHint="@color/semiLightGray"
+        android:layout_marginTop="5dp"
+        android:inputType="textEmailAddress"
+        android:textColorHighlight="@color/lightBlue"
+        android:textCursorDrawable="@drawable/cursor_drawable"/>
+    <TextView
+        android:id="@+id/tv_apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="5dp"
+        android:text="확인"
+        android:textSize="14sp"
+        android:textColor="@color/primaryColor"
+        android:fontFamily="@font/pretendard_semibold"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_gravity="end"/>
+</LinearLayout>
