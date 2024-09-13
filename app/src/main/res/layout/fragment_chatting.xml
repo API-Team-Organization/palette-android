@@ -19,7 +19,6 @@
             android:orientation="vertical"
             app:layout_constraintTop_toTopOf="parent">
 
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/chattingToolbar"
                 android:layout_width="match_parent"
@@ -49,55 +48,42 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/view"
+            app:layout_constraintBottom_toTopOf="@id/chattingTextBox"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#e0e0e0"
-            app:layout_constraintBottom_toTopOf="@+id/chattingTextBox" />
-
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/chattingTextBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginBottom="15dp">
             <EditText
                 android:id="@+id/chattingEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
-                android:layout_toStartOf="@+id/chattingSubmitButton"
-                android:background="@android:color/transparent"
-                android:fontFamily="@font/suit_medium"
-                android:hint="당신의 palette를 그려보세요"
-                android:textColorHint="@color/semiDarkGray"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:hint="당신의 팔레트를 그려보세요"
+                android:textColorHint="@color/gray"
+                android:textSize="16sp"
                 android:textColor="@color/black"
-                android:inputType="textMultiLine"
-                android:textColorHighlight="@color/lightBlue"
-                android:maxLines="6"
-                tools:ignore="Autofill" />
+                android:fontFamily="@font/pretendard_medium"
+                android:background="@drawable/bac_chatting_edit_text"
+                android:padding="15dp"/>
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/chattingSubmitButton"
-                android:layout_width="64dp"
-                android:layout_height="48dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_send"
-                android:background="@color/default_gray"
-                android:textColor="@color/default_gray" />
-
-        </RelativeLayout>
-
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bac_circle"
+                android:padding="13dp"
+                android:src="@drawable/ic_arrow_upward" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </FrameLayout>

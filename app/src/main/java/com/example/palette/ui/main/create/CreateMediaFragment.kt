@@ -2,15 +2,21 @@ package com.example.palette.ui.main.create
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.application.UserPrefs
 import com.example.palette.common.Constant
@@ -109,24 +115,35 @@ class CreateMediaFragment : Fragment() {
     }
 
     private fun deleteChatDialog(context: Context, position: Int) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_confirm, null)
         val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+        val dialog = builder.create()
 
-        builder.setTitle("채팅방 삭제")
-        builder.setMessage("정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?")
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
 
-        builder.setPositiveButton("삭제") { dialog, _ ->
+        val titleTextView = dialogView.findViewById<TextView>(R.id.confirmTextView)
+        val noButton = dialogView.findViewById<TextView>(R.id.noTextView)
+        val yesButton = dialogView.findViewById<TextView>(R.id.yesTextView)
+
+        titleTextView.text = "정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?"
+
+        noButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        yesButton.setOnClickListener {
             deleteRoom(position)
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("취소") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        builder.setCancelable(false)
-
-        val dialog = builder.create()
         dialog.show()
+
+        dialog.window?.setLayout(
+            (context.resources.displayMetrics.widthPixels * 0.9).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private fun showSampleData(isLoading: Boolean) {
