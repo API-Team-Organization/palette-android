@@ -288,6 +288,7 @@ class ChattingFragment(
             }
         }
 
+        if (chatList.isEmpty()) return
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
 
