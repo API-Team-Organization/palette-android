@@ -81,7 +81,7 @@
                 android:layout_marginStart="10dp"
                 android:background="@drawable/bac_circle"
                 android:padding="13dp"
-                android:src="@drawable/ic_arrow_upward" />
+                android:src="@drawable/ic_arrow_upward_gray" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
