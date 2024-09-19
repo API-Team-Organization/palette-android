@@ -70,7 +70,7 @@ class ChangeNameFragment : Fragment() {
                     // 프로필 업데이트 성공
                     shortToast("프로필이 성공적으로 업데이트되었습니다.")
                     Log.d("ProfileEditFragment", "Profile updated successfully.")
-                    // 업데이트 성공 후 필요한 작업 처리
+                    requireActivity().supportFragmentManager.popBackStack()
                 } else {
                     // 프로필 업데이트 실패
                     shortToast("프로필 업데이트에 실패했습니다.")
