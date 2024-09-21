@@ -46,7 +46,6 @@ class ChattingFragment(
     }
     private var chatList: MutableList<Received> = mutableListOf()
     private var isLoading = false
-    private var loadPage = 0L
     private lateinit var webSocketManager: WebSocketManager
 
     override fun onCreateView(
@@ -105,32 +104,16 @@ class ChattingFragment(
             }
         }
 
-        binding.chattingRecycler.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.chattingRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                // 최상단에 도달하고 데이터 로드 중이 아니며, 데이터를 모두 로드하지 않았다면
                 if (!binding.chattingRecycler.canScrollVertically(-1) && !isLoading) {
-                    isLoading = true // 데이터를 로드 중으로 설정
+                    isLoading = true // 로딩 시작 플래그 설정
 
-                    if (chatList.isEmpty()) return
-                    val millis: Long? = stringToMillis(chatList[chatList.size - 1].datetime)
-                    loadPage = millis ?: 0
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        if (millis == null) return@launch
-                        val temporaryList = ChatRequestManager.getChatList(
-                            PaletteApplication.prefs.token,
-                            roomId = roomId,
-                            before = millis
-                        )?.data
-
-                        if (temporaryList.isNullOrEmpty()) {
-                            shortToast("채팅 내역이 더 없습니다")
-                        } else {
-                            chatList.addAll(0, temporaryList)
-                            recyclerAdapter.setData(chatList)
-//                            binding.chattingRecycler.scrollToPosition(chatList.size - loadPage*10)
-                        }
-
-                        isLoading = false // 데이터 로드가 끝났으므로 플래그 초기화
-                    }
+                    val firstMessageTime = chatList.firstOrNull()?.datetime?.let { stringToMillis(it) } ?: return
+                    loadMoreChats(firstMessageTime)
                 }
             }
         })
@@ -144,6 +127,26 @@ class ChattingFragment(
             )
         }
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
+    }
+
+    private fun loadMoreChats(before: Long) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val newChats = ChatRequestManager.getChatList(
+                token = PaletteApplication.prefs.token,
+                roomId = roomId,
+                before = before,
+            )?.data
+
+            if (newChats.isNullOrEmpty()) {
+                shortToast("더 이상 불러올 채팅이 없습니다.")
+            } else {
+                newChats.reverse()
+                chatList.addAll(0, newChats)
+                recyclerAdapter.setData(chatList)
+            }
+
+            isLoading = false // 로딩 종료 플래그 설정
+        }
     }
 
     private fun initEditText() {
