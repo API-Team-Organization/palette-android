@@ -64,7 +64,7 @@
             <EditText
                 android:id="@+id/chattingEditText"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="당신의 팔레트를 그려보세요"
                 android:textColorHint="@color/gray"
@@ -72,7 +72,8 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/pretendard_medium"
                 android:background="@drawable/bac_chatting_edit_text"
-                android:padding="15dp"/>
+                android:padding="15dp"
+                android:maxLines="4"/>
 
             <ImageView
                 android:id="@+id/chattingSubmitButton"
@@ -81,7 +82,8 @@
                 android:layout_marginStart="10dp"
                 android:background="@drawable/bac_circle"
                 android:padding="13dp"
-                android:src="@drawable/ic_arrow_upward" />
+                android:src="@drawable/ic_arrow_upward"
+                android:layout_gravity="center" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
