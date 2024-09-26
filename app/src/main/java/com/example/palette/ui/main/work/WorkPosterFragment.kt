@@ -1,6 +1,7 @@
 package com.example.palette.ui.main.work
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -55,9 +56,14 @@ class WorkPosterFragment : Fragment() {
                     return@launch
                 }
                 val imageList = response.data
+                Log.d("imageList", response.data.toString())
 
                 withContext(Dispatchers.Main) {
-                    imageAdapter.updateImages(imageList)
+                    if (imageList.isEmpty()) {
+                        binding.tvNoPoster.visibility = View.VISIBLE
+                    } else {
+                        imageAdapter.updateImages(imageList)
+                    }
                 }
             } catch (e: Exception) {
                 logE("Error: ${e.message}")
