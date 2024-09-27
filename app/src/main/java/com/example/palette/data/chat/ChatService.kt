@@ -1,6 +1,7 @@
 package com.example.palette.data.chat
 
 import com.example.palette.data.base.BaseResponse
+import com.example.palette.data.socket.MessageResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -23,9 +24,9 @@ interface ChatService {
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Path("roomId") roomId: Int,
-        @Query("before") before: Long,
+        @Query("before") before: String,
         @Query("size") size: Int
-    ): Response<BaseResponse<MutableList<Received>>>
+    ): Response<BaseResponse<MutableList<MessageResponse>>>
 
     @GET("chat/my-image")
     suspend fun getImageList(

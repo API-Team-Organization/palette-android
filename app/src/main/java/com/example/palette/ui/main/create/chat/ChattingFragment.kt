@@ -20,10 +20,11 @@ import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.chat.ChatData
 import com.example.palette.data.chat.ChatRequestManager
-import com.example.palette.data.chat.Received
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.RoomData
 import com.example.palette.data.socket.BaseResponseMessage
+import com.example.palette.data.socket.ChatResource
+import com.example.palette.data.socket.MessageResponse
 import com.example.palette.data.socket.WebSocketManager
 import com.example.palette.databinding.FragmentChattingBinding
 import com.example.palette.ui.base.BaseControllable
@@ -32,9 +33,7 @@ import com.example.palette.ui.util.log
 import com.example.palette.ui.util.logE
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.time.ZonedDateTime
 
 class ChattingFragment(
     private var roomId: Int,
@@ -44,7 +43,7 @@ class ChattingFragment(
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
-    private var chatList: MutableList<Received> = mutableListOf()
+    private var chatList: MutableList<MessageResponse> = mutableListOf()
     private var isLoading = false
     private lateinit var webSocketManager: WebSocketManager
 
@@ -112,7 +111,7 @@ class ChattingFragment(
                 if (!binding.chattingRecycler.canScrollVertically(-1) && !isLoading) {
                     isLoading = true // 로딩 시작 플래그 설정
 
-                    val firstMessageTime = chatList.firstOrNull()?.datetime?.let { stringToMillis(it) } ?: return
+                    val firstMessageTime = chatList.firstOrNull()?.datetime ?: return
                     loadMoreChats(firstMessageTime)
                 }
             }
@@ -129,12 +128,12 @@ class ChattingFragment(
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
     }
 
-    private fun loadMoreChats(before: Long) {
+    private fun loadMoreChats(before: ZonedDateTime) {
         viewLifecycleOwner.lifecycleScope.launch {
             val newChats = ChatRequestManager.getChatList(
                 token = PaletteApplication.prefs.token,
                 roomId = roomId,
-                before = before,
+                before = before.toOffsetDateTime().toString(),
             )?.data
 
             if (newChats.isNullOrEmpty()) {
@@ -206,32 +205,32 @@ class ChattingFragment(
         )
 
         if (response.isSuccessful) {
-            val newReceived = Received(
-                id = -100,
+            val newReceived = MessageResponse(
+                id = "",
                 isAi = false,
+                datetime = ZonedDateTime.now(),
                 message = message,
-                datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(
-                    Date()
-                ),
                 roomId = roomId,
                 userId = 0,
-                resource = "Chat"
+                resource = ChatResource.CHAT,
+                data = null
             )
             chatList.add(newReceived)
             recyclerAdapter.addChat(newReceived)
             binding.chattingEditText.text.clear()
 
             // 플레이스홀더 아이템 두 개 추가
-            val placeholder1 = Received(
-                id = -2,
+            val placeholder1 = MessageResponse(
+                id = "",
                 isAi = true,
                 message = "로딩 중...",
-                datetime = "",
+                datetime = ZonedDateTime.now(),
                 roomId = roomId,
                 userId = 0,
-                resource = ""
+                resource = ChatResource.INTERNAL_CHAT_LOADING,
+                data = null
             )
-            val placeholder2 = placeholder1.copy(id = -1)
+            val placeholder2 = placeholder1.copy(resource = ChatResource.INTERNAL_IMAGE_LOADING)
 
             chatList.add(placeholder1)
             chatList.add(placeholder2)
@@ -246,41 +245,29 @@ class ChattingFragment(
     }
 
     private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
-        val receivedMessage = chatMessage.data?.message
-        val newReceived = Received(
-            id = receivedMessage?.id,
-            isAi = true,
-            message = receivedMessage?.message ?: "값이 비어있음",
-            datetime = receivedMessage?.timestamp ?: SimpleDateFormat(
-                "yyyy-MM-dd'T'HH:mm:ss",
-                Locale.getDefault()
-            ).format(Date()),
-            roomId = roomId,
-            userId = receivedMessage?.userId ?: -1,
-            resource = receivedMessage?.resource ?: "CHAT"
-        )
         log("Chatting handleChatMessage chatMessage is $chatMessage")
 
-        val action = chatMessage.data?.action ?: return
+        val action = chatMessage.data.action
+        val newReceived = chatMessage.data.message
         // action에 따라 처리
         when (action) {
             "START" -> {}
             "TEXT" -> {
                 log("TEXT 리턴 값입니다!")
-                chatList[chatList.size - 2] = (newReceived)
+                chatList[chatList.size - 2] = newReceived!! // must provided by server
                 recyclerAdapter.setData(chatList)
 
             }
 
             "IMAGE" -> {
                 log("IMAGE 리턴 값입니다!")
-                chatList[chatList.size - 1] = (newReceived)
+                chatList[chatList.size - 1] = newReceived!!
                 recyclerAdapter.setData(chatList)
             }
 
             "END" -> {
                 if (chatMessage.data.message == null) return
-                shortToast(chatMessage.data.message.message!!)
+                shortToast(chatMessage.data.message.message)
                 for (i in 0..<2) {
                     chatList.removeAt(chatList.size - 2 + i)
                 }
@@ -340,13 +327,6 @@ class ChattingFragment(
         dialog.setCancelable(false)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
-    }
-
-    fun stringToMillis(dateString: String): Long? {
-        // 날짜 포맷을 설정합니다. 밀리초 이하의 숫자는 무시하기 위해 .SSS까지만 사용합니다.
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val date = inputFormat.parse(dateString)
-        return date?.time // Long 형태의 밀리초 반환
     }
 
     override fun onDestroyView() {

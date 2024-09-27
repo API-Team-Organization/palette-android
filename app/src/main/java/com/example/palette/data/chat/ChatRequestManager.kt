@@ -4,8 +4,10 @@ import android.util.Log
 import com.example.palette.common.Constant
 import com.example.palette.data.ApiClient
 import com.example.palette.data.base.BaseResponse
+import com.example.palette.data.socket.MessageResponse
 import com.example.palette.ui.util.log
 import retrofit2.Response
+import java.time.OffsetDateTime
 
 object ChatRequestManager {
     private val chatService: ChatService = ApiClient.retrofit.create(ChatService::class.java)
@@ -16,7 +18,7 @@ object ChatRequestManager {
         return response
     }
 
-    suspend fun getChatList(token: String, roomId: Int, before: Long = System.currentTimeMillis()): BaseResponse<MutableList<Received>>? {
+    suspend fun getChatList(token: String, roomId: Int, before: String = OffsetDateTime.now().toString()): BaseResponse<MutableList<MessageResponse>>? {
         val response = chatService.getChatList(token = token, roomId = roomId, before = before, size = 10)
         Log.d(Constant.TAG, "getChatList response: $response")
 

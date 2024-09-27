@@ -6,11 +6,13 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import okhttp3.*
+import java.time.ZonedDateTime
 
 class WebSocketManager(token: String, roomId: Int) {
     private val client = OkHttpClient()
     private lateinit var webSocket: WebSocket
     private val gson = GsonBuilder()
+        .registerTypeAdapter(ZonedDateTime::class.java, ZonedDateTimeAdapter())
         .registerTypeAdapter(BaseResponseMessage::class.java, BaseResponseMessageAdapter())
         .create()
     private var onMessageReceived: ((BaseResponseMessage.ChatMessage) -> Unit)? = null
