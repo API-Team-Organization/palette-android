@@ -36,8 +36,8 @@ import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 
 class ChattingFragment(
-    private var roomId: Int,
-    private var title: String
+    private val roomId: Int,
+    private val title: String
 ) : Fragment() {
     private lateinit var binding: FragmentChattingBinding
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
@@ -54,7 +54,11 @@ class ChattingFragment(
         binding = FragmentChattingBinding.inflate(inflater, container, false)
 
         // WebSocket 연결
-        webSocketManager = WebSocketManager(token = PaletteApplication.prefs.token, roomId)
+        try {
+            webSocketManager = WebSocketManager(PaletteApplication.prefs.token, roomId)
+        } catch (e: Exception) {
+            logE("WebSocketManager 생성 중 오류 발생: ${e.localizedMessage}")
+        }
         webSocketManager.setOnMessageReceivedListener { chatMessage ->
             // UI 스레드에서 안전하게 업데이트
             viewLifecycleOwner.lifecycleScope.launch {
@@ -73,7 +77,7 @@ class ChattingFragment(
         binding.chattingToolbar.title = title
 
         viewLifecycleOwner.lifecycleScope.launch {
-            chatList = ChatRequestManager.getChatList(
+            chatList = ChatRequestManager.getChatList( // getChatList failed -> return EmptyList
                 token = PaletteApplication.prefs.token,
                 roomId = roomId
             )!!.data
@@ -108,12 +112,16 @@ class ChattingFragment(
                 super.onScrollStateChanged(recyclerView, newState)
 
                 // 최상단에 도달하고 데이터 로드 중이 아니며, 데이터를 모두 로드하지 않았다면
-                if (!binding.chattingRecycler.canScrollVertically(-1) && !isLoading) {
-                    isLoading = true // 로딩 시작 플래그 설정
+                if (binding.chattingRecycler.canScrollVertically(-1)) return
+                if (isLoading) return
+                if (chatList.isEmpty()) return
 
-                    val firstMessageTime = chatList.firstOrNull()?.datetime ?: return
-                    loadMoreChats(firstMessageTime)
-                }
+                isLoading = true // 로딩 시작 플래그 설정
+
+                log("chatList : $chatList")
+                val firstMessageTime = chatList[0].datetime
+                log("firstMessageTiem : $firstMessageTime")
+                loadMoreChats(firstMessageTime)
             }
         })
 
@@ -128,12 +136,12 @@ class ChattingFragment(
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
     }
 
-    private fun loadMoreChats(before: ZonedDateTime) {
+    private fun loadMoreChats(before: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             val newChats = ChatRequestManager.getChatList(
                 token = PaletteApplication.prefs.token,
                 roomId = roomId,
-                before = before.toOffsetDateTime().toString(),
+                before = before,
             )?.data
 
             if (newChats.isNullOrEmpty()) {
@@ -176,23 +184,6 @@ class ChattingFragment(
             }
             sendMessage(roomId, chat.message) // Retrofit으로 채팅 메시지 전송
             binding.chattingEditText.text.clear()
-
-//
-//            // 데이터 요청 및 처리
-//            val response = ChatRequestManager.createChat(PaletteApplication.prefs.token, chat, roomId = roomId)
-//            if (response.isSuccessful) {
-//                val receivedData = response.body()!!.data.received
-//                for (i in receivedData.indices) {
-//                    chatList[chatList.size - 2 + i] = receivedData[i]
-//                }
-//                recyclerAdapter.setData(chatList)
-//            } else {
-//                shortToast("부적절한 단어 혹은 짧은 문장")
-//                for (i in 0..< 2) {
-//                    chatList.removeAt(chatList.size - 2 + i)
-//                }
-//                recyclerAdapter.setData(chatList)
-//            }
         }
     }
 
@@ -208,7 +199,7 @@ class ChattingFragment(
             val newReceived = MessageResponse(
                 id = "",
                 isAi = false,
-                datetime = ZonedDateTime.now(),
+                datetime = ZonedDateTime.now().toString(),
                 message = message,
                 roomId = roomId,
                 userId = 0,
@@ -224,7 +215,7 @@ class ChattingFragment(
                 id = "",
                 isAi = true,
                 message = "로딩 중...",
-                datetime = ZonedDateTime.now(),
+                datetime = ZonedDateTime.now().toString(),
                 roomId = roomId,
                 userId = 0,
                 resource = ChatResource.INTERNAL_CHAT_LOADING,
@@ -256,7 +247,6 @@ class ChattingFragment(
                 log("TEXT 리턴 값입니다!")
                 chatList[chatList.size - 2] = newReceived!! // must provided by server
                 recyclerAdapter.setData(chatList)
-
             }
 
             "IMAGE" -> {
