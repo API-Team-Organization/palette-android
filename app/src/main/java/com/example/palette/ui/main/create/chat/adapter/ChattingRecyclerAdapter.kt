@@ -54,6 +54,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 val binding = ItemChattingPaletteBoxBinding.inflate(inflater, parent, false)
                 LeftViewHolder(binding)
             }
+
             else -> {
                 val binding = ItemChattingMeBoxBinding.inflate(inflater, parent, false)
                 RightViewHolder(binding)
@@ -112,8 +113,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 textGchatMessagePalette.text = chat.message
 
                 if (chat.resource == ChatResource.IMAGE) {
-                    Glide.with(itemView)
-                        .load(chat.message) // 이미지 URL
+                    Glide.with(itemView).load(chat.message) // 이미지 URL
                         .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
                         .into(chattingCreatedImage) // ImageView 설정
                     textGchatMessagePalette.visibility = View.GONE
@@ -182,8 +182,8 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         private fun showDownloadDialog(context: Context, imageUrl: String) {
             val dialogBuilder = AlertDialog.Builder(context)
 
-            val dialogView = LayoutInflater.from(context)
-                .inflate(R.layout.dialog_download_image, null)
+            val dialogView =
+                LayoutInflater.from(context).inflate(R.layout.dialog_download_image, null)
             dialogBuilder.setView(dialogView)
 
             val dialog = dialogBuilder.create()
@@ -255,10 +255,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.zoomedImageView)
 
-        Glide.with(context)
-            .asBitmap()
-            .load(imageUrl)
-            .into(object : CustomTarget<Bitmap>() {
+        Glide.with(context).asBitmap().load(imageUrl).into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     imageView.setImage(ImageSource.bitmap(resource))
                 }
@@ -285,8 +282,14 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         }
     }
 
-    fun formatChatTime(datetime: ZonedDateTime): String {
+    fun formatChatTime(datetime: String): String {
+        // 문자열을 ZonedDateTime으로 변환
+        val zonedDateTime = ZonedDateTime.parse(datetime)
+
+        // 원하는 출력 형식 정의
         val outputFormat = DateTimeFormatter.ofPattern("HH:mm")
-        return datetime.format(outputFormat)
+
+        // ZonedDateTime을 원하는 형식으로 변환하여 반환
+        return zonedDateTime.format(outputFormat)
     }
 }

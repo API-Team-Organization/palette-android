@@ -1,7 +1,5 @@
 package com.example.palette.data.socket
 
-import java.time.ZonedDateTime
-
 // WebSocket으로 들어오는 데이터 타입들
 sealed class BaseResponseMessage(val type: MessageType) {
     data class ChatMessage(
@@ -44,7 +42,7 @@ data class MessageResponse(
     val id: String,
     val message: String,
     val resource: ChatResource,
-    val datetime: ZonedDateTime,
+    val datetime: String,
     val roomId: Int,
     val userId: Int,
     val isAi: Boolean,
