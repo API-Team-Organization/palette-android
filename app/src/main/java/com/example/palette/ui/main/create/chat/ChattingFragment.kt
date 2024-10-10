@@ -96,10 +96,11 @@ class ChattingFragment(
 
             val chatLoader = async {
                 try {
-                    val chats = ChatRequestManager.getChatList( // getChatList failed -> return EmptyList
-                        token = PaletteApplication.prefs.token,
-                        roomId = roomId
-                    )!!.data
+                    val chats =
+                        ChatRequestManager.getChatList( // getChatList failed -> return EmptyList
+                            token = PaletteApplication.prefs.token,
+                            roomId = roomId
+                        )!!.data
 
                     chatList.addAll(chats.reversed())
 
@@ -114,10 +115,10 @@ class ChattingFragment(
             val lastMessage = chatList.last() // no? sad...
             if (lastMessage.promptId != null) {
                 val qna = qnaList.find { it.id == lastMessage.promptId }!!
-                when (qna.question.type) {
-                    PromptType.USER_INPUT -> TODO() // 이거 기반으로 텍스트필드 이쁘장하게 바꾸기
-                    PromptType.SELECTABLE -> TODO()
-                    PromptType.GRID -> TODO()
+
+                with(binding) {
+                    chattingEditText.visibility = if (qna.type == PromptType.USER_INPUT) View.VISIBLE else View.GONE
+                    // selectable, grid 넣기.
                 }
             }
         }
@@ -270,7 +271,7 @@ class ChattingFragment(
     private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
         log("Chatting handleChatMessage chatMessage is $chatMessage")
 
-        val newReceived = chatMessage.message
+//        val newReceived = chatMessage.message
         // action에 따라 처리
 //        when (action) {
 //            "START" -> {}
