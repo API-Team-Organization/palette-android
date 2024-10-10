@@ -1,6 +1,7 @@
 package com.example.palette.data.chat
 
-import com.example.palette.data.base.BaseResponse
+import com.example.palette.data.base.DataResponse
+import com.example.palette.data.chat.qna.PromptData
 import com.example.palette.data.socket.MessageResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,7 +18,7 @@ interface ChatService {
         @Header("Accept") accept: String = "*/*",
         @Query("roomId") roomId: Int,
         @Body postChat: ChatData
-    ): Response<BaseResponse<PaletteChat>>
+    ): Response<DataResponse<PaletteChat>>
 
     @GET("chat/{roomId}")
     suspend fun getChatList(
@@ -26,7 +27,15 @@ interface ChatService {
         @Path("roomId") roomId: Int,
         @Query("before") before: String,
         @Query("size") size: Int
-    ): Response<BaseResponse<MutableList<MessageResponse>>>
+    ): Response<DataResponse<MutableList<MessageResponse>>>
+
+    // 아무튼 Chat 임. ^^7
+    @GET("room/{roomId}/qna")
+    suspend fun getQnAForRoom(
+        @Header("X-AUTH-Token") token: String,
+        @Header("Accept") accept: String = "*/*",
+        @Path("roomId") roomId: Int,
+    ): Response<DataResponse<List<PromptData>>>
 
     @GET("chat/my-image")
     suspend fun getImageList(
@@ -34,6 +43,5 @@ interface ChatService {
         @Header("Accept") accept: String = "*/*",
         @Query("page") page: Int,
         @Query("size") size: Int,
-        @Query("sort") sort: List<String>
-    ): Response<BaseResponse<List<String>>>
+    ): Response<DataResponse<ImageListResponse>>
 }

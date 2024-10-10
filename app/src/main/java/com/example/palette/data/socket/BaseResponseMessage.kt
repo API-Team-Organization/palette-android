@@ -1,19 +1,38 @@
 package com.example.palette.data.socket
 
+import kotlinx.datetime.Instant
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonContentPolymorphicSerializer
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+
 // WebSocket으로 들어오는 데이터 타입들
+@Serializable
 sealed class BaseResponseMessage(val type: MessageType) {
+    @Serializable
     data class ChatMessage(
-        val data: ChatResponse
+        val id: String,
+        val message: String,
+        val resource: ChatResource,
+        val datetime: Instant,
+        val roomId: Int,
+        val userId: Int,
+        val isAi: Boolean,
+        val promptId: String?
     ) : BaseResponseMessage(MessageType.NEW_CHAT)
 
+    @Serializable
     data class ErrorMessage(
         val kind: String,
         val message: String
-    ) : BaseResponseMessage(MessageType.ERROR)
+    ) : BaseResponseMessage(MessageType.ERROR) // 에러일 때 처리할 로직 필요
 }
 
 enum class MessageType {
-    ERROR, NEW_CHAT
+    NEW_CHAT, ERROR
 }
 
 enum class PromptType {
@@ -25,32 +44,20 @@ enum class PromptType {
 enum class ChatResource {
     CHAT,
     IMAGE,
-    PROMPT_USER_INPUT,
-    PROMPT_SELECTABLE,
-    PROMPT_GRID,
+    PROMPT,
 
     INTERNAL_IMAGE_LOADING,
     INTERNAL_CHAT_LOADING,
 }
 
-data class ChatResponse(
-    val action: String,
-    val message: MessageResponse?,
-)
-
+@Serializable
 data class MessageResponse(
     val id: String,
     val message: String,
     val resource: ChatResource,
-    val datetime: String,
+    val datetime: Instant,
     val roomId: Int,
     val userId: Int,
     val isAi: Boolean,
-    val data: PromptData?
+    val promptId: String?
 )
-
-sealed class PromptData(val type: PromptType) {
-    data class Selectable(val choice: List<String>) : PromptData(PromptType.SELECTABLE)
-    data class Grid(val xSize: Int, val ySize: Int) : PromptData(PromptType.GRID)
-    data object UserInput : PromptData(PromptType.USER_INPUT)
-}

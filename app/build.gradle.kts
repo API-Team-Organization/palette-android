@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 android {
@@ -40,9 +41,10 @@ android {
 }
 
 dependencies {
-    //gson
-    implementation("com.google.code.gson:gson:2.10.1")
-    
+    // "kotlin serialization"
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+
     // rx
     implementation("io.reactivex.rxjava2:rxjava:2.2.21")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
@@ -72,10 +74,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
     // Retrofit 라이브러리
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-
-    // Gson 변환기 라이브러리
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")
+//    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // dotsIndicator onBoarding dot
     implementation("com.tbuonomo:dotsindicator:5.0")

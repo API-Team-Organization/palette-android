@@ -1,5 +1,8 @@
 package com.example.palette.data.chat
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Received(
     val id: Int?,
     val message: String,
@@ -7,5 +10,6 @@ data class Received(
     val roomId: Int,
     val userId: Int,
     val isAi: Boolean,
-    val resource: String
+    val resource: String,
+    val promptId: String?,
 )

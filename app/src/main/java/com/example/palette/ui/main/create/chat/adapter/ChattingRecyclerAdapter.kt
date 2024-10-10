@@ -23,6 +23,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.palette.R
+import com.example.palette.data.chat.qna.PromptData
 import com.example.palette.data.socket.ChatResource
 import com.example.palette.data.socket.MessageResponse
 import com.example.palette.databinding.ItemChattingMeBoxBinding
@@ -31,13 +32,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.format.char
+import kotlinx.datetime.format.parse
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val listOfChat = mutableListOf<MessageResponse>()
+    private val qnaList = mutableListOf<PromptData>()
 
     companion object {
         const val VIEW_TYPE_LEFT = 1
@@ -73,7 +82,13 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         }
     }
 
-    fun setData(list: MutableList<MessageResponse>) {
+    fun setQnAList(list: List<PromptData>) {
+        qnaList.clear()
+        qnaList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun setData(list: List<MessageResponse>) {
         listOfChat.clear()
         listOfChat.addAll(list)
         notifyDataSetChanged() // 전체 데이터가 변경되었음을 알림
@@ -282,14 +297,15 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         }
     }
 
-    fun formatChatTime(datetime: String): String {
+    fun formatChatTime(datetime: Instant): String {
         // 문자열을 ZonedDateTime으로 변환
-        val zonedDateTime = ZonedDateTime.parse(datetime)
-
         // 원하는 출력 형식 정의
-        val outputFormat = DateTimeFormatter.ofPattern("HH:mm")
-
+        val formatter = DateTimeComponents.Format {
+            hour()
+            char(':')
+            minute()
+        }
         // ZonedDateTime을 원하는 형식으로 변환하여 반환
-        return zonedDateTime.format(outputFormat)
+        return datetime.format(formatter)
     }
 }

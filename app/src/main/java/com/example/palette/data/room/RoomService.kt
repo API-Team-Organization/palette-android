@@ -1,7 +1,8 @@
 package com.example.palette.data.room
 
 import com.example.palette.data.base.BaseResponse
-import com.example.palette.data.base.BaseVoidResponse
+import com.example.palette.data.base.DataResponse
+import com.example.palette.data.base.VoidResponse
 import com.example.palette.data.room.data.RoomData
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,25 +18,25 @@ interface RoomService {
     suspend fun createRoom(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
-    ): Response<BaseResponse<RoomData>>
+    ): Response<DataResponse<RoomData>>
 
     @GET("room/list")
     suspend fun getRoomList(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*"
-    ): BaseResponse<List<RoomData>>
+    ): DataResponse<List<RoomData>>
 
     @DELETE("room/{roomId}")
     suspend fun deleteRoom(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Path("roomId") roomId: Int
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 
     @PATCH("room/title")
     suspend fun setRoomTitle(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Body roomData: RoomData
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 }

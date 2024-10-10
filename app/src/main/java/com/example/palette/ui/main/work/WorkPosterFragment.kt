@@ -9,8 +9,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.chat.ChatRequestManager
+import com.example.palette.data.error.CustomException
 import com.example.palette.databinding.FragmentWorkPosterBinding
+import com.example.palette.ui.util.log
 import com.example.palette.ui.util.logE
+import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,19 +48,20 @@ class WorkPosterFragment : Fragment() {
                 val token = PaletteApplication.prefs.token
                 val page = 0
                 val size = 20 // TODO: Constants 로 분리
-                val sort = listOf("createdDate,asc")
+                log("aaaa")
+                val response = try {
+                    val m = ChatRequestManager.getImageList(token, page, size)
+                    log("$m")
+                    m
+                } catch (e: CustomException) {
+                    shortToast(e.errorResponse.message)
+                    null
+                } ?: return@launch
 
-                val response =
-                    ChatRequestManager.getImageList(token, page, size, sort) ?: return@launch
-
-                if (response.code != 200) {
-                    logE("Failed to load images: ${response?.code}")
-                    return@launch
-                }
                 val imageList = response.data
 
                 withContext(Dispatchers.Main) {
-                    imageAdapter.updateImages(imageList)
+                    imageAdapter.updateImages(imageList.images)
                 }
             } catch (e: Exception) {
                 logE("Error: ${e.message}")

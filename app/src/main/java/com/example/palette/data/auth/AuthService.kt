@@ -1,6 +1,6 @@
 package com.example.palette.data.auth
 
-import com.example.palette.data.base.BaseVoidResponse
+import com.example.palette.data.base.VoidResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -13,45 +13,45 @@ interface AuthService {
     @POST("auth/login")
     suspend fun login(
         @Body loginRequest: LoginRequest
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 
     @POST("auth/logout")
     suspend fun logout(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*"
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 
     @GET("auth/session")
     suspend fun session(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*"
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 
     @POST("auth/register")
     suspend fun register(
         @Body registerRequest: RegisterRequest
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 
     @POST("auth/verify")
     suspend fun verify(
         @Header("X-AUTH-Token") token: String,
         @Body verifyRequest: VerifyRequest
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 
     @POST("auth/resend")
     suspend fun resend(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*"
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 
     @DELETE("auth/resign")
     suspend fun resign(
         @Header("X-AUTH-Token") token: String
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 
     @PATCH("auth/password")
     suspend fun changePassword(
         @Header("X-AUTH-Token") token: String,
         @Body request: ChangePasswordRequest
-    ): Response<BaseVoidResponse>
+    ): Response<VoidResponse>
 }
