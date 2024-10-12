@@ -18,6 +18,7 @@ import com.example.palette.common.Constant.TAG
 import com.example.palette.common.HeaderUtil
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.auth.LoginRequest
+import com.example.palette.data.error.CustomException
 import com.example.palette.databinding.FragmentLoginBinding
 import com.example.palette.ui.main.ServiceActivity
 import com.example.palette.ui.util.shortToast
@@ -108,7 +109,8 @@ class LoginFragment : Fragment() {
                 val intent = Intent(activity, ServiceActivity::class.java)
                 requireActivity().startActivity(intent)
                 requireActivity().finish()
-
+            } catch (e: CustomException) {
+                shortToast(e.errorResponse.message)
             } catch (e: HttpException) {
                 shortToast("이메일과 비밀번호를 다시 확인해주세요")
             } catch (e: SocketTimeoutException) {

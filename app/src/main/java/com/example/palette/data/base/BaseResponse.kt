@@ -1,12 +1,29 @@
 package com.example.palette.data.base
 
-data class BaseResponse<T>(
-    val code: Int,
-    val message: String,
-    val data: T
-)
+import kotlinx.serialization.Serializable
 
-data class BaseVoidResponse(
-    val code: Int,
+@Serializable
+sealed interface BaseResponse {
+    val code: Int
     val message: String
-)
+}
+
+@Serializable
+data class DataResponse<T>(
+    override val code: Int,
+    override val message: String,
+    val data: T,
+) : BaseResponse
+
+@Serializable
+data class VoidResponse(
+    override val code: Int,
+    override val message: String
+) : BaseResponse
+
+@Serializable
+data class ErrorResponse(
+    override val code: Int,
+    override val message: String,
+    val kind: String,
+) : BaseResponse
