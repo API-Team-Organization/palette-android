@@ -8,7 +8,6 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.controllers.RiveFileController
@@ -27,6 +26,8 @@ import com.example.palette.ui.util.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 
 enum class BottomTab(
     val eventName: String
@@ -54,11 +55,21 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         override fun notifyEvent(event: RiveEvent) {
             val scope = CoroutineScope(Dispatchers.Main)
             scope.launch {
-                val session = AuthRequestManager.sessionRequest(PaletteApplication.prefs.token)
-
-                log(PaletteApplication.prefs.token)
-                if (!session.isSuccessful)
-                    sessionDialog(this@ServiceActivity)
+                try {
+                    val response = AuthRequestManager.sessionRequest(PaletteApplication.prefs.token)
+                    if (response.isSuccessful) {
+                        // 성공 시 처리
+                        log(PaletteApplication.prefs.token)
+                    } else {
+                        // 실패 시 처리
+                        sessionDialog(this@ServiceActivity)
+                    }
+                } catch (e: UnknownHostException) {
+                    log("네트워크 연결 문제: ${e.message}")
+                    withContext(Dispatchers.Main) {
+                        showNetworkErrorDialog()
+                    }
+                }
             }
 
             val tab = BottomTab.from(event.name) ?: return
@@ -131,10 +142,23 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         finish() //인텐트 종료
 
         overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0) //인텐트 효과 없애기
-        val intent = intent //인텐트
         startActivity(intent) //액티비티 열기
         overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0) //인텐트 효과 없애기
 
+    }
+
+    // 네트워크 오류 Dialog 표시 함수
+    private fun showNetworkErrorDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("네트워크 오류")
+            .setMessage("인터넷 연결을 확인해 주세요. 앱을 종료합니다.")
+            .setPositiveButton("종료") { _, _ ->
+                finishAffinity() // 앱 종료
+            }
+            .setCancelable(false) // Dialog 바깥을 터치해도 닫히지 않음
+            .create()
+
+        dialog.show()
     }
 
     override fun onRestart() {

@@ -1,6 +1,5 @@
 package com.example.palette.common
 
-import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
 
 val json = Json {
@@ -9,5 +8,4 @@ val json = Json {
     allowSpecialFloatingPointValues = true
     encodeDefaults = true
     classDiscriminator = "_serverClass"
-    classDiscriminatorMode = ClassDiscriminatorMode.NONE
 }
