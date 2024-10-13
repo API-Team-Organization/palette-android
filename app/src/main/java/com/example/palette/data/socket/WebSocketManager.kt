@@ -26,7 +26,7 @@ class WebSocketManager(token: String, roomId: Int) {
             log("WebSocket 수신된 메시지: $text")
 
             try {
-                val baseMessage = json.decodeFromString<BaseResponseMessage>(text)
+                val baseMessage: BaseResponseMessage = json.decodeFromString(text)
                 when (baseMessage) {
                     is BaseResponseMessage.ErrorMessage -> {
                         handleErrorMessage(baseMessage)

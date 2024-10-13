@@ -2,6 +2,8 @@ package com.example.palette.data.socket
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.Polymorphic
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
@@ -10,8 +12,8 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 // WebSocket으로 들어오는 데이터 타입들
-@Serializable
-sealed class BaseResponseMessage(val type: MessageType) {
+@Serializable(with = BaseResponseMessageSerializer::class)
+sealed class BaseResponseMessage {
     @Serializable
     data class ChatMessage(
         val id: String,
@@ -22,13 +24,13 @@ sealed class BaseResponseMessage(val type: MessageType) {
         val userId: Int,
         val isAi: Boolean,
         val promptId: String?
-    ) : BaseResponseMessage(MessageType.NEW_CHAT)
+    ) : BaseResponseMessage()
 
     @Serializable
     data class ErrorMessage(
         val kind: String,
         val message: String
-    ) : BaseResponseMessage(MessageType.ERROR) // 에러일 때 처리할 로직 필요
+    ) : BaseResponseMessage() // 에러일 때 처리할 로직 필요
 }
 
 enum class MessageType {
@@ -61,3 +63,13 @@ data class MessageResponse(
     val isAi: Boolean,
     val promptId: String?
 )
+
+class BaseResponseMessageSerializer : JsonContentPolymorphicSerializer<BaseResponseMessage>(BaseResponseMessage::class) {
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out BaseResponseMessage> {
+        return when (element.jsonObject["type"]?.jsonPrimitive?.content) {
+            "NEW_CHAT" -> BaseResponseMessage.ChatMessage.serializer()
+            "ERROR" -> BaseResponseMessage.ErrorMessage.serializer()
+            else -> throw SerializationException("Unknown type: ${element.jsonObject["type"]}")
+        }
+    }
+}
