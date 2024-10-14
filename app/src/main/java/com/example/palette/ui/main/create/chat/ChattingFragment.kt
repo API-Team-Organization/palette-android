@@ -85,12 +85,9 @@ class ChattingFragment(
         viewLifecycleOwner.lifecycleScope.launch {
             val qnaLoader = async {
                 val qna = try {
-                    val test = ChatRequestManager.getQnAList(PaletteApplication.prefs.token, roomId)
-                    log("서버에서 받아온 값 ^^7 : $test")
-                    test
+                    ChatRequestManager.getQnAList(PaletteApplication.prefs.token, roomId)
                 } catch (e: CustomException) {
                     shortToast(e.message!!)
-                    logE(e.message!!)
                     null
                 } ?: return@async
                 qnaList.addAll(qna.data)
@@ -111,22 +108,17 @@ class ChattingFragment(
                     binding.chattingRecycler.scrollToPosition(chatList.size - 1)
                 } catch (e: CustomException) {
                     shortToast(e.errorResponse.message)
-                    logE(e.message!!)
                 }
             }
             listOf(qnaLoader, chatLoader).awaitAll()
 
-            if (chatList.isNotEmpty()) {
-                val lastMessage = chatList.last() // no? sad...
-                if (lastMessage.promptId != null) {
-                    val qna = qnaList.find { it.id == lastMessage.promptId }!!
+            val lastMessage = chatList.last() // no? sad...
+            if (lastMessage.promptId != null) {
+                val qna = qnaList.find { it.id == lastMessage.promptId }!!
 
-                    log("ChattingFragment qnaPromptType is ${qna.type} \n qna is $qna")
-                    with(binding) {
-                        chattingEditText.visibility = if (qna.type == PromptType.USER_INPUT) View.VISIBLE else View.GONE
-                        // selectable .visibility = if (qna.type == PromptType.SELECTABLE) View.VISIBLE else View.GONE
-                        // grid .visibility = if (qna.type == PromptType.GRID) View.VISIBLE else View.GONE
-                    }
+                with(binding) {
+                    chattingEditText.visibility = if (qna.type == PromptType.USER_INPUT) View.VISIBLE else View.GONE
+                    // selectable, grid 넣기.
                 }
             }
         }
@@ -213,7 +205,6 @@ class ChattingFragment(
         })
     }
 
-    // TODO: 질문에 따라 다른 입력창으로 정보를 전달해야함. => 보내는 건 어케하는데;;
     private fun submitText(chat: ChatData) {
         viewLifecycleOwner.lifecycleScope.launch {
             if (chatList.size == 0) {
@@ -252,23 +243,23 @@ class ChattingFragment(
             recyclerAdapter.addChat(newReceived)
             binding.chattingEditText.text.clear()
 
-//            // 플레이스홀더 아이템 두 개 추가
-//            val placeholder1 = MessageResponse(
-//                id = "",
-//                isAi = true,
-//                message = "로딩 중...",
-//                datetime = Clock.System.now(),
-//                roomId = roomId,
-//                userId = 0,
-//                resource = ChatResource.INTERNAL_CHAT_LOADING,
-//                promptId = null
-//            )
-//            val placeholder2 = placeholder1.copy(resource = ChatResource.INTERNAL_IMAGE_LOADING)
-//
-//            chatList.add(placeholder1)
-//            chatList.add(placeholder2)
-//            recyclerAdapter.addChat(placeholder1)
-//            recyclerAdapter.addChat(placeholder2)
+            // 플레이스홀더 아이템 두 개 추가
+            val placeholder1 = MessageResponse(
+                id = "",
+                isAi = true,
+                message = "로딩 중...",
+                datetime = Clock.System.now(),
+                roomId = roomId,
+                userId = 0,
+                resource = ChatResource.INTERNAL_CHAT_LOADING,
+                promptId = null
+            )
+            val placeholder2 = placeholder1.copy(resource = ChatResource.INTERNAL_IMAGE_LOADING)
+
+            chatList.add(placeholder1)
+            chatList.add(placeholder2)
+            recyclerAdapter.addChat(placeholder1)
+            recyclerAdapter.addChat(placeholder2)
 
             binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
             log("ChattingFragment sendMessage response.isSuccessful $response")
@@ -280,19 +271,7 @@ class ChattingFragment(
     private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
         log("Chatting handleChatMessage chatMessage is $chatMessage")
 
-        chatList.add(
-            MessageResponse(
-                id = chatMessage.id,
-                promptId = chatMessage.promptId,
-                message = chatMessage.message,
-                roomId = chatMessage.roomId,
-                userId = chatMessage.userId,
-                datetime = chatMessage.datetime,
-                resource = chatMessage.resource,
-                isAi = chatMessage.isAi
-            )
-        )
-        recyclerAdapter.setData(chatList)
+//        val newReceived = chatMessage.message
         // action에 따라 처리
 //        when (action) {
 //            "START" -> {}
