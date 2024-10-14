@@ -14,6 +14,7 @@ import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.auth.VerifyRequest
+import com.example.palette.data.error.CustomException
 import com.example.palette.databinding.FragmentJoinCheckNumBinding
 import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
@@ -62,15 +63,17 @@ class JoinCheckNumFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val verifyData = VerifyRequest(code)
-                val response = AuthRequestManager.verifyRequest(PaletteApplication.prefs.token, verifyData)
-                Log.d("JoinCheckNumFragment", response.body().toString())
+                try {
+                    AuthRequestManager.verifyRequest(PaletteApplication.prefs.token, verifyData)
+                } catch (e: CustomException) {
+                    when (e.errorResponse.kind) {
+                        "INVALID_VERIFY_CODE" -> shortToast("인증번호가 일치하지 않습니다.")
+                        else -> shortToast("알수는 있는데 일단 안드가 잘못한 오류: ${e.errorResponse.message}")
+                    }
+                    null
+                } ?: return@launch
 
-                if (response.isSuccessful) {
-                    findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinCompleteFragment)
-                } else {
-                    shortToast("인증번호가 일치하지 않습니다.")
-                    log("JoinCheckNumFragment verifyCode response: $response")
-                }
+                findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinCompleteFragment)
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다")
                 Log.d("JoinCheckNumFragment", e.stackTraceToString())
@@ -87,13 +90,19 @@ class JoinCheckNumFragment : Fragment() {
                 Log.d("JoinCheckNumFragment", "Token: $token")
 
                 val response = AuthRequestManager.resendRequest(token)
-                Log.d("JoinCheckNumFragment", "Response code: ${response.code()}, Response body: ${response.body()}")
+                Log.d(
+                    "JoinCheckNumFragment",
+                    "Response code: ${response.code()}, Response body: ${response.body()}"
+                )
 
                 if (response.isSuccessful) {
                     shortToast("인증번호가 재전송되었습니다.")
                 } else {
                     shortToast("인증번호 재전송에 실패했습니다.")
-                    Log.d("JoinCheckNumFragment", "Response code: ${response.code()}, Response message: ${response.message()}")
+                    Log.d(
+                        "JoinCheckNumFragment",
+                        "Response code: ${response.code()}, Response message: ${response.message()}"
+                    )
                 }
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다")

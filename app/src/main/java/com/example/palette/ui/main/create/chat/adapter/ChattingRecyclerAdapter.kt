@@ -23,20 +23,30 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.palette.R
-import com.example.palette.data.chat.Received
+import com.example.palette.data.chat.qna.PromptData
+import com.example.palette.data.socket.ChatResource
+import com.example.palette.data.socket.MessageResponse
 import com.example.palette.databinding.ItemChattingMeBoxBinding
 import com.example.palette.databinding.ItemChattingPaletteBoxBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.format.char
+import kotlinx.datetime.format.parse
 import java.net.HttpURLConnection
 import java.net.URL
-import java.text.SimpleDateFormat
-import java.util.Locale
+import java.time.ZonedDateTime
 
 class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val listOfChat = mutableListOf<Received>()
+    private val listOfChat = mutableListOf<MessageResponse>()
+    private val qnaList = mutableListOf<PromptData>()
 
     companion object {
         const val VIEW_TYPE_LEFT = 1
@@ -53,6 +63,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 val binding = ItemChattingPaletteBoxBinding.inflate(inflater, parent, false)
                 LeftViewHolder(binding)
             }
+
             else -> {
                 val binding = ItemChattingMeBoxBinding.inflate(inflater, parent, false)
                 RightViewHolder(binding)
@@ -71,34 +82,40 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         }
     }
 
-    fun setData(list: MutableList<Received>) {
+    fun setQnAList(list: List<PromptData>) {
+        qnaList.clear()
+        qnaList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun setData(list: List<MessageResponse>) {
         listOfChat.clear()
         listOfChat.addAll(list)
         notifyDataSetChanged() // 전체 데이터가 변경되었음을 알림
     }
 
-    fun addChat(chat: Received) {
+    fun addChat(chat: MessageResponse) {
         listOfChat.add(chat)
         notifyItemInserted(listOfChat.size - 1)
     }
 
     inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(chat: Received) {
+        fun bind(chat: MessageResponse) {
             binding.apply {
                 // 초기화
                 chattingCreatedImage.setImageDrawable(null) // 이미지 초기화
                 textGchatMessagePalette.text = null // 텍스트 초기화
                 textGchatTimePalette.text = null // 텍스트 초기화
 
-                if (chat.id == -1) {
+                if (chat.resource == ChatResource.INTERNAL_IMAGE_LOADING) {
                     // 로딩 애니메이션을 표시할 뷰
                     chattingLoadImage.visibility = View.VISIBLE
                     textGchatMessagePalette.visibility = View.GONE
                     return
                 }
 
-                if (chat.id == -2) {
+                if (chat.resource == ChatResource.INTERNAL_CHAT_LOADING) {
                     chattingLoadImage.visibility = View.GONE
                     textGchatMessagePalette.visibility = View.VISIBLE
                     textGchatMessagePalette.text = "로딩 중..."
@@ -110,9 +127,8 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 textGchatMessagePalette.visibility = View.VISIBLE
                 textGchatMessagePalette.text = chat.message
 
-                if (chat.resource == "IMAGE") {
-                    Glide.with(itemView)
-                        .load(chat.message) // 이미지 URL
+                if (chat.resource == ChatResource.IMAGE) {
+                    Glide.with(itemView).load(chat.message) // 이미지 URL
                         .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
                         .into(chattingCreatedImage) // ImageView 설정
                     textGchatMessagePalette.visibility = View.GONE
@@ -181,8 +197,8 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         private fun showDownloadDialog(context: Context, imageUrl: String) {
             val dialogBuilder = AlertDialog.Builder(context)
 
-            val dialogView = LayoutInflater.from(context)
-                .inflate(R.layout.dialog_download_image, null)
+            val dialogView =
+                LayoutInflater.from(context).inflate(R.layout.dialog_download_image, null)
             dialogBuilder.setView(dialogView)
 
             val dialog = dialogBuilder.create()
@@ -254,10 +270,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.zoomedImageView)
 
-        Glide.with(context)
-            .asBitmap()
-            .load(imageUrl)
-            .into(object : CustomTarget<Bitmap>() {
+        Glide.with(context).asBitmap().load(imageUrl).into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     imageView.setImage(ImageSource.bitmap(resource))
                 }
@@ -271,7 +284,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     inner class RightViewHolder(private val binding: ItemChattingMeBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(chat: Received) {
+        fun bind(chat: MessageResponse) {
             binding.apply {
                 textGchatMessageMe.text = chat.message // 텍스트 설정
                 textGchatTimeMe.text = formatChatTime(chat.datetime) // 텍스트 초기화
@@ -284,10 +297,15 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         }
     }
 
-    fun formatChatTime(datetime: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val date = inputFormat.parse(datetime)
-        return outputFormat.format(date!!)
+    fun formatChatTime(datetime: Instant): String {
+        // 문자열을 ZonedDateTime으로 변환
+        // 원하는 출력 형식 정의
+        val formatter = DateTimeComponents.Format {
+            hour()
+            char(':')
+            minute()
+        }
+        // ZonedDateTime을 원하는 형식으로 변환하여 반환
+        return datetime.format(formatter)
     }
 }

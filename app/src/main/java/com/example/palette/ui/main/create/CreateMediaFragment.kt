@@ -19,6 +19,7 @@ import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
 import com.example.palette.data.base.BaseResponse
+import com.example.palette.data.base.DataResponse
 import com.example.palette.data.info.InfoRequestManager.profileInfoRequest
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.RoomData
@@ -36,7 +37,7 @@ class CreateMediaFragment : Fragment() {
     private lateinit var binding: FragmentCreateMediaBinding
     private val itemList = ArrayList<RoomData>()
     private lateinit var workAdapter: CreateMediaAdapter
-    private lateinit var roomList: BaseResponse<List<RoomData>>
+    private lateinit var roomList: DataResponse<List<RoomData>>
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
