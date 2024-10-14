@@ -8,9 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -22,7 +20,6 @@ import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.chat.ChatData
 import com.example.palette.data.chat.ChatRequestManager
-import com.example.palette.data.chat.qna.ChatQuestion
 import com.example.palette.data.chat.qna.PromptData
 import com.example.palette.data.error.CustomException
 import com.example.palette.data.room.RoomRequestManager
@@ -69,6 +66,7 @@ class ChattingFragment(
             logE("WebSocketManager 생성 중 오류 발생: ${e.localizedMessage}")
         }
         webSocketManager.setOnMessageReceivedListener { chatMessage ->
+            // UI 스레드에서 안전하게 업데이트
             viewLifecycleOwner.lifecycleScope.launch {
                 log("ChattingFragment onCreateView handleChatMessage 호출됨")
                 handleChatMessage(chatMessage)
@@ -99,12 +97,13 @@ class ChattingFragment(
             val chatLoader = async {
                 try {
                     val chats =
-                        ChatRequestManager.getChatList(
+                        ChatRequestManager.getChatList( // getChatList failed -> return EmptyList
                             token = PaletteApplication.prefs.token,
                             roomId = roomId
                         )!!.data
 
                     chatList.addAll(chats.reversed())
+
                     recyclerAdapter.setData(chatList)
                     binding.chattingRecycler.scrollToPosition(chatList.size - 1)
                 } catch (e: CustomException) {
@@ -113,44 +112,19 @@ class ChattingFragment(
             }
             listOf(qnaLoader, chatLoader).awaitAll()
 
-            val lastMessage = chatList.lastOrNull()
-            if (lastMessage?.promptId != null) {
+            val lastMessage = chatList.last() // no? sad...
+            if (lastMessage.promptId != null) {
                 val qna = qnaList.find { it.id == lastMessage.promptId }!!
 
-                if (qna is PromptData.Selectable) {
-                    val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
-
-                    with(binding) {
-//                        chattingEditText.visibility = View.GONE // 입력 필드 숨김
-                        chattingSelectLayout.visibility = View.VISIBLE
-
-                        chattingSelectLayout.removeAllViews()
-
-                        selectableQuestion?.choices?.forEach { choice ->
-                            val button = Button(context).apply {
-                                text = choice.displayName
-                                background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
-                                elevation = 0f
-                                val layoutParams = LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                                ).apply {
-                                    setMargins(8, 0, 8, 0)
-                                }
-                                this.layoutParams = layoutParams
-                                setOnClickListener {
-                                    binding.chattingEditText.setText(choice.displayName)
-                                }
-                            }
-                            chattingSelectLayout.addView(button)
-                        }
-                    }
+                with(binding) {
+                    chattingEditText.visibility = if (qna.type == PromptType.USER_INPUT) View.VISIBLE else View.GONE
+                    // selectable, grid 넣기.
                 }
             }
         }
 
         binding.chattingToolbar.setNavigationOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            requireActivity().supportFragmentManager.popBackStack() // 백 스택에서 프래그먼트 제거
         }
 
         binding.chattingToolbar.setOnClickListener {
@@ -170,21 +144,27 @@ class ChattingFragment(
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
+                // 최상단에 도달하고 데이터 로드 중이 아니며, 데이터를 모두 로드하지 않았다면
                 if (binding.chattingRecycler.canScrollVertically(-1)) return
                 if (isLoading) return
                 if (chatList.isEmpty()) return
 
-                isLoading = true
+                isLoading = true // 로딩 시작 플래그 설정
+
                 log("chatList : $chatList")
                 val firstMessageTime = chatList[0].datetime
-                log("firstMessageTime : $firstMessageTime")
+                log("firstMessageTiem : $firstMessageTime")
                 loadMoreChats(firstMessageTime.toString())
             }
         })
 
         binding.chattingRecycler.apply {
             adapter = recyclerAdapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
         }
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
     }
@@ -205,13 +185,14 @@ class ChattingFragment(
                 recyclerAdapter.setData(chatList)
             }
 
-            isLoading = false
+            isLoading = false // 로딩 종료 플래그 설정
         }
     }
 
     private fun initEditText() {
         binding.chattingEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
+                // EditText 내용이 변경된 후 호출됩니다.
                 if (s.isNullOrBlank()) {
                     binding.chattingSubmitButton.setImageResource(R.drawable.ic_arrow_upward_gray)
                 } else {
@@ -234,7 +215,7 @@ class ChattingFragment(
                 )
                 binding.chattingToolbar.title = chat.message
             }
-            sendMessage(roomId, chat.message)
+            sendMessage(roomId, chat.message) // Retrofit으로 채팅 메시지 전송
             binding.chattingEditText.text.clear()
         }
     }
@@ -290,12 +271,43 @@ class ChattingFragment(
     private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
         log("Chatting handleChatMessage chatMessage is $chatMessage")
 
+//        val newReceived = chatMessage.message
+        // action에 따라 처리
+//        when (action) {
+//            "START" -> {}
+//            "TEXT" -> {
+//                log("TEXT 리턴 값입니다!")
+//                chatList[chatList.size - 2] = newReceived!! // must provided by server
+//                recyclerAdapter.setData(chatList)
+//            }
+//
+//            "IMAGE" -> {
+//                log("IMAGE 리턴 값입니다!")
+//                chatList[chatList.size - 1] = newReceived!!
+//                recyclerAdapter.setData(chatList)
+//            }
+//
+//            "END" -> {
+//                if (chatMessage.data.message == null) return
+//                shortToast(chatMessage.data.message.message)
+//                for (i in 0..<2) {
+//                    chatList.removeAt(chatList.size - 2 + i)
+//                }
+//                recyclerAdapter.setData(chatList)
+//            }
+//
+//            else -> {
+//                logE("알 수 없는 action: $action")
+//            }
+//        }
+
         if (chatList.isEmpty()) return
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
 
     private fun showChangeTitleDialog() {
         val builder = AlertDialog.Builder(requireContext())
+
         val inflater = LayoutInflater.from(requireContext())
         val dialogView = inflater.inflate(R.layout.dialog_edit_text, null)
 
@@ -313,6 +325,7 @@ class ChattingFragment(
         }
 
         builder.setView(dialogView)
+
         val dialog = builder.create()
 
         applyButton.setOnClickListener {
@@ -331,6 +344,7 @@ class ChattingFragment(
                 }
                 dialog.dismiss()
             }
+
         }
         dialog.setCancelable(false)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

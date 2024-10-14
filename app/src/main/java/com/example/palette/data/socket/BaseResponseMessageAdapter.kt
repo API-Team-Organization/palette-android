@@ -1,17 +1,20 @@
 package com.example.palette.data.socket
 
-import java.lang.reflect.Type
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonContentPolymorphicSerializer
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
-//class BaseResponseMessageAdapter : JsonDeserializer<PromptData> {
-//    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): PromptData {
-//        val jsonObject = json.asJsonObject
-//        val type = jsonObject.get("resource").asString
-//
-//        return when {
-//            type.endsWith(PromptType.USER_INPUT.name) -> context.deserialize(json, PromptData.UserInput::class.java)
-//            type.endsWith(PromptType.SELECTABLE.name) -> context.deserialize(json, PromptData.Selectable::class.java)
-//            type.endsWith(PromptType.GRID.name) -> context.deserialize(json, PromptData.Grid::class.java)
-//            else -> throw JsonParseException("Unknown type: $type")
+//object BaseResponseMessageSerializer :
+//    JsonContentPolymorphicSerializer<BaseResponseMessage>(BaseResponseMessage::class) {
+//    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<BaseResponseMessage> {
+//        val type = element.jsonObject["type"]?.jsonPrimitive?.content
+//        return when (type) {
+//            "NEW_CHAT" -> BaseResponseMessage.ChatMessage.serializer()
+//            "ERROR" -> BaseResponseMessage.ErrorMessage.serializer()
+//            else -> throw SerializationException("Unknown type: $type")
 //        }
 //    }
 //}
