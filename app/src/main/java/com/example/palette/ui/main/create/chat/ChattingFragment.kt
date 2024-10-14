@@ -191,21 +191,17 @@ class ChattingFragment(
 
             log("ChattingFragment initView \nqnaList: $qnaList\nchatList: $chatList")
 
-//            val lastMessage = chatList.last() // no? sad...
-//            if (lastMessage.promptId != null) {
-//                val qna = qnaList.find { it.id == lastMessage.promptId }!!
-//
-//                with(binding) {
-//                    chattingEditText.visibility = if (qna.type == PromptType.USER_INPUT) View.VISIBLE else View.GONE
-//                    // selectable, grid 넣기.
-//                }
-//            }
+            val qna: PromptData?
 
-            val lastMessage = chatList.lastOrNull() // no? sad...
-            if (lastMessage != null) {
-                val qna = qnaList.find { it.id == lastMessage.promptId }!!
+            if (chatList.isEmpty()) {
+                qna = qnaList[0]
+            } else {
+                val lastMessage = chatList.last()
+                qna = qnaList.find { it.id == lastMessage.promptId }!!
+            }
 
-                if (qna is PromptData.Selectable) {
+            when (qna) {
+                is PromptData.Selectable -> {
                     val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
                     with(binding) {
                         chattingSelectLayout.visibility = View.VISIBLE
@@ -230,6 +226,10 @@ class ChattingFragment(
                         }
                     }
                 }
+
+                is PromptData.Grid -> {}
+
+                is PromptData.UserInput -> {}
             }
         }
     }
