@@ -5,12 +5,12 @@ import com.example.palette.ui.util.log
 import com.example.palette.ui.util.logE
 import kotlinx.serialization.SerializationException
 import okhttp3.*
-import java.time.ZonedDateTime
 
 class WebSocketManager(token: String, roomId: Int) {
     private val client = OkHttpClient()
     private lateinit var webSocket: WebSocket
     private var onMessageReceived: ((BaseResponseMessage.ChatMessage) -> Unit)? = null
+    private var onConnect: (() -> Unit)? = null
 
     private val request: Request = Request.Builder()
         .url("wss://api.paletteapp.xyz/ws/${roomId}")
@@ -20,6 +20,7 @@ class WebSocketManager(token: String, roomId: Int) {
     private val listener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             log("WebSocket 웹소켓 연결 성공")
+            onConnect?.invoke()
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -57,6 +58,10 @@ class WebSocketManager(token: String, roomId: Int) {
     fun setOnMessageReceivedListener(listener: (BaseResponseMessage.ChatMessage) -> Unit) {
         log(" WebSocketManager setOnMessageReceivedListener listener $listener")
         this.onMessageReceived = listener
+    }
+    fun setOnConnect(listener: () -> Unit) {
+        log(" WebSocketManager setOnConnect listener $listener")
+        this.onConnect = listener
     }
 
     private fun handleErrorMessage(errorMessage: BaseResponseMessage.ErrorMessage) {
