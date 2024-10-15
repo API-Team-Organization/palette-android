@@ -48,7 +48,7 @@ class CreateMediaAdapter(
 
         init {
             itemView.setOnClickListener {
-                itemClickListener.onItemClick(adapterPosition)
+                itemClickListener.onItemClick(bindingAdapterPosition)
             }
 
             itemView.setOnLongClickListener {
