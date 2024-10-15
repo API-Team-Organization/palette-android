@@ -419,8 +419,8 @@ class ChattingFragment(
             chattingSelectLayout.removeAllViews()
 
             val gridLayout = GridLayout(context).apply {
-                rowCount = gridQuestion?.xSize ?: 4
-                columnCount = gridQuestion?.ySize ?: 4
+                rowCount = gridQuestion?.xSize ?: 3
+                columnCount = gridQuestion?.ySize ?: 3
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -433,7 +433,7 @@ class ChattingFragment(
                 for (i in 0 until (it.xSize * it.ySize)) {
                     val button = Button(context).apply {
                         text = (i + 1).toString()
-                        background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
+                        background = ContextCompat.getDrawable(context, R.drawable.bac_chatting_edit_text)
                         elevation = 0f
                         setOnClickListener {
                             binding.chattingEditText.setText((i + 1).toString())
@@ -443,9 +443,9 @@ class ChattingFragment(
                     val gridParams = GridLayout.LayoutParams().apply {
                         rowSpec = GridLayout.spec(i / it.ySize)
                         columnSpec = GridLayout.spec(i % it.ySize)
-                        width = 0
                         height = GridLayout.LayoutParams.WRAP_CONTENT
-                        setMargins(6, 6, 6, 6)
+                        width = GridLayout.LayoutParams.WRAP_CONTENT
+                        setMargins(10, 10, 10, 10)
                     }
                     gridLayout.addView(button, gridParams)
                 }
