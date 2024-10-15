@@ -44,13 +44,14 @@ import kotlinx.coroutines.launch
 class ChattingFragment(
     private val roomId: Int,
     private val title: String,
-    private val isFirst: Boolean = false
+    private val isFirst: Boolean = false,
+    private val messageList: MutableList<MessageResponse>
 ) : Fragment() {
     private lateinit var binding: FragmentChattingBinding
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
-    private var chatList: MutableList<MessageResponse> = mutableListOf()
+    private var chatList: MutableList<MessageResponse> = messageList
     private var qnaList: MutableList<PromptData> = mutableListOf()
     private var isLoading = false
     private lateinit var webSocketManager: WebSocketManager
@@ -207,7 +208,11 @@ class ChattingFragment(
             }
 
             val chatLoader = async {
-                loadChatData()
+                if (messageList.isEmpty()) {
+                    loadChatData()
+                } else {
+                    null
+                }
             }
 
             listOf(qnaLoader, chatLoader).awaitAll()
@@ -224,6 +229,7 @@ class ChattingFragment(
                 qna = qnaList[0]
             } else {
                 val lastMessage = chatList.last()
+                if (chatList.last().promptId == null) return@launch
                 qna = qnaList.find { it.id == lastMessage.promptId }!!
             }
 
