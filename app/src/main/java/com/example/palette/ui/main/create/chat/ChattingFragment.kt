@@ -120,25 +120,28 @@ class ChattingFragment(
 
             val chat: ChatAnswer
 
-            when(sendType) {
+            when (sendType) {
                 "SELECTABLE" -> {
                     chat = ChatAnswer.SelectableAnswer(
                         choiceId = sendData,
                         type = "SELECTABLE"
                     )
                 }
+
                 "GRID" -> {
                     chat = ChatAnswer.GridAnswer(
-                        choice = sendData.split(",").map { it.toInt() }, // 0,1,2,3,4,4,
+                        choice = binding.chattingEditText.text.split(",").map { it.toInt() },
                         type = sendType
                     )
                 }
+
                 "USER_INPUT" -> {
                     chat = ChatAnswer.UserInputAnswer(
                         input = binding.chattingEditText.text.toString(),
                         type = sendType
                     )
                 }
+
                 else -> return@setOnClickListener
             }
 
@@ -307,19 +310,21 @@ class ChattingFragment(
     private suspend fun sendMessage(roomId: Int, data: ChatAnswer) {
         val chat: ChatAnswer
 
-        when(data) {
+        when (data) {
             is ChatAnswer.GridAnswer -> {
                 chat = ChatAnswer.GridAnswer(
                     choice = data.choice,
                     type = "GRID"
                 )
             }
+
             is ChatAnswer.SelectableAnswer -> {
                 chat = ChatAnswer.SelectableAnswer(
                     choiceId = data.choiceId,
                     type = "SELECTABLE"
                 )
             }
+
             is ChatAnswer.UserInputAnswer -> {
                 chat = ChatAnswer.UserInputAnswer(
                     input = data.input,
@@ -354,7 +359,7 @@ class ChattingFragment(
 
         if (chatList.isEmpty()) return
 
-        if (chatList.last().isAi) {
+        if (chatList.last().isAi && chatList.last().promptId != null) {
             val lastMessage = chatList.last()
             val qna = qnaList.find { it.id == lastMessage.promptId }!!
 
