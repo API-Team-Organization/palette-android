@@ -26,6 +26,7 @@
             android:layout_height="48dp"
             android:background="@drawable/bac_tab_layout"
             app:tabBackground="@drawable/bac_tab"
+            app:tabRippleColor="@android:color/transparent"
             android:layout_marginTop="15dp"
             app:tabSelectedTextColor="@color/white"
             app:tabTextColor="@color/darkGray"
