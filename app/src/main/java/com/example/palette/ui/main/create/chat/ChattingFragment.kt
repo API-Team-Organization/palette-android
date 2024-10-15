@@ -422,6 +422,7 @@ class ChattingFragment(
         hideKeyboard()
         with(binding) {
             chattingSelectLayout.visibility = View.VISIBLE
+            chattingTextBox.visibility = View.GONE
             chattingSelectLayout.removeAllViews()
 
             val cardView = CardView(requireContext()).apply {
