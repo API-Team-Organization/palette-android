@@ -12,7 +12,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class WorkFragment : Fragment() {
     private lateinit var binding: FragmentWorkBinding
-    private val tabTextList = listOf("사진", "동영상")
+    private val tabTextList = listOf("포스터", "동영상")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

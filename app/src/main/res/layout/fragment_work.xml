@@ -35,7 +35,7 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="사진"
+                android:text="포스터"
                 android:layout_margin="4dp"/>
             <com.google.android.material.tabs.TabItem
                 android:layout_width="0dp"
