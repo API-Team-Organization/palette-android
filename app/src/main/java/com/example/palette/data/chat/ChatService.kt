@@ -1,7 +1,9 @@
 package com.example.palette.data.chat
 
 import com.example.palette.data.base.DataResponse
+import com.example.palette.data.base.VoidResponse
 import com.example.palette.data.chat.qna.PromptData
+import com.example.palette.data.chat.qna.QnABody
 import com.example.palette.data.socket.MessageResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,15 +19,15 @@ interface ChatService {
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Query("roomId") roomId: Int,
-        @Body postChat: ChatData
-    ): Response<DataResponse<PaletteChat>>
+        @Body data: QnABody
+    ): Response<VoidResponse>
 
     @GET("chat/{roomId}")
     suspend fun getChatList(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
         @Path("roomId") roomId: Int,
-        @Query("before") before: String,
+        @Query("before") before: String?,
         @Query("size") size: Int
     ): Response<DataResponse<MutableList<MessageResponse>>>
 

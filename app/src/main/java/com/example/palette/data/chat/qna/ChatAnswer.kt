@@ -9,16 +9,25 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-@Serializable
-sealed class ChatAnswer(val type: PromptType) {
+@Serializable(with = ChatAnswer.ChatAnswerSerializer::class)
+sealed class ChatAnswer {
     @Serializable
-    data class SelectableAnswer(val choiceId: String) : ChatAnswer(PromptType.SELECTABLE)
+    data class SelectableAnswer(
+        val choiceId: String,
+        val type: String
+    ) : ChatAnswer()
 
     @Serializable
-    data class GridAnswer(val choice: List<Int>) : ChatAnswer(PromptType.GRID)
+    data class GridAnswer(
+        val choice: List<Int>,
+        val type: String
+    ) : ChatAnswer()
 
     @Serializable
-    data class UserInputAnswer(val input: String) : ChatAnswer(PromptType.USER_INPUT)
+    data class UserInputAnswer(
+        val input: String,
+        val type: String
+    ) : ChatAnswer()
 
     object ChatAnswerSerializer : JsonContentPolymorphicSerializer<ChatAnswer>(ChatAnswer::class) {
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<ChatAnswer> {

@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
-import com.example.palette.data.base.BaseResponse
 import com.example.palette.data.base.DataResponse
 import com.example.palette.data.info.InfoRequestManager.profileInfoRequest
 import com.example.palette.data.room.RoomRequestManager
@@ -114,8 +113,8 @@ class CreateMediaFragment : Fragment() {
         }
     }
 
-    private fun startChatting(position: Int, title: String) {
-        changeFragment(ChattingFragment(roomId = position, title = title))
+    private fun startChatting(position: Int, title: String, isFirst: Boolean = false) {
+        changeFragment(ChattingFragment(roomId = position, title = title, isFirst))
     }
 
     private fun deleteChatDialog(context: Context, position: Int) {
@@ -171,7 +170,8 @@ class CreateMediaFragment : Fragment() {
                     shortToast("생성 성공")
                     startChatting(
                         roomResponse.body()!!.data.id,
-                        title = roomResponse.body()!!.data.title.toString()
+                        title = roomResponse.body()!!.data.title.toString(),
+                        isFirst = true
                     )
                     log("생성된 roomId == ${roomResponse.body()!!.data.id}")
                 } else {
