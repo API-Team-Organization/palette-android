@@ -482,8 +482,12 @@ class ChattingFragment(
                             height = buttonSize
                             setMargins(10, 10, 10, 10)
                         }
+
                         setOnClickListener { _ ->
-                            if (i !in selectedPositions) {
+                            if (i in selectedPositions) {
+                                selectedPositions.remove(i)
+                                background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_unselect)
+                            } else {
                                 selectedPositions.add(i)
                                 background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_select)
                             }
@@ -506,9 +510,11 @@ class ChattingFragment(
                     gravity = Gravity.CENTER
                 }
                 setPadding(0, 20, 0, 20)
+
                 setOnClickListener {
-                    // 여기에 제출 기능 구현
                     updateChattingEditText(selectedPositions)
+
+                    chattingSelectLayout.visibility = View.GONE
                 }
             }
 
@@ -521,6 +527,7 @@ class ChattingFragment(
             chattingSelectLayout.addView(cardView)
         }
     }
+
 
     private fun updateChattingEditText(selectedPositions: List<Int>) {
         val orderedPositions = selectedPositions.joinToString(",")
