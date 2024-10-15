@@ -11,7 +11,9 @@
     android:paddingStart="15dp"
     android:paddingEnd="15dp"
     android:layout_marginTop="10dp"
-    android:backgroundTint="@color/white">
+    android:backgroundTint="@color/white"
+    android:focusable="false"
+    android:focusableInTouchMode="false">
 
     <ImageView
         android:id="@+id/iv_logo"
@@ -43,10 +45,17 @@
             android:id="@+id/tv_poster_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Palette 어시스턴트"
+            android:text="Palette 어시스턴트Palette 어시스턴트Palette 어시스턴트Palette 어시스턴트Palette 어시스턴트Palette 어시스턴트"
             android:textSize="14sp"
             android:fontFamily="@font/pretendard_medium"
-            android:textColor="@color/darkGray"/>
+            android:textColor="@color/darkGray"
+            android:maxLines="1"
+            android:ems="15"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:scrollHorizontally="true"/>
 
     </LinearLayout>
 

@@ -1,5 +1,7 @@
 package com.example.palette.ui.main.create.room.adapter
 
+import android.text.TextUtils
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +25,11 @@ class CreateMediaAdapter(
         holder.iv_logo.setImageResource(R.drawable.logo)
         holder.tv_poster_title.text = itemList[position].title
         holder.tv_poster_desc.text = lastMessageList[position]
+
+        holder.tv_poster_desc.movementMethod = LinkMovementMethod.getInstance()
+        holder.tv_poster_desc.ellipsize = TextUtils.TruncateAt.MARQUEE
+        holder.tv_poster_desc.setSelected(true)
+        holder.tv_poster_desc.setSingleLine(true)
     }
 
     override fun getItemCount(): Int = itemList.size
