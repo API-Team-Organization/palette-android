@@ -2,26 +2,22 @@ package com.example.palette.data.chat
 
 import android.util.Log
 import com.example.palette.common.Constant
-import com.example.palette.common.json
 import com.example.palette.data.ApiClient
-import com.example.palette.data.base.BaseResponse
 import com.example.palette.data.base.DataResponse
 import com.example.palette.data.base.ErrorHandler
-import com.example.palette.data.base.ErrorResponse
+import com.example.palette.data.base.VoidResponse
+import com.example.palette.data.chat.qna.ChatAnswer
 import com.example.palette.data.chat.qna.PromptData
+import com.example.palette.data.chat.qna.QnABody
 import com.example.palette.data.socket.MessageResponse
-import com.example.palette.ui.util.log
-import com.example.palette.ui.util.logE
 import kotlinx.datetime.Clock
-import retrofit2.HttpException
 import retrofit2.Response
-import java.time.OffsetDateTime
 
 object ChatRequestManager {
     private val chatService: ChatService = ApiClient.retrofit.create(ChatService::class.java)
 
-    suspend fun createChat(token: String, chat: ChatData, roomId: Int): Response<DataResponse<PaletteChat>> {
-        val response = chatService.chat(token = token, roomId = roomId, postChat = chat)
+    suspend fun createChat(token: String, chat: ChatAnswer, roomId: Int): Response<VoidResponse> {
+        val response = chatService.chat(token = token, roomId = roomId, data = QnABody(chat))
         Log.d(Constant.TAG, "ChatRequestManager createChat response is $response")
         return response
     }

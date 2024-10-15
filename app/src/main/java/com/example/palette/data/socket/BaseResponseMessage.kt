@@ -33,10 +33,6 @@ sealed class BaseResponseMessage {
     ) : BaseResponseMessage() // 에러일 때 처리할 로직 필요
 }
 
-enum class MessageType {
-    NEW_CHAT, ERROR
-}
-
 enum class PromptType {
     USER_INPUT,
     SELECTABLE,

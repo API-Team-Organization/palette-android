@@ -20,15 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.data.chat.ChatData
 import com.example.palette.data.chat.ChatRequestManager
+import com.example.palette.data.chat.qna.ChatAnswer
 import com.example.palette.data.chat.qna.ChatQuestion
 import com.example.palette.data.chat.qna.PromptData
 import com.example.palette.data.error.CustomException
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.RoomData
 import com.example.palette.data.socket.BaseResponseMessage
-import com.example.palette.data.socket.ChatResource
 import com.example.palette.data.socket.MessageResponse
 import com.example.palette.data.socket.WebSocketManager
 import com.example.palette.databinding.FragmentChattingBinding
@@ -41,7 +40,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 class ChattingFragment(
     private val roomId: Int,
@@ -56,6 +54,7 @@ class ChattingFragment(
     private var qnaList: MutableList<PromptData> = mutableListOf()
     private var isLoading = false
     private lateinit var webSocketManager: WebSocketManager
+    private lateinit var sendData: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -117,11 +116,17 @@ class ChattingFragment(
         binding.chattingToolbar.setOnClickListener { showChangeTitleDialog() }
 
         binding.chattingSubmitButton.setOnClickListener {
-            val newMessage = binding.chattingEditText.text.toString()
-            val chat = ChatData(newMessage)
+            // TODO: Selectable 만 되게 임시로 박아둠
+            val chat = ChatAnswer.SelectableAnswer(
+                choiceId = sendData,
+                type = "SELECTABLE"
+            )
 
-            if (newMessage.isNotBlank()) {
-                submitText(chat)
+            if (sendData.isEmpty()) return@setOnClickListener
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                sendMessage(roomId, chat) // Retrofit으로 채팅 메시지 전송
+                binding.chattingEditText.text.clear()
             }
         }
 
@@ -209,6 +214,7 @@ class ChattingFragment(
                         selectableQuestion?.choices?.forEach { choice ->
                             val button = Button(context).apply {
                                 text = choice.displayName
+                                sendData = choice.id
                                 background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
                                 elevation = 0f
                                 val layoutParams = LinearLayout.LayoutParams(
@@ -270,67 +276,35 @@ class ChattingFragment(
         })
     }
 
-    private fun submitText(chat: ChatData) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (chatList.size == 0) {
-                log("ChattingFragment 첫 메세지를 제목으로 설정합니다 ${chat}")
-                RoomRequestManager.setRoomTitle(
-                    PaletteApplication.prefs.token,
-                    RoomData(roomId, chat.message)
-                )
-                binding.chattingToolbar.title = chat.message
-            }
-            sendMessage(roomId, chat.message) // Retrofit으로 채팅 메시지 전송
-            binding.chattingEditText.text.clear()
-        }
-    }
+    private suspend fun sendMessage(roomId: Int, data: ChatAnswer) {
+        val chat: ChatAnswer
 
-    private suspend fun sendMessage(roomId: Int, message: String) {
-        val chatRequest = ChatData(message = message)
-        val response = ChatRequestManager.createChat(
+        when(data) {
+            is ChatAnswer.GridAnswer -> {
+                chat = ChatAnswer.GridAnswer(
+                    choiceId = data.choiceId,
+                    type = "GRID"
+                )
+            }
+            is ChatAnswer.SelectableAnswer -> {
+                chat = ChatAnswer.SelectableAnswer(
+                    choiceId = data.choiceId,
+                    type = "SELECTABLE"
+                )
+            }
+            is ChatAnswer.UserInputAnswer -> {
+                chat = ChatAnswer.UserInputAnswer(
+                    choiceId = data.choiceId,
+                    type = "USER_INPUT"
+                )
+            }
+        }
+
+        ChatRequestManager.createChat(
             PaletteApplication.prefs.token,
             roomId = roomId,
-            chat = chatRequest
+            chat = chat
         )
-
-        if (response.isSuccessful) {
-            val newReceived = MessageResponse(
-                id = "",
-                isAi = false,
-                datetime = Clock.System.now(),
-                message = message,
-                roomId = roomId,
-                userId = 0,
-                resource = ChatResource.CHAT,
-                promptId = null
-            )
-            chatList.add(newReceived)
-            recyclerAdapter.addChat(newReceived)
-            binding.chattingEditText.text.clear()
-
-//            // 플레이스홀더 아이템 두 개 추가
-//            val placeholder1 = MessageResponse(
-//                id = "",
-//                isAi = true,
-//                message = "로딩 중...",
-//                datetime = Clock.System.now(),
-//                roomId = roomId,
-//                userId = 0,
-//                resource = ChatResource.INTERNAL_CHAT_LOADING,
-//                promptId = null
-//            )
-//            val placeholder2 = placeholder1.copy(resource = ChatResource.INTERNAL_IMAGE_LOADING)
-//
-//            chatList.add(placeholder1)
-//            chatList.add(placeholder2)
-//            recyclerAdapter.addChat(placeholder1)
-//            recyclerAdapter.addChat(placeholder2)
-
-            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-            log("ChattingFragment sendMessage response.isSuccessful $response")
-        } else {
-            log("ChattingFragment sendMessage response.error $response")
-        }
     }
 
     private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
