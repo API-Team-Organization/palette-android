@@ -196,90 +196,6 @@ class ChattingFragment(
             binding.chattingRecycler.scrollToPosition(chatList.size - 1)
 
             log("ChattingFragment initView \nqnaList: $qnaList\nchatList: $chatList")
-
-            val qna: PromptData?
-
-            if (chatList.isEmpty()) {
-                qna = qnaList[0]
-            } else {
-                val lastMessage = chatList.last()
-                qna = qnaList.find { it.id == lastMessage.promptId }!!
-            }
-
-            when (qna) {
-                is PromptData.Selectable -> {
-                    val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
-                    with(binding) {
-                        chattingSelectLayout.visibility = View.VISIBLE
-                        chattingSelectLayout.removeAllViews()
-                        selectableQuestion?.choices?.forEach { choice ->
-                            val button = Button(context).apply {
-                                text = choice.displayName
-                                background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
-                                elevation = 0f
-                                val layoutParams = LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                                ).apply {
-                                    setMargins(8, 0, 8, 0)
-                                }
-                                this.layoutParams = layoutParams
-                                setOnClickListener {
-                                    binding.chattingEditText.setText(choice.displayName)
-                                    sendData = choice.id
-                                }
-                            }
-                            chattingSelectLayout.addView(button)
-                        }
-                    }
-                }
-
-                is PromptData.Grid -> {
-                    val gridQuestion = qna.question as? ChatQuestion.GridQuestion
-                    with(binding) {
-                        chattingSelectLayout.visibility = View.VISIBLE
-                        chattingSelectLayout.removeAllViews()
-
-                        val gridLayout = GridLayout(context).apply {
-                            rowCount = gridQuestion?.xSize ?: 4
-                            columnCount = gridQuestion?.ySize ?: 4
-                            layoutParams = LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                            ).apply {
-                                setMargins(8, 0, 8, 0)
-                            }
-                        }
-
-                        gridQuestion?.let {
-                            for (i in 0 until (it.xSize * it.ySize)) {
-                                val button = Button(context).apply {
-                                    text = (i + 1).toString()
-                                    background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
-                                    elevation = 0f
-                                    setOnClickListener {
-                                        binding.chattingEditText.setText(i + 1)
-                                    }
-                                }
-
-                                val gridParams = GridLayout.LayoutParams().apply {
-                                    rowSpec = GridLayout.spec(i / it.ySize)
-                                    columnSpec = GridLayout.spec(i % it.ySize)
-                                    width = 0
-                                    height = GridLayout.LayoutParams.WRAP_CONTENT
-                                    setMargins(6, 6, 6, 6)
-                                }
-                                gridLayout.addView(button, gridParams)
-                            }
-                        }
-                        chattingSelectLayout.addView(gridLayout)
-                    }
-                }
-
-                is PromptData.UserInput -> {
-                    binding.chattingSelectLayout.visibility = View.GONE
-                }
-            }
         }
     }
 
@@ -367,6 +283,96 @@ class ChattingFragment(
 
         if (chatList.isEmpty()) return
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+
+        updateAnswerMethod()
+    }
+
+    private fun updateAnswerMethod() {
+        if (chatList.isEmpty()) return
+
+        val lastMessage = chatList.last()
+        val qna = qnaList.find { it.id == lastMessage.promptId } ?: return
+
+        when (qna) {
+            is PromptData.Selectable -> {
+                updateSelectableUI(qna)
+            }
+            is PromptData.Grid -> {
+                updateGridUI(qna)
+            }
+            is PromptData.UserInput -> {
+                binding.chattingSelectLayout.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun updateSelectableUI(qna: PromptData.Selectable) {
+        val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
+        with(binding) {
+            chattingSelectLayout.visibility = View.VISIBLE
+            chattingSelectLayout.removeAllViews()
+            selectableQuestion?.choices?.forEach { choice ->
+                val button = Button(context).apply {
+                    text = choice.displayName
+                    background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
+                    elevation = 0f
+                    val layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(8, 0, 8, 0)
+                    }
+                    this.layoutParams = layoutParams
+                    setOnClickListener {
+                        binding.chattingEditText.setText(choice.displayName)
+                        sendData = choice.id
+                    }
+                }
+                chattingSelectLayout.addView(button)
+            }
+        }
+    }
+
+    private fun updateGridUI(qna: PromptData.Grid) {
+        val gridQuestion = qna.question as? ChatQuestion.GridQuestion
+        with(binding) {
+            chattingSelectLayout.visibility = View.VISIBLE
+            chattingSelectLayout.removeAllViews()
+
+            val gridLayout = GridLayout(context).apply {
+                rowCount = gridQuestion?.xSize ?: 4
+                columnCount = gridQuestion?.ySize ?: 4
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(8, 0, 8, 0)
+                }
+            }
+
+            gridQuestion?.let {
+                for (i in 0 until (it.xSize * it.ySize)) {
+                    val button = Button(context).apply {
+                        text = (i + 1).toString()
+                        background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
+                        elevation = 0f
+                        setOnClickListener {
+                            binding.chattingEditText.setText((i + 1).toString())
+                        }
+                    }
+
+                    val gridParams = GridLayout.LayoutParams().apply {
+                        rowSpec = GridLayout.spec(i / it.ySize)
+                        columnSpec = GridLayout.spec(i % it.ySize)
+                        width = 0
+                        height = GridLayout.LayoutParams.WRAP_CONTENT
+                        setMargins(6, 6, 6, 6)
+                    }
+                    gridLayout.addView(button, gridParams)
+                }
+            }
+            chattingSelectLayout.addView(gridLayout)
+        }
     }
 
     private fun showChangeTitleDialog() {
