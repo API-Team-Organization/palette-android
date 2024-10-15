@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -228,6 +229,46 @@ class ChattingFragment(
                             }
                             chattingSelectLayout.addView(button)
                         }
+                    }
+                } else if (qna is PromptData.Grid) {
+                    val gridQuestion = qna.question as? ChatQuestion.GridQuestion
+                    with(binding) {
+                        chattingSelectLayout.visibility = View.VISIBLE
+                        chattingSelectLayout.removeAllViews()
+
+                        val gridLayout = GridLayout(context).apply {
+                            rowCount = gridQuestion?.xSize ?: 4
+                            columnCount = gridQuestion?.ySize ?: 4
+                            layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            ).apply {
+                                setMargins(8, 0, 8, 0)
+                            }
+                        }
+
+                        gridQuestion?.let {
+                            for (i in 0 until (it.xSize * it.ySize)) {
+                                val button = Button(context).apply {
+                                    text = (i + 1).toString()
+                                    background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
+                                    elevation = 0f
+                                    setOnClickListener {
+                                        binding.chattingEditText.setText(i + 1)
+                                    }
+                                }
+
+                                val gridParams = GridLayout.LayoutParams().apply {
+                                    rowSpec = GridLayout.spec(i / it.ySize)
+                                    columnSpec = GridLayout.spec(i % it.ySize)
+                                    width = 0
+                                    height = GridLayout.LayoutParams.WRAP_CONTENT
+                                    setMargins(6, 6, 6, 6)
+                                }
+                                gridLayout.addView(button, gridParams)
+                            }
+                        }
+                        chattingSelectLayout.addView(gridLayout)
                     }
                 }
             }
