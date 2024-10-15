@@ -214,7 +214,6 @@ class ChattingFragment(
                         selectableQuestion?.choices?.forEach { choice ->
                             val button = Button(context).apply {
                                 text = choice.displayName
-                                sendData = choice.id
                                 background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
                                 elevation = 0f
                                 val layoutParams = LinearLayout.LayoutParams(
@@ -226,6 +225,7 @@ class ChattingFragment(
                                 this.layoutParams = layoutParams
                                 setOnClickListener {
                                     binding.chattingEditText.setText(choice.displayName)
+                                    sendData = choice.id
                                 }
                             }
                             chattingSelectLayout.addView(button)
