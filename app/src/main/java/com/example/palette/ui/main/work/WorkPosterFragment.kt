@@ -47,7 +47,7 @@ class WorkPosterFragment : Fragment() {
             try {
                 val token = PaletteApplication.prefs.token
                 val page = 0
-                val size = 20 // TODO: Constants 로 분리
+                val size = 20 // TODO: Constants로 분리
                 log("aaaa")
                 val response = try {
                     val m = ChatRequestManager.getImageList(token, page, size)
@@ -61,11 +61,19 @@ class WorkPosterFragment : Fragment() {
                 val imageList = response.data
 
                 withContext(Dispatchers.Main) {
-                    imageAdapter.updateImages(imageList.images)
+                    if (imageList.images.isEmpty()) {
+                        binding.tvNoImages.visibility = View.VISIBLE
+                        rvImageList.visibility = View.GONE
+                    } else {
+                        binding.tvNoImages.visibility = View.GONE
+                        rvImageList.visibility = View.VISIBLE
+                        imageAdapter.updateImages(imageList.images)
+                    }
                 }
             } catch (e: Exception) {
                 logE("Error: ${e.message}")
             }
         }
     }
+
 }
