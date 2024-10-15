@@ -41,7 +41,7 @@ class CreateMediaAdapter(
 
             if (!touchHandled && event.action == MotionEvent.ACTION_UP) {
                 // 터치가 링크가 아닐 때 클릭 처리
-                itemClickListener.onItemClick(holder.bindingAdapterPosition, holder.itemView)
+                itemClickListener.onItemClick(holder.bindingAdapterPosition)
             }
 
             touchHandled
@@ -56,7 +56,7 @@ class CreateMediaAdapter(
     override fun getItemCount(): Int = itemList.size
 
     interface OnItemClickListener {
-        fun onItemClick(position: Int, itemView: View)
+        fun onItemClick(position: Int)
         fun onItemLongClick(position: Int)
     }
 
@@ -69,7 +69,7 @@ class CreateMediaAdapter(
 
         init {
             itemView.setOnClickListener {
-                itemClickListener.onItemClick(bindingAdapterPosition, itemView)
+                itemClickListener.onItemClick(bindingAdapterPosition)
             }
 
             itemView.setOnLongClickListener {
