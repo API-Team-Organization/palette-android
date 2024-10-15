@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 둥근 사각형 배경 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/semiDarkGray"/> <!-- 사각형 색상 -->
+            <corners android:radius="8dp"/> <!-- 모서리 둥글게 -->
+            <size android:width="32dp" android:height="32dp"/> <!-- 사각형 크기 -->
+        </shape>
+    </item>
+
+    <!-- 원형 배경 -->
+    <item android:gravity="center"> <!-- 원을 중앙에 위치시키기 위한 속성 -->
+        <shape android:shape="oval">
+            <solid android:color="@color/white"/> <!-- 원의 색상 -->
+            <size android:width="8dp" android:height="8dp"/> <!-- 원의 크기 -->
+        </shape>
+    </item>
+
+</layer-list>

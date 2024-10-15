@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -418,40 +420,107 @@ class ChattingFragment(
             chattingSelectLayout.visibility = View.VISIBLE
             chattingSelectLayout.removeAllViews()
 
-            val gridLayout = GridLayout(context).apply {
-                rowCount = gridQuestion?.xSize ?: 3
-                columnCount = gridQuestion?.ySize ?: 3
+            val cardView = CardView(requireContext()).apply {
+                radius = 24f
+                cardElevation = 12f
+                setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(8, 0, 8, 0)
+                    setMargins(16, 16, 16, 16)
                 }
             }
+
+            val cardInnerLayout = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                setPadding(16, 16, 16, 16)
+            }
+
+            val instructionText = TextView(context).apply {
+                text = "원하는 위치를 순서대로 선택해주세요"
+                textSize = 18f
+                setTextColor(ContextCompat.getColor(context, R.color.black))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+
+            val gridLayout = GridLayout(context).apply {
+                rowCount = gridQuestion?.xSize ?: 3
+                columnCount = gridQuestion?.ySize ?: 3
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 16, 0, 0)
+                    gravity = Gravity.CENTER
+                }
+            }
+
+            val selectedPositions = mutableListOf<Int>()
 
             gridQuestion?.let {
+                val buttonSize = resources.getDimensionPixelSize(R.dimen.grid_button_size)
+
                 for (i in 0 until (it.xSize * it.ySize)) {
                     val button = Button(context).apply {
-                        text = (i + 1).toString()
-                        background = ContextCompat.getDrawable(context, R.drawable.bac_chatting_edit_text)
-                        elevation = 0f
-                        setOnClickListener {
-                            binding.chattingEditText.setText((i + 1).toString())
+                        background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_unselect)
+                        layoutParams = GridLayout.LayoutParams().apply {
+                            rowSpec = GridLayout.spec(i / it.ySize)
+                            columnSpec = GridLayout.spec(i % it.ySize)
+                            width = buttonSize
+                            height = buttonSize
+                            setMargins(10, 10, 10, 10)
+                        }
+                        setOnClickListener { _ ->
+                            if (i !in selectedPositions) {
+                                selectedPositions.add(i)
+                                background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_select)
+                            }
                         }
                     }
-
-                    val gridParams = GridLayout.LayoutParams().apply {
-                        rowSpec = GridLayout.spec(i / it.ySize)
-                        columnSpec = GridLayout.spec(i % it.ySize)
-                        height = GridLayout.LayoutParams.WRAP_CONTENT
-                        width = GridLayout.LayoutParams.WRAP_CONTENT
-                        setMargins(10, 10, 10, 10)
-                    }
-                    gridLayout.addView(button, gridParams)
+                    gridLayout.addView(button)
                 }
             }
-            chattingSelectLayout.addView(gridLayout)
+
+            val submitButton = Button(context).apply {
+                text = "답변하기"
+                textSize = 16f
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+                background = ContextCompat.getDrawable(context, R.drawable.bac_button)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(16, 32, 16, 0)
+                    gravity = Gravity.CENTER
+                }
+                setPadding(0, 20, 0, 20)
+                setOnClickListener {
+                    // 여기에 제출 기능 구현
+                    updateChattingEditText(selectedPositions)
+                }
+            }
+
+            cardInnerLayout.addView(instructionText)
+            cardInnerLayout.addView(gridLayout)
+            cardInnerLayout.addView(submitButton)
+
+            cardView.addView(cardInnerLayout)
+
+            chattingSelectLayout.addView(cardView)
         }
+    }
+
+    private fun updateChattingEditText(selectedPositions: List<Int>) {
+        val orderedPositions = selectedPositions.joinToString(",")
+        binding.chattingEditText.setText(orderedPositions)
     }
 
     private fun showChangeTitleDialog() {
