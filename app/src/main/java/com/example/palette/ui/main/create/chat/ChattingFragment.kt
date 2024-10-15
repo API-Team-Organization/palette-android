@@ -215,7 +215,6 @@ class ChattingFragment(
                         selectableQuestion?.choices?.forEach { choice ->
                             val button = Button(context).apply {
                                 text = choice.displayName
-                                sendData = choice.id
                                 background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
                                 elevation = 0f
                                 val layoutParams = LinearLayout.LayoutParams(
@@ -227,6 +226,7 @@ class ChattingFragment(
                                 this.layoutParams = layoutParams
                                 setOnClickListener {
                                     binding.chattingEditText.setText(choice.displayName)
+                                    sendData = choice.id
                                 }
                             }
                             chattingSelectLayout.addView(button)
@@ -276,7 +276,9 @@ class ChattingFragment(
                     }
                 }
 
-                is PromptData.UserInput -> {}
+                is PromptData.UserInput -> {
+                    binding.chattingSelectLayout.visibility = View.GONE
+                }
             }
         }
     }
@@ -406,7 +408,6 @@ class ChattingFragment(
                 }
                 dialog.dismiss()
             }
-
         }
         dialog.setCancelable(false)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
