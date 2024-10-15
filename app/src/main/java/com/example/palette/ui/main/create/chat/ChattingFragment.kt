@@ -143,7 +143,7 @@ class ChattingFragment(
 
                 log("chatList : $chatList")
                 val firstMessageTime = chatList[0].datetime
-                log("firstMessageTiem : $firstMessageTime")
+                log("firstMessageTime : $firstMessageTime")
                 loadMoreChats(firstMessageTime.toString())
             }
         })
@@ -163,7 +163,8 @@ class ChattingFragment(
         try {
             val it = ChatRequestManager.getChatList( // getChatList failed -> return EmptyList
                 token = PaletteApplication.prefs.token,
-                roomId = roomId
+                roomId = roomId,
+                before = null
             )?.data ?: emptyList()
 
             chatList.addAll((it).reversed())
