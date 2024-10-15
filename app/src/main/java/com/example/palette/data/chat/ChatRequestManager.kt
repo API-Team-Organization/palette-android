@@ -22,7 +22,7 @@ object ChatRequestManager {
         return response
     }
 
-    suspend fun getChatList(token: String, roomId: Int, before: String = Clock.System.now().toString()): DataResponse<MutableList<MessageResponse>>? {
+    suspend fun getChatList(token: String, roomId: Int, before: String? = Clock.System.now().toString()): DataResponse<MutableList<MessageResponse>>? {
         val response = chatService.getChatList(token = token, roomId = roomId, before = before, size = 10)
         Log.d(Constant.TAG, "getChatList response: $response")
 

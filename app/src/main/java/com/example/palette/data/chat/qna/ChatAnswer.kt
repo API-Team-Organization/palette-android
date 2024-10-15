@@ -19,13 +19,13 @@ sealed class ChatAnswer {
 
     @Serializable
     data class GridAnswer(
-        val choiceId: List<Int>,
+        val choice: List<Int>,
         val type: String
     ) : ChatAnswer()
 
     @Serializable
     data class UserInputAnswer(
-        val choiceId: String,
+        val input: String,
         val type: String
     ) : ChatAnswer()
 
