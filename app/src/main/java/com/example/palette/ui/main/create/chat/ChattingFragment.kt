@@ -26,7 +26,7 @@ import com.example.palette.data.chat.qna.ChatQuestion
 import com.example.palette.data.chat.qna.PromptData
 import com.example.palette.data.error.CustomException
 import com.example.palette.data.room.RoomRequestManager
-import com.example.palette.data.room.data.RoomData
+import com.example.palette.data.room.data.TitleData
 import com.example.palette.data.socket.BaseResponseMessage
 import com.example.palette.data.socket.MessageResponse
 import com.example.palette.data.socket.WebSocketManager
@@ -396,8 +396,9 @@ class ChattingFragment(
             } else {
                 viewLifecycleOwner.lifecycleScope.launch {
                     RoomRequestManager.setRoomTitle(
-                        PaletteApplication.prefs.token,
-                        RoomData(roomId, newTitle)
+                        token = PaletteApplication.prefs.token,
+                        title = TitleData(newTitle),
+                        roomId = roomId
                     )
                     binding.chattingToolbar.title = newTitle
                 }
