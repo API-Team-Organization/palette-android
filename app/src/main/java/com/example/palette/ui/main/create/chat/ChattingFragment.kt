@@ -415,6 +415,7 @@ class ChattingFragment(
                     setMargins(0, 16, 0, 16) // 그리드 상단 및 하단 마진 추가
                     gravity = Gravity.CENTER
                 }
+                setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
             }
 
             // 선택된 위치 저장
@@ -454,6 +455,7 @@ class ChattingFragment(
                 textSize = 16f
                 setTextColor(ContextCompat.getColor(context, R.color.white))
                 background = ContextCompat.getDrawable(context, R.drawable.bac_button)
+                typeface = ResourcesCompat.getFont(context, R.font.pretendard_semibold)
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
