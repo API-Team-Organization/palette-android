@@ -31,6 +31,7 @@ import com.example.palette.ui.main.create.room.CreateMediaFragment
 import com.example.palette.ui.main.settings.SettingFragment
 import com.example.palette.ui.main.work.WorkFragment
 import com.example.palette.ui.util.changeFragment
+import com.example.palette.ui.util.isRootFragment
 import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.CoroutineScope
@@ -67,15 +68,19 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (doubleBackToExitPressedOnce) {
-                finish()
-                return
+            if (!isRootFragment(supportFragmentManager)) {
+                supportFragmentManager.popBackStack()
+            } else {
+                if (doubleBackToExitPressedOnce) {
+                    finish()
+                    return
+                }
+
+                doubleBackToExitPressedOnce = true
+                shortToast("한 번 더 누르면 종료됩니다.")
+
+                handler.postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
             }
-
-            doubleBackToExitPressedOnce = true
-            shortToast("한 번 더 누르면 종료됩니다.")
-
-            handler.postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
         }
     }
 
@@ -125,7 +130,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private fun handleTabClick(event: BottomTab) {
         if (currentTab != event) {
             currentTab = event
-            changeFragment(getFragment(event), supportFragmentManager)
+            changeFragment(getFragment(event), supportFragmentManager, false)
         }
     }
 
