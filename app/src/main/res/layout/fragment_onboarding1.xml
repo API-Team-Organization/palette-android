@@ -13,17 +13,12 @@
         android:orientation="vertical"
         android:weightSum="10">
 
-
-        <ImageView
+        <app.rive.runtime.kotlin.RiveAnimationView
             android:id="@+id/onBoarding1Animation"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:src="@drawable/onboarding1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_weight="8"/>
-
+            android:layout_weight="8"
+            app:riveAnimation="@raw/message_icon_new"/>
 
         <LinearLayout
             android:id="@+id/onBoarding1TextBox"
@@ -33,10 +28,11 @@
             android:gravity="center"
             android:layout_weight="2"
             android:layout_marginBottom="120dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AI 홍보물 제작 앱"
+                android:text="믿을 수 없이 간편한."
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:fontFamily="@font/pretendard_bold"/>
@@ -44,14 +40,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="최신 AI 기술로 당신의 아이디어를"
+                android:text="나만의 홍보물,"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" 현실로 만들어보세요!"
+                android:text="AI를 활용해 쉽게 만들어보세요!"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>

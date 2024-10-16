@@ -14,15 +14,12 @@
         android:weightSum="10">
 
 
-        <ImageView
+        <app.rive.runtime.kotlin.RiveAnimationView
             android:id="@+id/onBoarding2Animation"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:src="@drawable/onboarding2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_weight="8"/>
+            android:layout_weight="8"
+            app:riveAnimation="@raw/document_icon_new"/>
 
 
         <LinearLayout
@@ -36,7 +33,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AI와 함께 홍보 능력을 높이세요!"
+                android:text="다재다능, 적재적소."
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:fontFamily="@font/pretendard_bold"/>
@@ -44,14 +41,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="쉽고 빠르게 AI가 도와주는"
+                android:text="다양한 스타일의 홍보물,"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="홍보물 제작을 경험해보세요."
+                android:text="Palette는 모두 소화 가능합니다."
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>

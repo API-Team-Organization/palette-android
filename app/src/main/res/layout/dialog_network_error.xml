@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_dialog_background"
+    android:minWidth="300dp"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="네트워크 오류"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@font/pretendard_semibold"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:textSize="14sp"
+        android:text="인터넷 연결을 확인해 주세요. 앱을 종료합니다."
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/tossGray" />
+
+    <TextView
+        android:id="@+id/tv_session"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:text="종료"
+        android:textSize="14sp"
+        android:textColor="@color/primaryColor"
+        android:fontFamily="@font/pretendard_medium"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_gravity="end"/>
+
+</LinearLayout>
