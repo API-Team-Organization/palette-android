@@ -1,8 +1,6 @@
 package com.example.palette.ui.onboarding
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +8,6 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.common.Constant
 import com.example.palette.databinding.FragmentStartBinding
 
 class StartFragment : Fragment() {
@@ -28,7 +25,11 @@ class StartFragment : Fragment() {
     }
 
     private fun initView() {
-        val isFirst = PaletteApplication.prefs.isFirst
+        val prefs = PaletteApplication.prefs
+        prefs.isFirst = false
+
+        val isFirst = prefs.isFirst
+
         if (!isFirst) {
             findNavController().navigate(R.id.action_startFragment_to_loginFragment)
         }

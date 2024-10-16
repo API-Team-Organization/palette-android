@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
         val prefs = PaletteApplication.prefs
         val isFirst = prefs.isFirst
         if (isFirst) {
-            prefs.isFirst = false
             log("최초 실행입니다.")
         } else {
             log("최초실행이 아닙니다.")

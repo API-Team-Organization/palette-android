@@ -36,24 +36,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chattingRecycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_marginBottom="16dp"
             app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toTopOf="@+id/text_gchat_indicator"
+            app:layout_constraintBottom_toTopOf="@+id/chatUserInputBox"
             app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout" />
-
-        <LinearLayout
-            android:id="@+id/chattingSelectLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            android:gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/chattingTextBox"
-            android:layout_marginHorizontal="15dp">
-        </LinearLayout>
 
         <TextView
             android:id="@+id/text_gchat_indicator"
@@ -61,42 +48,58 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/chattingTextBox"
+            app:layout_constraintBottom_toTopOf="@id/chatUserInputBox"
             app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
-            android:id="@+id/chattingTextBox"
+            android:id="@+id/chatUserInputBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginBottom="15dp">
-            <EditText
-                android:id="@+id/chattingEditText"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:hint="당신의 팔레트를 그려보세요"
-                android:textColorHint="@color/gray"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:fontFamily="@font/pretendard_medium"
-                android:background="@drawable/bac_chatting_edit_text"
-                android:padding="15dp"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/chattingSubmitButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bac_circle"
-                android:padding="13dp"
-                android:src="@drawable/ic_arrow_upward_gray" />
+            <LinearLayout
+                android:id="@+id/chattingSelectLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/chattingTextBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginBottom="15dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/chattingEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bac_chatting_edit_text"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:hint="당신의 팔레트를 그려보세요"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/chattingSubmitButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bac_circle_gray"
+                    android:padding="13dp"
+                    android:src="@drawable/ic_arrow_upward_gray" />
+            </LinearLayout>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
