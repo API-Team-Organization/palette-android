@@ -19,12 +19,9 @@ import com.api.palette.R
 import com.api.palette.application.PaletteApplication
 import com.api.palette.common.Constant
 import com.api.palette.data.base.DataResponse
-import com.api.palette.data.chat.ChatRequestManager
-import com.api.palette.data.error.CustomException
 import com.api.palette.data.info.InfoRequestManager.profileInfoRequest
 import com.api.palette.data.room.RoomRequestManager
 import com.api.palette.data.room.data.RoomData
-import com.api.palette.data.socket.MessageResponse
 import com.api.palette.databinding.FragmentCreateMediaBinding
 import com.api.palette.ui.base.BaseControllable
 import com.api.palette.ui.main.create.room.adapter.CreateMediaAdapter
@@ -40,7 +37,6 @@ class CreateMediaFragment : Fragment() {
     private val itemList = ArrayList<RoomData>()
     private lateinit var workAdapter: CreateMediaAdapter
     private lateinit var roomList: DataResponse<List<RoomData>>
-    private val messageList = mutableListOf<MutableList<MessageResponse>>()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -64,7 +60,7 @@ class CreateMediaFragment : Fragment() {
 
     private fun initWorkAdapter() {
         with(binding) {
-            workAdapter = CreateMediaAdapter(itemList, messageList.map { it.last().message })
+            workAdapter = CreateMediaAdapter(itemList)
             workRecyclerView.adapter = workAdapter
             workRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -72,7 +68,7 @@ class CreateMediaFragment : Fragment() {
 
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                startChatting(roomList.data[position].id, roomList.data[position].title.toString(), chatList = messageList[position])
+                startChatting(roomList.data[position].id, roomList.data[position].title.toString())
             }
 
             override fun onItemLongClick(position: Int) {
@@ -90,10 +86,6 @@ class CreateMediaFragment : Fragment() {
                         binding.roomListEmptyText.visibility = View.VISIBLE
                     } else {
                         binding.roomListEmptyText.visibility = View.GONE
-                        messageList.clear()
-                        for (i in roomList.data) {
-                            loadChatData(i.id)
-                        }
                         itemList.clear()
                         itemList.addAll(roomList.data)
 
@@ -123,8 +115,8 @@ class CreateMediaFragment : Fragment() {
         }
     }
 
-    private fun startChatting(position: Int, title: String, isFirst: Boolean = false, chatList: MutableList<MessageResponse> = mutableListOf()) {
-        changeFragment(ChattingFragment(roomId = position, title = title, isFirst = isFirst, messageList = chatList))
+    private fun startChatting(position: Int, title: String, isFirst: Boolean = false) {
+        changeFragment(ChattingFragment(roomId = position, title = title, isFirst = isFirst))
     }
 
     private fun deleteChatDialog(context: Context, position: Int) {
@@ -182,7 +174,6 @@ class CreateMediaFragment : Fragment() {
                         roomResponse.body()!!.data.id,
                         title = roomResponse.body()!!.data.title.toString(),
                         isFirst = true,
-
                     )
                     log("생성된 roomId == ${roomResponse.body()!!.data.id}")
                 } else {
@@ -248,21 +239,6 @@ class CreateMediaFragment : Fragment() {
                 binding.userName.text = username
                 binding.today.text = "환영합니다!"
             }
-        }
-    }
-
-    private suspend fun loadChatData(roomId: Int) {
-        try {
-            val chatList = ChatRequestManager.getChatList(
-                token = PaletteApplication.prefs.token,
-                roomId = roomId,
-                before = null
-            )?.data ?: emptyList()
-
-            val chat = chatList.reversed().toMutableList()
-            messageList.add(chat)
-        } catch (e: CustomException) {
-            shortToast(e.errorResponse.message)
         }
     }
 }

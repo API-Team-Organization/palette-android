@@ -17,8 +17,7 @@ import com.api.palette.R
 import com.api.palette.data.room.data.RoomData
 
 class CreateMediaAdapter(
-    private val itemList: ArrayList<RoomData>,
-    private val lastMessageList: List<String>
+    private val itemList: ArrayList<RoomData>
 ) : RecyclerView.Adapter<CreateMediaAdapter.WorkViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkViewHolder {
         val view =
@@ -33,7 +32,7 @@ class CreateMediaAdapter(
     override fun onBindViewHolder(holder: WorkViewHolder, position: Int) {
         holder.iv_logo.setImageResource(R.drawable.logo)
         holder.tv_poster_title.text = itemList[position].title
-        holder.tv_poster_desc.text = lastMessageList[position]
+        holder.tv_poster_desc.text = itemList[position].message
 
         // 터치 이벤트를 통해 클릭 처리
         holder.tv_poster_desc.setOnTouchListener { v, event ->
