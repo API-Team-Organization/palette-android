@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -54,6 +56,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val createMediaFragment = CreateMediaFragment()
     private val workFragment = WorkFragment()
     private val settingFragment = SettingFragment()
+    private lateinit var vibrator: Vibrator
 
     private val eventListener = object : RiveFileController.RiveEventListener {
         override fun notifyEvent(event: RiveEvent) {
@@ -78,6 +81,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
             val tab = BottomTab.from(event.name) ?: return
             handleTabClick(tab)
+            vibrateOnClick()
         }
     }
 
@@ -89,6 +93,8 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
         // RiveAnimationView에서 click_home 이벤트를 강제로 실행
         riveAnimationView.addEventListener(eventListener)
+
+        vibrator = (getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator)!!
 
         setContentView(binding.root)
     }
@@ -104,6 +110,10 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         BottomTab.HOME -> createMediaFragment
         BottomTab.SEARCH -> workFragment
         BottomTab.SETTING -> settingFragment
+    }
+
+    private fun vibrateOnClick() {
+        vibrator.vibrate(VibrationEffect.createOneShot(50, 75))
     }
 
     // bottomVisible 메서드 정의
