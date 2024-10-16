@@ -16,10 +16,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.LinearLayout
+import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -61,7 +63,6 @@ class ChattingFragment(
     private var qnaList: MutableList<PromptData> = mutableListOf()
     private var isLoading = false
     private lateinit var webSocketManager: WebSocketManager
-    private var sendData: String = "basic value"
     private lateinit var sendType: String
 
     override fun onCreateView(
@@ -159,25 +160,26 @@ class ChattingFragment(
         if (binding.chattingEditText.text.isEmpty()) return
 
         val chat: ChatAnswer
+        val input = binding.chattingEditText.text.toString()
 
         when (sendType) {
             "SELECTABLE" -> {
                 chat = ChatAnswer.SelectableAnswer(
-                    choiceId = sendData,
+                    choiceId = input,
                     type = sendType
                 )
             }
 
             "GRID" -> {
                 chat = ChatAnswer.GridAnswer(
-                    choice = binding.chattingEditText.text.split(",").map { it.toInt() },
+                    choice = input.split(",").map { it.toInt() },
                     type = sendType
                 )
             }
 
             "USER_INPUT" -> {
                 chat = ChatAnswer.UserInputAnswer(
-                    input = binding.chattingEditText.text.toString(),
+                    input = input,
                     type = sendType
                 )
             }
@@ -253,17 +255,22 @@ class ChattingFragment(
     private fun managementInputTool(qna: PromptData) {
         when (qna) {
             is PromptData.Selectable -> {
+                binding.chattingSelectLayout.visibility = View.VISIBLE
+                binding.chattingTextBox.visibility = View.GONE
                 sendType = "SELECTABLE"
                 updateSelectableUI(qna)
             }
 
             is PromptData.Grid -> {
+                binding.chattingSelectLayout.visibility = View.VISIBLE
+                binding.chattingTextBox.visibility = View.GONE
                 sendType = "GRID"
                 updateGridUI(qna)
             }
 
             is PromptData.UserInput -> {
                 sendType = "USER_INPUT"
+                binding.chattingTextBox.visibility = View.VISIBLE
                 binding.chattingSelectLayout.visibility = View.GONE
             }
         }
@@ -334,28 +341,102 @@ class ChattingFragment(
 
     private fun updateSelectableUI(qna: PromptData.Selectable) {
         val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
+
+        var selectedChoice = selectableQuestion?.choices?.get(0)?.id ?: "DISPLAY"
         with(binding) {
-            chattingSelectLayout.visibility = View.VISIBLE
             chattingSelectLayout.removeAllViews()
-            selectableQuestion?.choices?.forEach { choice ->
-                val button = Button(context).apply {
-                    text = choice.displayName
-                    background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
-                    elevation = 0f
-                    val layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(8, 0, 8, 0)
-                    }
-                    this.layoutParams = layoutParams
-                    setOnClickListener {
-                        binding.chattingEditText.setText(choice.displayName)
-                        sendData = choice.id
+
+            val cardView = CardView(requireContext()).apply {
+                radius = 32f
+                cardElevation = 12f
+                setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(32, 16, 16, 32)
+                }
+            }
+
+            val cardInnerLayout = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                setPadding(64, 64, 64, 64)
+            }
+
+            val pickerLayout = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+
+                setPadding(16, 16, 16, 16)
+            }
+
+            val numberPicker = NumberPicker(context).apply {
+                wrapSelectorWheel = true
+
+                selectableQuestion?.choices?.let { choices ->
+                    minValue = 0
+                    maxValue = choices.size - 1
+                    displayedValues = choices.map { it.displayName }.toTypedArray()  // 리스트를 문자열 배열로 변환하여 설정
+                }
+
+                // 값 선택 시 이벤트 리스너 설정
+                setOnValueChangedListener { _, oldVal, newVal ->
+                    // newVal은 선택된 값의 인덱스
+                    selectableQuestion?.choices?.let { choices ->
+                        selectedChoice = choices[newVal].id  // 선택된 항목
                     }
                 }
-                chattingSelectLayout.addView(button)
             }
+
+            pickerLayout.addView(numberPicker)
+
+            val instructionText = TextView(context).apply {
+                text = "원하는 선택지를 선택해 주세요."
+                textSize = 18f
+                gravity = Gravity.START
+                setTextColor(ContextCompat.getColor(context, R.color.black))
+                typeface = ResourcesCompat.getFont(context, R.font.pretendard_bold)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+
+            val submitButton = Button(context).apply {
+                text = "선택하기"
+                textSize = 16f
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+                background = ContextCompat.getDrawable(context, R.drawable.bac_button)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(16, 32, 16, 0)
+                    gravity = Gravity.CENTER
+                }
+                setPadding(100, 20, 100, 20)
+
+                setOnClickListener {
+                    binding.chattingEditText.setText(selectedChoice)
+                    sendData()
+                }
+            }
+
+            cardInnerLayout.addView(instructionText)
+            cardInnerLayout.addView(pickerLayout)
+            cardInnerLayout.addView(submitButton)
+
+            cardView.addView(cardInnerLayout)
+
+            chattingSelectLayout.addView(cardView)
         }
     }
 
@@ -363,37 +444,38 @@ class ChattingFragment(
         val gridQuestion = qna.question as? ChatQuestion.GridQuestion
         hideKeyboard()
         with(binding) {
-            chattingSelectLayout.visibility = View.VISIBLE
-            chattingTextBox.visibility = View.GONE
             chattingSelectLayout.removeAllViews()
 
             val cardView = CardView(requireContext()).apply {
-                radius = 24f
+                radius = 32f
                 cardElevation = 12f
                 setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(16, 16, 16, 16)
+                    setMargins(32, 16, 16, 32)
                 }
             }
 
             val cardInnerLayout = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                setPadding(16, 16, 16, 16)
+                setPadding(64, 64, 64, 64)
             }
 
             val instructionText = TextView(context).apply {
                 text = "원하는 위치를 순서대로 선택해주세요"
                 textSize = 18f
+                gravity = Gravity.START
                 setTextColor(ContextCompat.getColor(context, R.color.black))
+                typeface = ResourcesCompat.getFont(context, R.font.pretendard_bold)
                 layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
             }
@@ -405,7 +487,7 @@ class ChattingFragment(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(0, 16, 0, 0)
+                    setMargins(0, 32, 0, 32)
                     gravity = Gravity.CENTER
                 }
             }
@@ -444,6 +526,7 @@ class ChattingFragment(
                 text = "답변하기"
                 textSize = 16f
                 setTextColor(ContextCompat.getColor(context, R.color.white))
+                typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
                 background = ContextCompat.getDrawable(context, R.drawable.bac_button)
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -452,13 +535,12 @@ class ChattingFragment(
                     setMargins(16, 32, 16, 0)
                     gravity = Gravity.CENTER
                 }
-                setPadding(0, 20, 0, 20)
+                setPadding(100, 20, 100, 20)
 
                 setOnClickListener {
                     updateChattingEditText(selectedPositions)
+                    binding.chattingSelectLayout.visibility = View.GONE
                     sendData()
-
-                    chattingSelectLayout.visibility = View.GONE
                 }
             }
 
