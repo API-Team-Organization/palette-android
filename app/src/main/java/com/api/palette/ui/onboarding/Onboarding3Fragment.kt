@@ -18,7 +18,7 @@ class Onboarding3Fragment : Fragment() {
     ): View {
         binding = FragmentOnboarding3Binding.inflate(inflater, container, false)
         val riveAnimationView: RiveAnimationView = binding.onBoarding3Animation
-        riveAnimationView.setRiveResource(R.raw.social_media_machine)
+        riveAnimationView.setRiveResource(R.raw.swipe)
 
         binding.onBoarding3Button.setOnClickListener {
             findNavController().navigate(R.id.action_onboardingDefaultFragment_to_startFragment)

@@ -94,7 +94,7 @@ class JoinCheckNumFragment : Fragment() {
                 )
 
                 if (response.isSuccessful) {
-                    shortToast("인증번호가 재전송되었습니다.")
+                    shortToast("인증번호가 재전송되었습니다")
                 } else {
                     shortToast("인증번호 재전송에 실패했습니다.")
                     Log.d(

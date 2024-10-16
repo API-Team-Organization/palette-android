@@ -177,7 +177,6 @@ class CreateMediaFragment : Fragment() {
                 val roomResponse = RoomRequestManager.roomRequest(PaletteApplication.prefs.token)
 
                 if (roomResponse.isSuccessful) {
-                    shortToast("생성 성공")
                     startChatting(
                         roomResponse.body()!!.data.id,
                         title = roomResponse.body()!!.data.title.toString(),
@@ -204,7 +203,6 @@ class CreateMediaFragment : Fragment() {
                 if (response.isSuccessful) {
                     itemList.removeAt(position)
                     workAdapter.notifyItemRemoved(position)
-                    shortToast("삭제되었습니다")
                     if (itemList.isEmpty()) {
                         binding.roomListEmptyText.visibility = View.VISIBLE
                     }

@@ -118,7 +118,7 @@ class JoinNameFragment : Fragment() {
                         Log.d(Constant.TAG, "token is $token")
 
                         PaletteApplication.prefs.token = token ?: ""
-                        shortToast("회원가입 성공, 이메일 인증을 진행해주세요.")
+                        shortToast("이메일 인증을 진행해주세요")
 
                     } catch (e: SocketTimeoutException) {
                         Log.e(Constant.TAG, "Network timeout", e)

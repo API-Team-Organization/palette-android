@@ -50,7 +50,6 @@
             android:fontFamily="@font/pretendard_medium"
             android:textColor="@color/darkGray"
             android:maxLines="1"
-            android:ems="15"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
             android:focusable="true"
