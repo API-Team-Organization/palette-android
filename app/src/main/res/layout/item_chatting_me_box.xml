@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/card_gchat_message_me"
         android:fontFamily="@font/pretendard_medium"
-        android:layout_marginEnd="8dp"/>
+        android:layout_marginEnd="5dp"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_gchat_message_me"
