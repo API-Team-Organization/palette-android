@@ -14,15 +14,12 @@
         android:weightSum="10">
 
 
-        <ImageView
+        <app.rive.runtime.kotlin.RiveAnimationView
             android:id="@+id/onBoarding3Animation"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:src="@drawable/onboarding3"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_weight="8"/>
+            android:layout_weight="8"
+            app:riveAnimation="@raw/social_media_machine"/>
 
 
         <LinearLayout
@@ -36,7 +33,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="홍보물을 한 눈에 관리하세요!"
+                android:text="이 모든게, 무료."
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:fontFamily="@font/pretendard_bold"/>
@@ -44,14 +41,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="내가 제작한 AI 홍보물,"
+                android:text="비싼 툴과 외주비 지출,"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="한눈에 모아보고 관리하세요"
+                android:text="이제는 Palette와 무료로 제작하세요."
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
@@ -71,6 +68,7 @@
         android:textColor="@color/white"
         android:background="@drawable/bac_button"
         android:layout_gravity="bottom|center"
-        android:layout_marginVertical="40dp"/>
+        android:layout_marginVertical="40dp"
+        style="?android:attr/borderlessButtonStyle"/>
 
 </FrameLayout>

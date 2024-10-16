@@ -18,6 +18,7 @@ import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -118,10 +119,16 @@ class ChattingFragment(
     private fun initView() {
         binding.chattingToolbar.title = title
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (chatList.isEmpty() || qnaList.isEmpty()) return@addCallback
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+
         loadQnaData()
 
         // 백 스택에서 프래그먼트 제거
         binding.chattingToolbar.setNavigationOnClickListener {
+            if (chatList.isEmpty() || qnaList.isEmpty()) return@setNavigationOnClickListener
             requireActivity().supportFragmentManager.popBackStack()
         }
 
@@ -344,6 +351,8 @@ class ChattingFragment(
     }
 
     private fun updateSelectableUI(qna: PromptData.Selectable) {
+        binding.chattingEditText.isFocusable = false
+        binding.chattingEditText.isFocusableInTouchMode = false
         val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
 
         var selectedChoice = selectableQuestion?.choices?.get(0)?.id ?: "DISPLAY"
@@ -353,6 +362,7 @@ class ChattingFragment(
             val cardView = CardView(requireContext()).apply {
                 radius = 64f
                 cardElevation = 12f
+
                 setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -362,6 +372,7 @@ class ChattingFragment(
                 }
             }
 
+            // 카드뷰 내부 레이아웃
             val cardInnerLayout = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
@@ -393,10 +404,11 @@ class ChattingFragment(
                 }
 
                 // 값 선택 시 이벤트 리스너 설정
-                setOnValueChangedListener { _, oldVal, newVal ->
+                setOnValueChangedListener { _, _, newVal ->
                     // newVal은 선택된 값의 인덱스
                     selectableQuestion?.choices?.let { choices ->
                         selectedChoice = choices[newVal].id  // 선택된 항목
+                        setPadding(15, 15, 15, 15) // 카드뷰 내부 패딩 (텍스트, 그리드, 버튼 간 여백)
                     }
                 }
             }
@@ -420,11 +432,12 @@ class ChattingFragment(
                 textSize = 16f
                 setTextColor(ContextCompat.getColor(context, R.color.white))
                 background = ContextCompat.getDrawable(context, R.drawable.bac_button)
+                typeface = ResourcesCompat.getFont(context, R.font.pretendard_semibold)
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(16, 32, 16, 0)
+                    setMargins(0, 25, 0, 25) // 버튼 상단 마진 추가
                     gravity = Gravity.CENTER
                 }
                 setPadding(100, 20, 100, 20)
@@ -606,7 +619,6 @@ class ChattingFragment(
             chattingSelectLayout.addView(cardView)
         }
     }
-
 
     private fun updateChattingEditText(selectedPositions: List<Int>) {
         val orderedPositions = selectedPositions.joinToString(",")

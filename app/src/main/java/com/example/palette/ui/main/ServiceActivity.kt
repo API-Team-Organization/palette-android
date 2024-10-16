@@ -1,10 +1,18 @@
 package com.example.palette.ui.main
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +21,7 @@ import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.RiveEvent
 import com.example.palette.MainActivity
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.room.RoomRequestManager
@@ -22,7 +31,9 @@ import com.example.palette.ui.main.create.room.CreateMediaFragment
 import com.example.palette.ui.main.settings.SettingFragment
 import com.example.palette.ui.main.work.WorkFragment
 import com.example.palette.ui.util.changeFragment
+import com.example.palette.ui.util.isRootFragment
 import com.example.palette.ui.util.log
+import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +61,28 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val createMediaFragment = CreateMediaFragment()
     private val workFragment = WorkFragment()
     private val settingFragment = SettingFragment()
+    private lateinit var vibrator: Vibrator
+
+    private var doubleBackToExitPressedOnce = false
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (!isRootFragment(supportFragmentManager)) {
+                supportFragmentManager.popBackStack()
+            } else {
+                if (doubleBackToExitPressedOnce) {
+                    finish()
+                    return
+                }
+
+                doubleBackToExitPressedOnce = true
+                shortToast("한 번 더 누르면 종료됩니다.")
+
+                handler.postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+            }
+        }
+    }
 
     private val eventListener = object : RiveFileController.RiveEventListener {
         override fun notifyEvent(event: RiveEvent) {
@@ -74,6 +107,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
             val tab = BottomTab.from(event.name) ?: return
             handleTabClick(tab)
+            vibrateOnClick()
         }
     }
 
@@ -81,10 +115,14 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         super.onCreate(savedInstanceState)
         changeFragment(createMediaFragment, supportFragmentManager)
 
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         log(PaletteApplication.prefs.token)
 
         // RiveAnimationView에서 click_home 이벤트를 강제로 실행
         riveAnimationView.addEventListener(eventListener)
+
+        vibrator = (getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator)!!
 
         setContentView(binding.root)
     }
@@ -92,7 +130,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private fun handleTabClick(event: BottomTab) {
         if (currentTab != event) {
             currentTab = event
-            changeFragment(getFragment(event), supportFragmentManager)
+            changeFragment(getFragment(event), supportFragmentManager, false)
         }
     }
 
@@ -102,32 +140,39 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         BottomTab.SETTING -> settingFragment
     }
 
+    private fun vibrateOnClick() {
+        vibrator.vibrate(VibrationEffect.createOneShot(50, 75))
+    }
+
     // bottomVisible 메서드 정의
     override fun bottomVisible(visibility: Boolean) {
         binding.bottomBar.visibility = if (visibility) View.VISIBLE else View.GONE
     }
 
     override fun sessionDialog(context: Context) {
-        val builder = AlertDialog.Builder(context)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_session, null)
 
-        builder.setTitle("세션 만료")
-        builder.setMessage("세션이 만료되었습니다. 로그인 후, 이용해 주세요.")
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        val tvSession: TextView = dialogView.findViewById(R.id.tv_session)
+
         PaletteApplication.prefs.clearToken()
 
-        builder.setPositiveButton("로그인") { dialog, _ ->
+        tvSession.setOnClickListener {
             val intent = Intent(context, MainActivity::class.java)
-
             context.startActivity(intent)
-            finish()
+
+            (context as? Activity)?.finish()
+
             dialog.dismiss()
         }
 
-        // 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
-        builder.setCancelable(false)
-
-        val dialog = builder.create()
         dialog.show()
     }
+
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun deleteRoom(token: String, roomId: Int) {
@@ -147,19 +192,24 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
     }
 
-    // 네트워크 오류 Dialog 표시 함수
     private fun showNetworkErrorDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_network_error, null)
+
         val dialog = AlertDialog.Builder(this)
-            .setTitle("네트워크 오류")
-            .setMessage("인터넷 연결을 확인해 주세요. 앱을 종료합니다.")
-            .setPositiveButton("종료") { _, _ ->
-                finishAffinity() // 앱 종료
-            }
-            .setCancelable(false) // Dialog 바깥을 터치해도 닫히지 않음
+            .setView(dialogView)
+            .setCancelable(false)
             .create()
+
+        val tvExit: TextView = dialogView.findViewById(R.id.tv_session)
+
+        tvExit.setOnClickListener {
+            finishAffinity()
+            dialog.dismiss()
+        }
 
         dialog.show()
     }
+
 
     override fun onRestart() {
         super.onRestart()
@@ -172,5 +222,10 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
             if (!session.isSuccessful)
                 sessionDialog(this@ServiceActivity)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
     }
 }

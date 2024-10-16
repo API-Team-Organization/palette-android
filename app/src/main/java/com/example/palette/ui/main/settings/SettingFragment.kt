@@ -1,5 +1,6 @@
 package com.example.palette.ui.main.settings
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -10,10 +11,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.example.palette.MainActivity
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.application.PreferenceManager
 import com.example.palette.common.Constant.TAG
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.info.InfoRequestManager
@@ -37,7 +39,7 @@ class SettingFragment : Fragment() {
         loadUserNameInfo()
 
         binding.llLogout.setOnClickListener {
-            logout()
+            showLogoutDialog()
         }
 
         binding.llResign.setOnClickListener {
@@ -76,6 +78,29 @@ class SettingFragment : Fragment() {
         }
     }
 
+    private fun showLogoutDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_logout, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        val noLogoutTextView: TextView = dialogView.findViewById(R.id.noLogoutTextView)
+        val logoutTextView: TextView = dialogView.findViewById(R.id.logoutTextView)
+
+        noLogoutTextView.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        logoutTextView.setOnClickListener {
+            logout()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
     private fun goToPrivacyPolicyPage() {
         try {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://dgsw-team-api.notion.site/cc32c87f614e4798893293abfe5ca72a"))
@@ -111,25 +136,32 @@ class SettingFragment : Fragment() {
     }
 
     private fun resignDialog(context: Context) {
-        val builder = AlertDialog.Builder(context).apply {
-            setTitle("회원탈퇴")
-            setMessage("정말 탈퇴하시겠습니까?")
-            setPositiveButton("탈퇴") { dialog, _ ->
-                resign()
-                val intent = Intent(activity, MainActivity::class.java)
-                requireActivity().startActivity(intent)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_resign, null)
 
-                activity?.finish()
-                dialog.dismiss()
-            }
-            setNegativeButton("취소") { dialog, _ ->
-                dialog.dismiss()
-            }
-            setCancelable(false)
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        val noTextView: TextView = dialogView.findViewById(R.id.noTextView)
+        val yesTextView: TextView = dialogView.findViewById(R.id.yesTextView)
+
+        noTextView.setOnClickListener {
+            dialog.dismiss()
         }
 
-        builder.create().show()
+        yesTextView.setOnClickListener {
+            resign()
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+
+            (context as? Activity)?.finish()
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
+
 
     private fun resign() {
         viewLifecycleOwner.lifecycleScope.launch {
