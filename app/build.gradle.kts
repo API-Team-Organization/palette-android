@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.palette"
+    namespace = "com.api.palette"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.palette"
+        applicationId = "com.api.palette"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
