@@ -1,10 +1,13 @@
 package com.example.palette.ui.main
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +16,7 @@ import app.rive.runtime.kotlin.RiveAnimationView
 import app.rive.runtime.kotlin.controllers.RiveFileController
 import app.rive.runtime.kotlin.core.RiveEvent
 import com.example.palette.MainActivity
+import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.room.RoomRequestManager
@@ -108,26 +112,29 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     }
 
     override fun sessionDialog(context: Context) {
-        val builder = AlertDialog.Builder(context)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_session, null)
 
-        builder.setTitle("세션 만료")
-        builder.setMessage("세션이 만료되었습니다. 로그인 후, 이용해 주세요.")
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        val tvSession: TextView = dialogView.findViewById(R.id.tv_session)
+
         PaletteApplication.prefs.clearToken()
 
-        builder.setPositiveButton("로그인") { dialog, _ ->
+        tvSession.setOnClickListener {
             val intent = Intent(context, MainActivity::class.java)
-
             context.startActivity(intent)
-            finish()
+
+            (context as? Activity)?.finish()
+
             dialog.dismiss()
         }
 
-        // 다이얼로그 외부 클릭이나 뒤로가기 버튼 비활성화
-        builder.setCancelable(false)
-
-        val dialog = builder.create()
         dialog.show()
     }
+
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun deleteRoom(token: String, roomId: Int) {
