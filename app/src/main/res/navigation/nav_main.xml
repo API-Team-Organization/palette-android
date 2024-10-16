@@ -9,13 +9,13 @@
         android:id="@+id/createMediaFragment"
         tools:layout="@layout/fragment_create_media"
         android:label="createMediaFragment"
-        android:name="com.example.palette.ui.main.create.room.CreateMediaFragment">
+        android:name="com.api.palette.ui.main.create.room.CreateMediaFragment">
     </fragment>
 
     <fragment
         android:id="@+id/settingFragment"
         tools:layout="@layout/fragment_setting"
         android:label="settingFragment"
-        android:name="com.example.palette.ui.main.settings.SettingFragment">
+        android:name="com.api.palette.ui.main.settings.SettingFragment">
     </fragment>
 </navigation>
