@@ -105,7 +105,6 @@ class LoginFragment : Fragment() {
                 val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
                 Log.d(TAG, "token is $token")
                 PaletteApplication.prefs.token = token ?: ""
-                shortToast("로그인 성공")
                 val intent = Intent(activity, ServiceActivity::class.java)
                 requireActivity().startActivity(intent)
                 requireActivity().finish()

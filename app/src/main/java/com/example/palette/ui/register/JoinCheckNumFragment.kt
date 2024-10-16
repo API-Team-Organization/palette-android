@@ -1,6 +1,5 @@
 package com.example.palette.ui.register
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,7 +15,6 @@ import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.auth.VerifyRequest
 import com.example.palette.data.error.CustomException
 import com.example.palette.databinding.FragmentJoinCheckNumBinding
-import com.example.palette.ui.util.log
 import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -96,7 +94,7 @@ class JoinCheckNumFragment : Fragment() {
                 )
 
                 if (response.isSuccessful) {
-                    shortToast("인증번호가 재전송되었습니다.")
+                    shortToast("인증번호가 재전송되었습니다")
                 } else {
                     shortToast("인증번호 재전송에 실패했습니다.")
                     Log.d(

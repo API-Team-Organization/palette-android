@@ -296,7 +296,6 @@ class ChattingFragment(
             )?.data
 
             if (newChats.isNullOrEmpty()) {
-                shortToast("더 이상 불러올 채팅이 없습니다.")
             } else {
                 newChats.reverse()
                 chatList.addAll(0, newChats)
@@ -586,7 +585,7 @@ class ChattingFragment(
             }
 
             val submitButton = Button(context).apply {
-                text = "답변하기"
+                text = "선택하기"
                 textSize = 16f
                 setTextColor(ContextCompat.getColor(context, R.color.white))
                 typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
