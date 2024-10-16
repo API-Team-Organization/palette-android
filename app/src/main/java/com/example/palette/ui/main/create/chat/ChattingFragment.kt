@@ -265,6 +265,8 @@ class ChattingFragment(
 
             is PromptData.UserInput -> {
                 sendType = "USER_INPUT"
+                binding.chattingEditText.isFocusable = true
+                binding.chattingEditText.isFocusableInTouchMode = true
                 binding.chattingSelectLayout.visibility = View.GONE
             }
         }
@@ -334,6 +336,8 @@ class ChattingFragment(
     }
 
     private fun updateSelectableUI(qna: PromptData.Selectable) {
+        binding.chattingEditText.isFocusable = false
+        binding.chattingEditText.isFocusableInTouchMode = false
         val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
         with(binding) {
             chattingSelectLayout.visibility = View.VISIBLE
