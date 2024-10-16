@@ -56,13 +56,12 @@ class ChattingFragment(
     private val roomId: Int,
     private val title: String,
     private val isFirst: Boolean = false,
-    private val messageList: MutableList<MessageResponse>
 ) : Fragment() {
     private lateinit var binding: FragmentChattingBinding
     private val recyclerAdapter: ChattingRecyclerAdapter by lazy {
         ChattingRecyclerAdapter()
     }
-    private var chatList: MutableList<MessageResponse> = messageList
+    private var chatList: MutableList<MessageResponse> = mutableListOf()
     private var qnaList: MutableList<PromptData> = mutableListOf()
     private var isLoading = false
     private lateinit var webSocketManager: WebSocketManager
@@ -235,11 +234,7 @@ class ChattingFragment(
             }
 
             val chatLoader = async {
-                if (messageList.isEmpty()) {
-                    loadChatData()
-                } else {
-                    null
-                }
+                loadChatData()
             }
 
             listOf(qnaLoader, chatLoader).awaitAll()
