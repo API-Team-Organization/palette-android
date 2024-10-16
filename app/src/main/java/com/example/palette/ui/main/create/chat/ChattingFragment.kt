@@ -426,6 +426,7 @@ class ChattingFragment(
 
                 setOnClickListener {
                     binding.chattingEditText.setText(selectedChoice)
+                    binding.chattingSelectLayout.visibility = View.GONE
                     sendData()
                 }
             }
