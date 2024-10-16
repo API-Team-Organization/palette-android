@@ -18,7 +18,7 @@ import com.example.palette.data.auth.AuthRequestManager
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.databinding.ActivityServiceBinding
 import com.example.palette.ui.base.BaseControllable
-import com.example.palette.ui.main.create.CreateMediaFragment
+import com.example.palette.ui.main.create.room.CreateMediaFragment
 import com.example.palette.ui.main.settings.SettingFragment
 import com.example.palette.ui.main.work.WorkFragment
 import com.example.palette.ui.util.changeFragment

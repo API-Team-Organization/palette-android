@@ -83,6 +83,8 @@
                 android:textColorHint="@color/gray"
                 android:textSize="16sp"
                 android:textColor="@color/black"
+                android:singleLine="true"
+                android:maxLines="1"
                 android:fontFamily="@font/pretendard_medium"
                 android:background="@drawable/bac_chatting_edit_text"
                 android:padding="15dp"/>

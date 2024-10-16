@@ -9,7 +9,7 @@
         android:id="@+id/createMediaFragment"
         tools:layout="@layout/fragment_create_media"
         android:label="createMediaFragment"
-        android:name="com.example.palette.ui.main.create.CreateMediaFragment">
+        android:name="com.example.palette.ui.main.create.room.CreateMediaFragment">
     </fragment>
 
     <fragment
