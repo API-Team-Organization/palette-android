@@ -3,10 +3,10 @@ package com.example.palette.data.room
 import android.util.Log
 import com.example.palette.common.Constant
 import com.example.palette.data.ApiClient
-import com.example.palette.data.base.BaseResponse
 import com.example.palette.data.base.DataResponse
 import com.example.palette.data.base.VoidResponse
 import com.example.palette.data.room.data.RoomData
+import com.example.palette.data.room.data.TitleData
 import retrofit2.HttpException
 import retrofit2.Response
 
@@ -30,10 +30,8 @@ object RoomRequestManager {
         return response
     }
 
-    suspend fun setRoomTitle(token: String, roomData: RoomData): Response<VoidResponse> {
-        Log.d(Constant.TAG, "RoomRequestManager setRoomTitle roomData : $roomData.")
-
-        val response = roomService.setRoomTitle(token = token, roomData = roomData)
+    suspend fun setRoomTitle(token: String, title: TitleData, roomId: Int): Response<VoidResponse> {
+        val response = roomService.setRoomTitle(token = token, title = title, roomId = roomId)
         if (!response.isSuccessful) {
             Log.d(Constant.TAG, "RoomRequestManager setRoomTitle 실패했습니다. $response")
         }
