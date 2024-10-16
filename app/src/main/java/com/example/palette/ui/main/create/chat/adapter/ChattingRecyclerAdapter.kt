@@ -33,16 +33,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeComponents
-import kotlinx.datetime.format.DateTimeFormat
-import kotlinx.datetime.format.byUnicodePattern
-import kotlinx.datetime.format.char
-import kotlinx.datetime.format.parse
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.net.HttpURLConnection
 import java.net.URL
-import java.time.ZonedDateTime
 
 class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val listOfChat = mutableListOf<MessageResponse>()
@@ -298,14 +292,13 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     }
 
     fun formatChatTime(datetime: Instant): String {
-        // 문자열을 ZonedDateTime으로 변환
-        // 원하는 출력 형식 정의
-        val formatter = DateTimeComponents.Format {
-            hour()
-            char(':')
-            minute()
-        }
-        // ZonedDateTime을 원하는 형식으로 변환하여 반환
-        return datetime.format(formatter)
+        val timeZone = TimeZone.currentSystemDefault()
+
+        val localDateTime = datetime.toLocalDateTime(timeZone)
+        val period = if (localDateTime.hour < 12) "오전" else "오후"
+        val hour12 = if (localDateTime.hour % 12 == 0) 12 else localDateTime.hour % 12
+        val formattedMinute = localDateTime.minute.toString().padStart(2, '0')
+
+        return "$period $hour12:$formattedMinute"
     }
 }
