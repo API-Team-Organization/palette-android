@@ -484,8 +484,8 @@ class ChattingFragment(
             }
 
             val gridLayout = GridLayout(context).apply {
-                rowCount = gridQuestion.xSize
-                columnCount = gridQuestion.ySize
+                rowCount = gridQuestion.ySize
+                columnCount = gridQuestion.xSize
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -512,52 +512,59 @@ class ChattingFragment(
             gridQuestion.let {
                 val buttonSize = resources.getDimensionPixelSize(R.dimen.grid_button_size)
 
-                for (i in 0 until (it.xSize * it.ySize)) {
-                    val button = Button(context).apply {
-                        background =
-                            ContextCompat.getDrawable(context, R.drawable.bac_grid_item_unselect)
-                        layoutParams = GridLayout.LayoutParams().apply {
-                            rowSpec = GridLayout.spec(i / it.ySize)
-                            columnSpec = GridLayout.spec(i % it.ySize)
-                            width = buttonSize
-                            height = buttonSize
-                            setMargins(10, 10, 10, 10)
-                        }
+                for (i in 0 until it.ySize) {
+                    for (j in 0 until it.xSize) {
+                        val position = i * it.xSize + j // 버튼의 인덱스 계산 (행 * 열 수 + 열)
 
-                        setOnClickListener { _ ->
-                            if (i in selectedPositions) {
-                                selectedPositions.remove(i)
-                                background = ContextCompat.getDrawable(
+                        val button = Button(context).apply {
+                            background =
+                                ContextCompat.getDrawable(
                                     context,
                                     R.drawable.bac_grid_item_unselect
                                 )
-                            } else {
-                                if (selectedPositions.size < maxCount) {
+                            layoutParams = GridLayout.LayoutParams().apply {
+                                rowSpec = GridLayout.spec(i)
+                                columnSpec = GridLayout.spec(j)
+                                width = buttonSize
+                                height = buttonSize
+                                setMargins(10, 10, 10, 10)
+                            }
+
+                            setOnClickListener { _ ->
+                                if (position in selectedPositions) {
+                                    selectedPositions.remove(position)
+                                    background = ContextCompat.getDrawable(
+                                        context,
+                                        R.drawable.bac_grid_item_unselect
+                                    )
+                                } else {
+                                    if (selectedPositions.size < maxCount) {
+                                        maxCountText.setTextColor(
+                                            ContextCompat.getColor(
+                                                context,
+                                                R.color.red
+                                            )
+                                        )
+                                        selectedPositions.add(position)
+                                        background = ContextCompat.getDrawable(
+                                            context,
+                                            R.drawable.bac_grid_item_select
+                                        )
+                                    }
+                                }
+
+                                if (selectedPositions.size != maxCount) {
                                     maxCountText.setTextColor(
                                         ContextCompat.getColor(
                                             context,
-                                            R.color.red
+                                            R.color.black
                                         )
-                                    )
-                                    selectedPositions.add(i)
-                                    background = ContextCompat.getDrawable(
-                                        context,
-                                        R.drawable.bac_grid_item_select
                                     )
                                 }
                             }
-
-                            if (selectedPositions.size != maxCount) {
-                                maxCountText.setTextColor(
-                                    ContextCompat.getColor(
-                                        context,
-                                        R.color.black
-                                    )
-                                )
-                            }
                         }
+                        gridLayout.addView(button)
                     }
-                    gridLayout.addView(button)
                 }
             }
 
