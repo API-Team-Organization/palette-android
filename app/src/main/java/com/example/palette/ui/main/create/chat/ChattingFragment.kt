@@ -354,7 +354,7 @@ class ChattingFragment(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(32, 16, 16, 32)
+                    setMargins(32, 0, 32, 16)
                 }
             }
 
@@ -384,7 +384,8 @@ class ChattingFragment(
                 selectableQuestion?.choices?.let { choices ->
                     minValue = 0
                     maxValue = choices.size - 1
-                    displayedValues = choices.map { it.displayName }.toTypedArray()  // 리스트를 문자열 배열로 변환하여 설정
+                    displayedValues =
+                        choices.map { it.displayName }.toTypedArray()  // 리스트를 문자열 배열로 변환하여 설정
                 }
 
                 // 값 선택 시 이벤트 리스너 설정
@@ -443,6 +444,7 @@ class ChattingFragment(
 
     private fun updateGridUI(qna: PromptData.Grid) {
         val gridQuestion = qna.question as? ChatQuestion.GridQuestion
+        val maxCount: Int = gridQuestion!!.maxCount
         hideKeyboard()
         with(binding) {
             chattingSelectLayout.removeAllViews()
@@ -482,8 +484,8 @@ class ChattingFragment(
             }
 
             val gridLayout = GridLayout(context).apply {
-                rowCount = gridQuestion?.xSize ?: 3
-                columnCount = gridQuestion?.ySize ?: 3
+                rowCount = gridQuestion.xSize
+                columnCount = gridQuestion.ySize
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -493,14 +495,27 @@ class ChattingFragment(
                 }
             }
 
+            val maxCountText = TextView(context).apply {
+                text = "최대 선택 개수: $maxCount"
+                textSize = 14f
+                gravity = Gravity.START
+                setTextColor(ContextCompat.getColor(context, R.color.black))
+                typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+
             val selectedPositions = mutableListOf<Int>()
 
-            gridQuestion?.let {
+            gridQuestion.let {
                 val buttonSize = resources.getDimensionPixelSize(R.dimen.grid_button_size)
 
                 for (i in 0 until (it.xSize * it.ySize)) {
                     val button = Button(context).apply {
-                        background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_unselect)
+                        background =
+                            ContextCompat.getDrawable(context, R.drawable.bac_grid_item_unselect)
                         layoutParams = GridLayout.LayoutParams().apply {
                             rowSpec = GridLayout.spec(i / it.ySize)
                             columnSpec = GridLayout.spec(i % it.ySize)
@@ -512,10 +527,33 @@ class ChattingFragment(
                         setOnClickListener { _ ->
                             if (i in selectedPositions) {
                                 selectedPositions.remove(i)
-                                background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_unselect)
+                                background = ContextCompat.getDrawable(
+                                    context,
+                                    R.drawable.bac_grid_item_unselect
+                                )
                             } else {
-                                selectedPositions.add(i)
-                                background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_select)
+                                if (selectedPositions.size < maxCount) {
+                                    maxCountText.setTextColor(
+                                        ContextCompat.getColor(
+                                            context,
+                                            R.color.red
+                                        )
+                                    )
+                                    selectedPositions.add(i)
+                                    background = ContextCompat.getDrawable(
+                                        context,
+                                        R.drawable.bac_grid_item_select
+                                    )
+                                }
+                            }
+
+                            if (selectedPositions.size != maxCount) {
+                                maxCountText.setTextColor(
+                                    ContextCompat.getColor(
+                                        context,
+                                        R.color.black
+                                    )
+                                )
                             }
                         }
                     }
@@ -547,6 +585,7 @@ class ChattingFragment(
 
             cardInnerLayout.addView(instructionText)
             cardInnerLayout.addView(gridLayout)
+            cardInnerLayout.addView(maxCountText)
             cardInnerLayout.addView(submitButton)
 
             cardView.addView(cardInnerLayout)
@@ -609,7 +648,8 @@ class ChattingFragment(
 
     @SuppressLint("ServiceCast")
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.chattingEditText.windowToken, 0)
     }
 
