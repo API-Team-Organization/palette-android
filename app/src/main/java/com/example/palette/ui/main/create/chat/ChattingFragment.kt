@@ -462,6 +462,8 @@ class ChattingFragment(
                     gravity = Gravity.CENTER
                 }
                 setPadding(32, 20, 32, 20) // 버튼 내부 패딩
+                elevation = 0f
+                stateListAnimator = null
             }
 
             submitButton.setOnClickListener {
