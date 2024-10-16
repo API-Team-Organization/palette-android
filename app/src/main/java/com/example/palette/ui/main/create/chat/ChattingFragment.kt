@@ -123,39 +123,7 @@ class ChattingFragment(
         binding.chattingToolbar.setOnClickListener { showChangeTitleDialog() }
 
         binding.chattingSubmitButton.setOnClickListener {
-            if (binding.chattingEditText.text.isEmpty()) return@setOnClickListener
-
-            val chat: ChatAnswer
-
-            when (sendType) {
-                "SELECTABLE" -> {
-                    chat = ChatAnswer.SelectableAnswer(
-                        choiceId = sendData,
-                        type = "SELECTABLE"
-                    )
-                }
-
-                "GRID" -> {
-                    chat = ChatAnswer.GridAnswer(
-                        choice = binding.chattingEditText.text.split(",").map { it.toInt() },
-                        type = sendType
-                    )
-                }
-
-                "USER_INPUT" -> {
-                    chat = ChatAnswer.UserInputAnswer(
-                        input = binding.chattingEditText.text.toString(),
-                        type = sendType
-                    )
-                }
-
-                else -> return@setOnClickListener
-            }
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                sendMessage(roomId, chat) // Retrofit으로 채팅 메시지 전송
-                binding.chattingEditText.text.clear()
-            }
+            sendData()
         }
 
         binding.chattingRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -185,6 +153,46 @@ class ChattingFragment(
             )
         }
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
+    }
+
+    private fun sendData() {
+        if (binding.chattingEditText.text.isEmpty()) return
+
+        val chat: ChatAnswer
+
+        when (sendType) {
+            "SELECTABLE" -> {
+                chat = ChatAnswer.SelectableAnswer(
+                    choiceId = sendData,
+                    type = sendType
+                )
+            }
+
+            "GRID" -> {
+                chat = ChatAnswer.GridAnswer(
+                    choice = binding.chattingEditText.text.split(",").map { it.toInt() },
+                    type = sendType
+                )
+            }
+
+            "USER_INPUT" -> {
+                chat = ChatAnswer.UserInputAnswer(
+                    input = binding.chattingEditText.text.toString(),
+                    type = sendType
+                )
+            }
+
+            else -> return
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            ChatRequestManager.createChat(
+                PaletteApplication.prefs.token,
+                roomId = roomId,
+                chat = chat
+            )
+            binding.chattingEditText.text.clear()
+        }
     }
 
     private suspend fun loadChatData() {
@@ -246,38 +254,17 @@ class ChattingFragment(
         when (qna) {
             is PromptData.Selectable -> {
                 sendType = "SELECTABLE"
-                val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
-                with(binding) {
-                    chattingSelectLayout.visibility = View.VISIBLE
-                    chattingSelectLayout.removeAllViews()
-                    selectableQuestion?.choices?.forEach { choice ->
-                        val button = Button(context).apply {
-                            text = choice.displayName
-                            background = ContextCompat.getDrawable(context, R.drawable.bac_auth)
-                            elevation = 0f
-                            val layoutParams = LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                            ).apply {
-                                setMargins(8, 0, 8, 0)
-                            }
-                            this.layoutParams = layoutParams
-                            setOnClickListener {
-                                binding.chattingEditText.setText(choice.displayName)
-                                sendData = choice.id
-                            }
-                        }
-                        chattingSelectLayout.addView(button)
-                    }
-                }
+                updateSelectableUI(qna)
             }
 
             is PromptData.Grid -> {
                 sendType = "GRID"
+                updateGridUI(qna)
             }
 
             is PromptData.UserInput -> {
                 sendType = "USER_INPUT"
+                binding.chattingSelectLayout.visibility = View.GONE
             }
         }
     }
@@ -318,41 +305,6 @@ class ChattingFragment(
         })
     }
 
-    private suspend fun sendMessage(roomId: Int, data: ChatAnswer) {
-        val chat: ChatAnswer
-
-        when (data) {
-            is ChatAnswer.GridAnswer -> {
-                chat = ChatAnswer.GridAnswer(
-                    choice = data.choice,
-                    type = "GRID"
-                )
-            }
-
-            is ChatAnswer.SelectableAnswer -> {
-                chat = ChatAnswer.SelectableAnswer(
-                    choiceId = data.choiceId,
-                    type = "SELECTABLE"
-                )
-            }
-
-            is ChatAnswer.UserInputAnswer -> {
-                chat = ChatAnswer.UserInputAnswer(
-                    input = data.input,
-                    type = "USER_INPUT"
-                )
-            }
-        }
-
-        log("서버로 보내는 값이다 : $chat")
-
-        ChatRequestManager.createChat(
-            PaletteApplication.prefs.token,
-            roomId = roomId,
-            chat = chat
-        )
-    }
-
     private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
         chatList.add(
             MessageResponse(
@@ -378,27 +330,6 @@ class ChattingFragment(
         }
 
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-
-        updateAnswerMethod()
-    }
-
-    private fun updateAnswerMethod() {
-        if (chatList.isEmpty()) return
-
-        val lastMessage = chatList.last()
-        val qna = qnaList.find { it.id == lastMessage.promptId } ?: return
-
-        when (qna) {
-            is PromptData.Selectable -> {
-                updateSelectableUI(qna)
-            }
-            is PromptData.Grid -> {
-                updateGridUI(qna)
-            }
-            is PromptData.UserInput -> {
-                binding.chattingSelectLayout.visibility = View.GONE
-            }
-        }
     }
 
     private fun updateSelectableUI(qna: PromptData.Selectable) {
@@ -525,6 +456,7 @@ class ChattingFragment(
 
                 setOnClickListener {
                     updateChattingEditText(selectedPositions)
+                    sendData()
 
                     chattingSelectLayout.visibility = View.GONE
                 }
