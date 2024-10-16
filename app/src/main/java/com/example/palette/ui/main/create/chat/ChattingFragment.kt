@@ -301,9 +301,9 @@ class ChattingFragment(
             override fun afterTextChanged(s: Editable?) {
                 // EditText 내용이 변경된 후 호출됩니다.
                 if (s.isNullOrBlank()) {
-                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_arrow_upward_gray)
+                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_gray)
                 } else {
-                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_arrow_upward)
+                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_black)
                 }
             }
 

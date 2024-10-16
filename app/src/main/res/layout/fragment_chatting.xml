@@ -94,7 +94,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
-                android:background="@drawable/bac_circle"
+                android:background="@drawable/bac_circle_gray"
                 android:padding="13dp"
                 android:src="@drawable/ic_arrow_upward_gray" />
         </LinearLayout>
