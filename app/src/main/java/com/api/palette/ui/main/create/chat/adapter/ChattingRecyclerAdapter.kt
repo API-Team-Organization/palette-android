@@ -88,11 +88,6 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         notifyDataSetChanged() // 전체 데이터가 변경되었음을 알림
     }
 
-    fun addChat(chat: MessageResponse) {
-        listOfChat.add(chat)
-        notifyItemInserted(listOfChat.size - 1)
-    }
-
     inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(chat: MessageResponse) {

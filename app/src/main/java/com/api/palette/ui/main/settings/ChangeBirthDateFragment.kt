@@ -60,7 +60,6 @@ class ChangeBirthDateFragment : Fragment() {
             try {
                 val response = InfoRequestManager.changeBirthDateRequest(
                     PaletteApplication.prefs.token,
-                    null,
                     birthDate
                 )
 

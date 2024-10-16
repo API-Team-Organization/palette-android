@@ -7,7 +7,6 @@ import com.api.palette.data.auth.RegisterRequest
 
 class RegisterViewModel : ViewModel() {
     private val _email = MutableLiveData<String>()
-    val email: LiveData<String> get() = _email
 
     private val _password = MutableLiveData<String>()
     val password: LiveData<String> get() = _password

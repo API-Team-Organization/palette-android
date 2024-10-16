@@ -16,14 +16,14 @@ object InfoRequestManager {
         return response.body()
     }
 
-    suspend fun changeNameRequest(token: String, username: String?, birthDate: String?): Response<VoidResponse> {
+    suspend fun changeNameRequest(token: String, username: String?): Response<VoidResponse> {
         val request = ChangeInfoRequest(username, null)
         val response = infoService.changeInfo(token, request)
 
         return response
     }
 
-    suspend fun changeBirthDateRequest(token: String, username: String?, birthDate: String): Response<VoidResponse> {
+    suspend fun changeBirthDateRequest(token: String, birthDate: String): Response<VoidResponse> {
         val request = ChangeInfoRequest(null, birthDate)
         val response = infoService.changeInfo(token, request)
 
