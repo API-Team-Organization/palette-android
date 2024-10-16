@@ -347,7 +347,7 @@ class ChattingFragment(
             chattingSelectLayout.removeAllViews()
 
             val cardView = CardView(requireContext()).apply {
-                radius = 32f
+                radius = 64f
                 cardElevation = 12f
                 setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
                 layoutParams = LinearLayout.LayoutParams(
@@ -450,7 +450,7 @@ class ChattingFragment(
             chattingSelectLayout.removeAllViews()
 
             val cardView = CardView(requireContext()).apply {
-                radius = 32f
+                radius = 64f
                 cardElevation = 12f
                 setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
                 layoutParams = LinearLayout.LayoutParams(
@@ -504,7 +504,9 @@ class ChattingFragment(
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
-                )
+                ).apply {
+                    setMargins(0,16,0,0)
+                }
             }
 
             val selectedPositions = mutableListOf<Int>()
@@ -591,8 +593,8 @@ class ChattingFragment(
             }
 
             cardInnerLayout.addView(instructionText)
-            cardInnerLayout.addView(gridLayout)
             cardInnerLayout.addView(maxCountText)
+            cardInnerLayout.addView(gridLayout)
             cardInnerLayout.addView(submitButton)
 
             cardView.addView(cardInnerLayout)
