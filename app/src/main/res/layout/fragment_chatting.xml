@@ -74,19 +74,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
                 android:layout_marginBottom="15dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center">
 
                 <EditText
                     android:id="@+id/chattingEditText"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="50dp"
                     android:layout_weight="1"
                     android:background="@drawable/bac_chatting_edit_text"
                     android:fontFamily="@font/pretendard_medium"
                     android:hint="당신의 팔레트를 그려보세요"
-                    android:maxLines="1"
                     android:padding="15dp"
-                    android:singleLine="true"
+                    android:minLines="1"
+                    android:maxLines="4"
+                    android:scrollbars="vertical"
+                    android:inputType="textMultiLine"
+                    android:singleLine="false"
+                    android:overScrollMode="always"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
                     android:textSize="16sp" />
