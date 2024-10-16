@@ -62,8 +62,7 @@ class ChangeNameFragment : Fragment() {
             try {
                 val response = InfoRequestManager.changeNameRequest(
                     PaletteApplication.prefs.token,
-                    username,
-                    null
+                    username
                 )
 
                 if (response.isSuccessful) {
