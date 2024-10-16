@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -114,10 +115,16 @@ class ChattingFragment(
     private fun initView() {
         binding.chattingToolbar.title = title
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (chatList.isEmpty() || qnaList.isEmpty()) return@addCallback
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+
         loadQnaData()
 
         // 백 스택에서 프래그먼트 제거
         binding.chattingToolbar.setNavigationOnClickListener {
+            if (chatList.isEmpty() || qnaList.isEmpty()) return@setNavigationOnClickListener
             requireActivity().supportFragmentManager.popBackStack()
         }
 
