@@ -68,4 +68,13 @@ class WebSocketManager(token: String, roomId: Int) {
         logE("WebSocket 에러 메시지: ${errorMessage.message}")
         // 에러 처리 로직
     }
+
+    fun send(message: String) {
+        if (::webSocket.isInitialized) {
+            webSocket.send(message) // 메시지를 웹소켓을 통해 전송
+            log("WebSocket 메시지 전송: $message")
+        } else {
+            logE("WebSocket이 초기화되지 않았습니다.")
+        }
+    }
 }

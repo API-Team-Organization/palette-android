@@ -1,8 +1,6 @@
 package com.example.palette.ui.onboarding
 
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +8,6 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.palette.R
 import com.example.palette.application.PaletteApplication
-import com.example.palette.common.Constant
 import com.example.palette.databinding.FragmentOnboardingDefaultBinding
 
 class OnboardingDefaultFragment : Fragment() {
