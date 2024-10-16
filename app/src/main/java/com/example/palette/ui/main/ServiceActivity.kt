@@ -5,11 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +32,7 @@ import com.example.palette.ui.main.settings.SettingFragment
 import com.example.palette.ui.main.work.WorkFragment
 import com.example.palette.ui.util.changeFragment
 import com.example.palette.ui.util.log
+import com.example.palette.ui.util.shortToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,6 +61,23 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val workFragment = WorkFragment()
     private val settingFragment = SettingFragment()
     private lateinit var vibrator: Vibrator
+
+    private var doubleBackToExitPressedOnce = false
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (doubleBackToExitPressedOnce) {
+                finish()
+                return
+            }
+
+            doubleBackToExitPressedOnce = true
+            shortToast("한 번 더 누르면 종료됩니다.")
+
+            handler.postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+        }
+    }
 
     private val eventListener = object : RiveFileController.RiveEventListener {
         override fun notifyEvent(event: RiveEvent) {
@@ -88,6 +109,8 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         changeFragment(createMediaFragment, supportFragmentManager)
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         log(PaletteApplication.prefs.token)
 
@@ -194,5 +217,10 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
             if (!session.isSuccessful)
                 sessionDialog(this@ServiceActivity)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
     }
 }
