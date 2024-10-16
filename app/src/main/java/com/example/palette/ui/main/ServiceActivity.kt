@@ -154,19 +154,24 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
     }
 
-    // 네트워크 오류 Dialog 표시 함수
     private fun showNetworkErrorDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_network_error, null)
+
         val dialog = AlertDialog.Builder(this)
-            .setTitle("네트워크 오류")
-            .setMessage("인터넷 연결을 확인해 주세요. 앱을 종료합니다.")
-            .setPositiveButton("종료") { _, _ ->
-                finishAffinity() // 앱 종료
-            }
-            .setCancelable(false) // Dialog 바깥을 터치해도 닫히지 않음
+            .setView(dialogView)
+            .setCancelable(false)
             .create()
+
+        val tvExit: TextView = dialogView.findViewById(R.id.tv_session)
+
+        tvExit.setOnClickListener {
+            finishAffinity()
+            dialog.dismiss()
+        }
 
         dialog.show()
     }
+
 
     override fun onRestart() {
         super.onRestart()
