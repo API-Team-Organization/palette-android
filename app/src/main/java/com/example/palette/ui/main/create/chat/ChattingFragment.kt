@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -369,35 +370,41 @@ class ChattingFragment(
 
             val cardView = CardView(requireContext()).apply {
                 radius = 24f
-                cardElevation = 12f
+                cardElevation = 8f
                 setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(16, 16, 16, 16)
+                    setMargins(25, 25, 25, 50) // 카드뷰 바깥쪽 마진 설정
                 }
             }
 
+            // 카드뷰 내부 레이아웃
             val cardInnerLayout = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                setPadding(16, 16, 16, 16)
+                setPadding(15, 15, 15, 15) // 카드뷰 내부 패딩 (텍스트, 그리드, 버튼 간 여백)
             }
 
+            // "원하는 위치를 순서대로 선택해주세요" 텍스트
             val instructionText = TextView(context).apply {
                 text = "원하는 위치를 순서대로 선택해주세요"
                 textSize = 18f
                 setTextColor(ContextCompat.getColor(context, R.color.black))
+                typeface = ResourcesCompat.getFont(context, R.font.pretendard_semibold) // Pretendard_Semibold 폰트 적용
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
-                )
+                ).apply {
+                    setMargins(15, 15, 15, 15) // 텍스트 아래쪽에 마진 추가
+                }
             }
 
+            // 그리드 레이아웃
             val gridLayout = GridLayout(context).apply {
                 rowCount = gridQuestion?.xSize ?: 3
                 columnCount = gridQuestion?.ySize ?: 3
@@ -405,11 +412,12 @@ class ChattingFragment(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(0, 16, 0, 0)
+                    setMargins(0, 16, 0, 16) // 그리드 상단 및 하단 마진 추가
                     gravity = Gravity.CENTER
                 }
             }
 
+            // 선택된 위치 저장
             val selectedPositions = mutableListOf<Int>()
 
             gridQuestion?.let {
@@ -423,7 +431,7 @@ class ChattingFragment(
                             columnSpec = GridLayout.spec(i % it.ySize)
                             width = buttonSize
                             height = buttonSize
-                            setMargins(10, 10, 10, 10)
+                            setMargins(10, 10, 10, 10) // 그리드 아이템 간 마진
                         }
 
                         setOnClickListener { _ ->
@@ -440,6 +448,7 @@ class ChattingFragment(
                 }
             }
 
+            // 답변하기 버튼
             val submitButton = Button(context).apply {
                 text = "답변하기"
                 textSize = 16f
@@ -449,19 +458,20 @@ class ChattingFragment(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(16, 32, 16, 0)
+                    setMargins(0, 25, 0, 25) // 버튼 상단 마진 추가
                     gravity = Gravity.CENTER
                 }
-                setPadding(0, 20, 0, 20)
-
-                setOnClickListener {
-                    updateChattingEditText(selectedPositions)
-                    sendData()
-
-                    chattingSelectLayout.visibility = View.GONE
-                }
+                setPadding(32, 20, 32, 20) // 버튼 내부 패딩
             }
 
+            submitButton.setOnClickListener {
+                updateChattingEditText(selectedPositions)
+                sendData()
+
+                chattingSelectLayout.visibility = View.GONE
+            }
+
+            // 카드뷰에 요소들 추가
             cardInnerLayout.addView(instructionText)
             cardInnerLayout.addView(gridLayout)
             cardInnerLayout.addView(submitButton)
@@ -471,6 +481,7 @@ class ChattingFragment(
             chattingSelectLayout.addView(cardView)
         }
     }
+
 
 
     private fun updateChattingEditText(selectedPositions: List<Int>) {
