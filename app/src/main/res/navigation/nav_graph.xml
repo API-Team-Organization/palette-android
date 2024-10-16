@@ -8,7 +8,7 @@
         android:id="@+id/onboardingDefaultFragment"
         tools:layout="@layout/fragment_onboarding_default"
         android:label="onboardingDefaultFragment"
-        android:name="com.example.palette.ui.onboarding.OnboardingDefaultFragment">
+        android:name="com.api.palette.ui.onboarding.OnboardingDefaultFragment">
         <action
             android:id="@+id/action_onboardingDefaultFragment_to_startFragment"
             app:destination="@id/startFragment"
@@ -21,7 +21,7 @@
         android:id="@+id/startFragment"
         tools:layout="@layout/fragment_start"
         android:label="startFragment"
-        android:name="com.example.palette.ui.onboarding.StartFragment">
+        android:name="com.api.palette.ui.onboarding.StartFragment">
         <action
             android:id="@+id/action_startFragment_to_loginFragment"
             app:destination="@id/loginFragment"
@@ -43,7 +43,7 @@
         android:id="@+id/joinEmailFragment"
         tools:layout="@layout/fragment_join_email"
         android:label="joinEmailFragment"
-        android:name="com.example.palette.ui.register.JoinEmailFragment">
+        android:name="com.api.palette.ui.register.JoinEmailFragment">
         <action
             android:id="@+id/action_joinEmailFragment_to_joinPasswordFragment"
             app:destination="@id/joinPasswordFragment"
@@ -57,7 +57,7 @@
         android:id="@+id/joinCheckNumFragment"
         tools:layout="@layout/fragment_join_check_num"
         android:label="joinCheckNumFragment"
-        android:name="com.example.palette.ui.register.JoinCheckNumFragment">
+        android:name="com.api.palette.ui.register.JoinCheckNumFragment">
         <action
             android:id="@+id/action_joinCheckNumFragment_to_joinCompleteFragment"
             app:destination="@id/joinCompleteFragment"
@@ -71,7 +71,7 @@
         android:id="@+id/joinPasswordFragment"
         tools:layout="@layout/fragment_join_password"
         android:label="joinPasswordFragment"
-        android:name="com.example.palette.ui.register.JoinPasswordFragment">
+        android:name="com.api.palette.ui.register.JoinPasswordFragment">
         <action
             android:id="@+id/action_joinPasswordFragment_to_joinBirthFragment"
             app:destination="@id/joinBirthFragment"
@@ -85,7 +85,7 @@
         android:id="@+id/joinBirthFragment"
         tools:layout="@layout/fragment_join_birth"
         android:label="joinBirthFragment"
-        android:name="com.example.palette.ui.register.JoinBirthFragment">
+        android:name="com.api.palette.ui.register.JoinBirthFragment">
         <action
             android:id="@+id/action_joinBirthFragment_to_joinNameFragment"
             app:destination="@id/joinNameFragment"
@@ -99,7 +99,7 @@
         android:id="@+id/joinNameFragment"
         tools:layout="@layout/fragment_join_name"
         android:label="joinNameFragment"
-        android:name="com.example.palette.ui.register.JoinNameFragment">
+        android:name="com.api.palette.ui.register.JoinNameFragment">
         <action
             android:id="@+id/action_joinNameFragment_to_joinCheckNumFragment"
             app:destination="@id/joinCheckNumFragment"
@@ -113,7 +113,7 @@
         android:id="@+id/joinCompleteFragment"
         tools:layout="@layout/fragment_join_complete"
         android:label="joinCompleteFragment"
-        android:name="com.example.palette.ui.register.JoinCompleteFragment">
+        android:name="com.api.palette.ui.register.JoinCompleteFragment">
         <action
             android:id="@+id/action_joinCompleteFragment_to_loginFragment"
             app:destination="@id/loginFragment"
@@ -127,7 +127,7 @@
         android:id="@+id/loginFragment"
         tools:layout="@layout/fragment_login"
         android:label="loginFragment"
-        android:name="com.example.palette.ui.login.LoginFragment">
+        android:name="com.api.palette.ui.login.LoginFragment">
         <action
             android:id="@+id/action_loginFragment_to_joinEmailFragment"
             app:destination="@id/joinEmailFragment"
@@ -138,7 +138,7 @@
     </fragment>
     <fragment
         android:id="@+id/editUserInfoFragment"
-        android:name="com.example.palette.ui.main.settings.EditUserInfoFragment"
+        android:name="com.api.palette.ui.main.settings.EditUserInfoFragment"
         android:label="fragment_edit_user_info"
         tools:layout="@layout/fragment_edit_user_info" >
         <action
@@ -150,7 +150,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.example.palette.ui.main.settings.SettingFragment"
+        android:name="com.api.palette.ui.main.settings.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" >
         <action
@@ -165,22 +165,22 @@
     </fragment>
     <fragment
         android:id="@+id/changeUserInfoFragment"
-        android:name="com.example.palette.ui.main.settings.ChangeNameFragment"
+        android:name="com.api.palette.ui.main.settings.ChangeNameFragment"
         android:label="fragment_change_user_info"
         tools:layout="@layout/fragment_change_name" />
     <fragment
         android:id="@+id/changeBirthDateFragment"
-        android:name="com.example.palette.ui.main.settings.ChangeBirthDateFragment"
+        android:name="com.api.palette.ui.main.settings.ChangeBirthDateFragment"
         android:label="fragment_change_birth_date"
         tools:layout="@layout/fragment_change_birth_date" />
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.example.palette.ui.main.settings.NotificationFragment"
+        android:name="com.api.palette.ui.main.settings.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
     <fragment
         android:id="@+id/premiumFragment"
-        android:name="com.example.palette.ui.main.settings.PremiumFragment"
+        android:name="com.api.palette.ui.main.settings.PremiumFragment"
         android:label="fragment_premium"
         tools:layout="@layout/fragment_premium" />
 
