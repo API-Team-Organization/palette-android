@@ -1,4 +1,4 @@
-package com.example.palette.ui.main.create
+package com.example.palette.ui.main.create.room
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -19,12 +19,15 @@ import com.example.palette.R
 import com.example.palette.application.PaletteApplication
 import com.example.palette.common.Constant
 import com.example.palette.data.base.DataResponse
+import com.example.palette.data.chat.ChatRequestManager
+import com.example.palette.data.error.CustomException
 import com.example.palette.data.info.InfoRequestManager.profileInfoRequest
 import com.example.palette.data.room.RoomRequestManager
 import com.example.palette.data.room.data.RoomData
+import com.example.palette.data.socket.MessageResponse
 import com.example.palette.databinding.FragmentCreateMediaBinding
 import com.example.palette.ui.base.BaseControllable
-import com.example.palette.ui.main.create.adapter.CreateMediaAdapter
+import com.example.palette.ui.main.create.room.adapter.CreateMediaAdapter
 import com.example.palette.ui.main.create.chat.ChattingFragment
 import com.example.palette.ui.util.changeFragment
 import com.example.palette.ui.util.log
@@ -37,6 +40,7 @@ class CreateMediaFragment : Fragment() {
     private val itemList = ArrayList<RoomData>()
     private lateinit var workAdapter: CreateMediaAdapter
     private lateinit var roomList: DataResponse<List<RoomData>>
+    private val messageList = mutableListOf<MutableList<MessageResponse>>()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -47,28 +51,9 @@ class CreateMediaFragment : Fragment() {
 
         loadProfileInfo()
 
-        with(binding) {
-            workAdapter = CreateMediaAdapter(itemList)
-            workRecyclerView.adapter = workAdapter
-            workRecyclerView.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        }
-
         showSampleData(isLoading = true)
 
         loadData()
-
-        workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                log("item position is $position")
-                startChatting(roomList.data[position].id, roomList.data[position].title.toString())
-            }
-
-            override fun onItemLongClick(position: Int) {
-                log("onItemLongClick itemPosition is ${itemList[position]}")
-                deleteChatDialog(requireActivity(), position)
-            }
-        }
 
         binding.llStartNewWork.setOnClickListener {
             createRoom()
@@ -77,18 +62,43 @@ class CreateMediaFragment : Fragment() {
         return binding.root
     }
 
+    private fun initWorkAdapter() {
+        with(binding) {
+            workAdapter = CreateMediaAdapter(itemList, messageList.map { it.last().message })
+            workRecyclerView.adapter = workAdapter
+            workRecyclerView.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        }
+
+        workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
+            override fun onItemClick(position: Int) {
+                startChatting(roomList.data[position].id, roomList.data[position].title.toString(), chatList = messageList[position])
+            }
+
+            override fun onItemLongClick(position: Int) {
+                deleteChatDialog(requireActivity(), position)
+            }
+        }
+    }
+
     private fun loadData() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 roomList = RoomRequestManager.roomList(PaletteApplication.prefs.token)
                 if (roomList.code <= 400) {
-                    log("CreateMediaFragment <= 400 check data ${roomList.data}")
                     if (roomList.data.isEmpty()) {
                         binding.roomListEmptyText.visibility = View.VISIBLE
                     } else {
                         binding.roomListEmptyText.visibility = View.GONE
+                        messageList.clear()
+                        for (i in roomList.data) {
+                            loadChatData(i.id)
+                        }
                         itemList.clear()
                         itemList.addAll(roomList.data)
+
+                        initWorkAdapter()
+
                         workAdapter.notifyDataSetChanged()
                     }
 
@@ -113,8 +123,8 @@ class CreateMediaFragment : Fragment() {
         }
     }
 
-    private fun startChatting(position: Int, title: String, isFirst: Boolean = false) {
-        changeFragment(ChattingFragment(roomId = position, title = title, isFirst))
+    private fun startChatting(position: Int, title: String, isFirst: Boolean = false, chatList: MutableList<MessageResponse> = mutableListOf()) {
+        changeFragment(ChattingFragment(roomId = position, title = title, isFirst = isFirst, messageList = chatList))
     }
 
     private fun deleteChatDialog(context: Context, position: Int) {
@@ -171,7 +181,8 @@ class CreateMediaFragment : Fragment() {
                     startChatting(
                         roomResponse.body()!!.data.id,
                         title = roomResponse.body()!!.data.title.toString(),
-                        isFirst = true
+                        isFirst = true,
+
                     )
                     log("생성된 roomId == ${roomResponse.body()!!.data.id}")
                 } else {
@@ -237,6 +248,21 @@ class CreateMediaFragment : Fragment() {
                 binding.userName.text = username
                 binding.today.text = "환영합니다!"
             }
+        }
+    }
+
+    private suspend fun loadChatData(roomId: Int) {
+        try {
+            val chatList = ChatRequestManager.getChatList(
+                token = PaletteApplication.prefs.token,
+                roomId = roomId,
+                before = null
+            )?.data ?: emptyList()
+
+            val chat = chatList.reversed().toMutableList()
+            messageList.add(chat)
+        } catch (e: CustomException) {
+            shortToast(e.errorResponse.message)
         }
     }
 }
