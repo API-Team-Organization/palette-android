@@ -39,7 +39,7 @@ class SettingFragment : Fragment() {
         loadUserNameInfo()
 
         binding.llLogout.setOnClickListener {
-            logout()
+            showLogoutDialog()
         }
 
         binding.llResign.setOnClickListener {
@@ -76,6 +76,29 @@ class SettingFragment : Fragment() {
                 Log.e(TAG, "Setting UserNameInfo error : ", e)
             }
         }
+    }
+
+    private fun showLogoutDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_logout, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        val noLogoutTextView: TextView = dialogView.findViewById(R.id.noLogoutTextView)
+        val logoutTextView: TextView = dialogView.findViewById(R.id.logoutTextView)
+
+        noLogoutTextView.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        logoutTextView.setOnClickListener {
+            logout()
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun goToPrivacyPolicyPage() {
