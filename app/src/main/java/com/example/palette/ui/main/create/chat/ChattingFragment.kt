@@ -48,6 +48,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Timer
+import java.util.TimerTask
 
 class ChattingFragment(
     private val roomId: Int,
@@ -64,6 +66,7 @@ class ChattingFragment(
     private var isLoading = false
     private lateinit var webSocketManager: WebSocketManager
     private lateinit var sendType: String
+    private val pingTimer = Timer()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -102,6 +105,7 @@ class ChattingFragment(
                 }
             }
             webSocketManager.start()
+            startPing()
         } catch (e: Exception) {
             logE("WebSocketManager 생성 중 오류 발생: ${e.localizedMessage}")
         }
@@ -662,9 +666,24 @@ class ChattingFragment(
         imm.hideSoftInputFromWindow(binding.chattingEditText.windowToken, 0)
     }
 
+    private fun startPing() {
+        pingTimer.schedule(object : TimerTask() {
+            override fun run() {
+                if (::webSocketManager.isInitialized) {
+                    webSocketManager.send("ping") // 서버에 ping 메시지 전송
+                }
+            }
+        }, 0, 30000) // 30초마다 Ping 전송
+    }
+
+    private fun stopPing() {
+        pingTimer.cancel()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         webSocketManager.stop() // 프래그먼트 종료 시 WebSocket 연결 해제
+        stopPing()
 
         if (chatList.isEmpty()) {
             (requireActivity() as? BaseControllable)?.deleteRoom(roomId = roomId)
