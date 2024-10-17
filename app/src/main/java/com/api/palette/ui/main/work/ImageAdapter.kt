@@ -78,6 +78,9 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
         val dialogView = LayoutInflater.from(context).inflate(R.layout.item_image, null)
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
+
+        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+
         Glide.with(context)
             .asBitmap()
             .load(imageUrl)
@@ -91,6 +94,11 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
 
         dialog.setContentView(dialogView)
         dialog.show()
+
+        dialog.window?.setLayout(
+            (context.resources.displayMetrics.widthPixels),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private fun showDownloadDialog(context: Context, imageUrl: String) {
