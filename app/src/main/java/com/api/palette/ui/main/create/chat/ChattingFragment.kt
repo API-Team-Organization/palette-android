@@ -434,6 +434,9 @@ class ChattingFragment(
                 }
                 setPadding(100, 20, 100, 20)
 
+                stateListAnimator = null
+                elevation = 0f
+
                 setOnClickListener {
                     binding.chattingEditText.setText(selectedChoice)
                     binding.chattingSelectLayout.visibility = View.GONE
@@ -593,6 +596,9 @@ class ChattingFragment(
                     gravity = Gravity.CENTER
                 }
                 setPadding(100, 20, 100, 20)
+
+                stateListAnimator = null
+                elevation = 0f
 
                 setOnClickListener {
                     updateChattingEditText(selectedPositions)
