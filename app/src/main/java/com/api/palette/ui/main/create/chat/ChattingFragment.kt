@@ -408,7 +408,7 @@ class ChattingFragment(
             pickerLayout.addView(numberPicker)
 
             val instructionText = TextView(context).apply {
-                text = "원하는 선택지를 선택해 주세요."
+                text = "원하시는 포스터의 비율을 선택해 주세요."
                 textSize = 18f
                 gravity = Gravity.START
                 setTextColor(ContextCompat.getColor(context, R.color.black))

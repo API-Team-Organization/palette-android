@@ -210,7 +210,6 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 dialog.dismiss()
             }
 
-            // 다이얼로그 표시
             dialog.show()
 
             dialog.window?.setLayout(
