@@ -22,6 +22,7 @@ class WorkPosterFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkPosterBinding
     private lateinit var imageAdapter: ImageAdapter
+    private var imageCount = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,7 +69,10 @@ class WorkPosterFragment : Fragment() {
                     } else {
                         binding.tvNoImages.visibility = View.GONE
                         binding.rvImageList.visibility = View.VISIBLE
-                        imageAdapter.updateImages(imageList.images)
+                        if (imageList.images.size != imageCount) {
+                            imageAdapter.updateImages(imageList.images)
+                            imageCount = imageList.images.size
+                        }
                     }
                     binding.swipeRefreshLayout.isRefreshing = false
                 }
