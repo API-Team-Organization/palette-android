@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.error.CustomException
@@ -23,7 +22,6 @@ class WorkPosterFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkPosterBinding
     private lateinit var imageAdapter: ImageAdapter
-    private lateinit var rvImageList: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,11 +29,13 @@ class WorkPosterFragment : Fragment() {
     ): View {
         binding = FragmentWorkPosterBinding.inflate(inflater, container, false)
 
-        rvImageList = binding.rvImageList
-        rvImageList.layoutManager = GridLayoutManager(requireContext(), 2)
-
+        binding.rvImageList.layoutManager = GridLayoutManager(requireContext(), 2)
         imageAdapter = ImageAdapter(listOf())
-        rvImageList.adapter = imageAdapter
+        binding.rvImageList.adapter = imageAdapter
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            loadImageList()
+        }
 
         loadImageList()
 
@@ -43,12 +43,13 @@ class WorkPosterFragment : Fragment() {
     }
 
     private fun loadImageList() {
+        binding.swipeRefreshLayout.isRefreshing = true
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val token = PaletteApplication.prefs.token
                 val page = 0
                 val size = 20 // TODO: Constants로 분리
-                log("aaaa")
                 val response = try {
                     val m = ChatRequestManager.getImageList(token, page, size)
                     log("$m")
@@ -63,17 +64,18 @@ class WorkPosterFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     if (imageList.images.isEmpty()) {
                         binding.tvNoImages.visibility = View.VISIBLE
-                        rvImageList.visibility = View.GONE
+                        binding.rvImageList.visibility = View.GONE
                     } else {
                         binding.tvNoImages.visibility = View.GONE
-                        rvImageList.visibility = View.VISIBLE
+                        binding.rvImageList.visibility = View.VISIBLE
                         imageAdapter.updateImages(imageList.images)
                     }
+                    binding.swipeRefreshLayout.isRefreshing = false
                 }
             } catch (e: Exception) {
                 logE("Error: ${e.message}")
+                binding.swipeRefreshLayout.isRefreshing = false
             }
         }
     }
-
 }

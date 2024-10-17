@@ -5,21 +5,23 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.work.WorkPosterFragment"
     android:background="@color/default_gray">
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_image_list"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:layout_marginTop="10dp"
-        android:splitMotionEvents="false"/>
-    <TextView
-        android:id="@+id/tv_no_images"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="작업한 포스터가 없습니다"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/pretendard_medium"
-        android:layout_gravity="center"
-        android:visibility="visible" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvImageList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tvNoImages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No images available"
+            android:visibility="gone"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 </FrameLayout>

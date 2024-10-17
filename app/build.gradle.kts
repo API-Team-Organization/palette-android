@@ -103,4 +103,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }
