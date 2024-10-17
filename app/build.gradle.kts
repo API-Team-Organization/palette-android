@@ -105,4 +105,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
 
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
 }
