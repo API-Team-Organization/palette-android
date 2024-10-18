@@ -601,9 +601,13 @@ class ChattingFragment(
                 elevation = 0f
 
                 setOnClickListener {
-                    updateChattingEditText(selectedPositions)
-                    binding.chattingSelectLayout.visibility = View.GONE
-                    sendData()
+                    if (selectedPositions.isEmpty()) {
+                        shortToast("최소 1개는 선택해야 합니다")
+                    } else {
+                        updateChattingEditText(selectedPositions)
+                        binding.chattingSelectLayout.visibility = View.GONE
+                        sendData()
+                    }
                 }
             }
 
