@@ -78,7 +78,9 @@
                 android:layout_marginTop="20dp"
                 android:hint="비밀번호"
                 android:textColorHint="@color/semiLightGray"
-                app:hintTextColor="@color/primaryColor">
+                app:hintTextColor="@color/primaryColor"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/semiLightGray">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etLoginPassword"
