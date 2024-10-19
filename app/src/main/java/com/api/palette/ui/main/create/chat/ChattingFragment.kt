@@ -50,6 +50,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import java.util.Timer
 import java.util.TimerTask
 
@@ -353,9 +354,13 @@ class ChattingFragment(
             handleCurrentPositionVisible(false)
             managementInputTool(qna)
         } else {
-            handleCurrentPositionVisible(
-                if (lastMessage.resource == ChatResource.IMAGE) false else true
-            )
+            handleCurrentPositionVisible(true)
+
+            if (lastMessage.resource == ChatResource.IMAGE) {
+                handleLoadingVisible(false)
+            } else {
+                handleLoadingVisible(true)
+            }
         }
     }
 
@@ -367,6 +372,28 @@ class ChattingFragment(
                 positionLabel.visibility = View.GONE
                 currentPositionText.text = "그리는 중.."
             }
+        }
+    }
+
+    private fun handleLoadingVisible(visibleState: Boolean) {
+        if (visibleState) {
+            chatList.add(
+                MessageResponse(
+                    id = "",
+                    promptId = null,
+                    message = "",
+                    roomId = roomId,
+                    userId = 0,
+                    datetime = Clock.System.now(),
+                    resource = ChatResource.INTERNAL_IMAGE_LOADING,
+                    isAi = true
+                )
+            )
+            recyclerAdapter.setData(chatList)
+            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+        } else {
+            chatList.removeAt(chatList.size - 2)
+            recyclerAdapter.setData(chatList)
         }
     }
 
