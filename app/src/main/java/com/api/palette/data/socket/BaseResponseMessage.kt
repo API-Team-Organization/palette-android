@@ -25,6 +25,11 @@ sealed class BaseResponseMessage {
     ) : BaseResponseMessage()
 
     @Serializable
+    data class PositionMessage(
+        val position: Int
+    ) : BaseResponseMessage()
+
+    @Serializable
     data class ErrorMessage(
         val kind: String,
         val message: String
@@ -63,6 +68,7 @@ class BaseResponseMessageSerializer : JsonContentPolymorphicSerializer<BaseRespo
         return when (element.jsonObject["type"]?.jsonPrimitive?.content) {
             "NEW_CHAT" -> BaseResponseMessage.ChatMessage.serializer()
             "ERROR" -> BaseResponseMessage.ErrorMessage.serializer()
+            "QUEUE_POSITION_UPDATE" -> BaseResponseMessage.PositionMessage.serializer()
             else -> throw SerializationException("Unknown type: ${element.jsonObject["type"]}")
         }
     }

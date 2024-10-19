@@ -37,6 +37,7 @@ import com.api.palette.data.error.CustomException
 import com.api.palette.data.room.RoomRequestManager
 import com.api.palette.data.room.data.TitleData
 import com.api.palette.data.socket.BaseResponseMessage
+import com.api.palette.data.socket.ChatResource
 import com.api.palette.data.socket.MessageResponse
 import com.api.palette.data.socket.WebSocketManager
 import com.api.palette.databinding.FragmentChattingBinding
@@ -101,7 +102,15 @@ class ChattingFragment(
                 log("ChattingFragment onCreateView handleChatMessage 호출됨")
                 firstMsgReceived = true
                 viewLifecycleOwner.lifecycleScope.launch {
-                    handleChatMessage(chatMessage)
+                    when(chatMessage) {
+                        is BaseResponseMessage.ChatMessage -> {
+                            handleChatMessage(chatMessage)
+                        }
+                        is BaseResponseMessage.PositionMessage -> {
+                            handleCurrentPositionVisible(true, chatMessage.position.toString())
+                        }
+                        else -> return@launch
+                    }
                 }
             }
             webSocketManager.start()
@@ -336,11 +345,28 @@ class ChattingFragment(
 
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
 
-        if (chatList.last().isAi && chatList.last().promptId != null) {
-            val lastMessage = chatList.last()
-            val qna = qnaList.find { it.id == lastMessage.promptId }!!
+        if (!chatList.last().isAi) return
+        val lastMessage = chatList.last()
 
+        if (chatList.last().promptId != null) {
+            val qna = qnaList.find { it.id == lastMessage.promptId }!!
+            handleCurrentPositionVisible(false)
             managementInputTool(qna)
+        } else {
+            handleCurrentPositionVisible(
+                if (lastMessage.resource == ChatResource.IMAGE) false else true
+            )
+        }
+    }
+
+    private fun handleCurrentPositionVisible(visibleState: Boolean, position: String = "") {
+        with(binding) {
+            positionBox.visibility = if (visibleState) View.VISIBLE else View.GONE
+            currentPositionText.text = position
+            if (position == "0") {
+                positionLabel.visibility = View.GONE
+                currentPositionText.text = "그리는 중.."
+            }
         }
     }
 
