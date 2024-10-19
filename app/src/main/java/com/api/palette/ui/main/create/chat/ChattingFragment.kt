@@ -334,14 +334,14 @@ class ChattingFragment(
 
         if (chatList.isEmpty()) return
 
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+
         if (chatList.last().isAi && chatList.last().promptId != null) {
             val lastMessage = chatList.last()
             val qna = qnaList.find { it.id == lastMessage.promptId }!!
 
             managementInputTool(qna)
         }
-
-        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
 
     private fun updateSelectableUI(qna: PromptData.Selectable) {
