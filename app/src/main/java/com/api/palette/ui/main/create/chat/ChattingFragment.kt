@@ -317,8 +317,10 @@ class ChattingFragment(
                 // EditText 내용이 변경된 후 호출됩니다.
                 if (s.isNullOrBlank()) {
                     binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_gray)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send)
                 } else {
-                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_black)
+                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_blue)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_ok)
                 }
             }
 
