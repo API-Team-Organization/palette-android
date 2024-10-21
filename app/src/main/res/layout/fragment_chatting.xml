@@ -39,7 +39,8 @@
             android:layout_height="0dp"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/chatUserInputBox"
-            app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout"
+            android:layout_marginBottom="16dp"/>
 
         <LinearLayout
             android:id="@+id/positionBox"
