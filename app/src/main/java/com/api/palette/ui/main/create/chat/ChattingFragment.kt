@@ -347,16 +347,14 @@ class ChattingFragment(
 
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
 
-        if (!chatList.last().isAi) return
+        if (!chatList.last().isAi) return // 내 채팅일 경우
         val lastMessage = chatList.last()
 
-        if (chatList.last().promptId != null) {
+        if (chatList.last().promptId != null) { // prompt 질의응답 식일 경우
             val qna = qnaList.find { it.id == lastMessage.promptId }!!
             handleCurrentPositionVisible(false)
             managementInputTool(qna)
-        } else {
-            handleCurrentPositionVisible(true)
-
+        } else { // 그냥 메세지일 경우
             if (lastMessage.resource == ChatResource.IMAGE) {
                 handleLoadingVisible(false)
             } else {
