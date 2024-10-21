@@ -51,14 +51,14 @@ class LoginFragment : Fragment() {
     private fun initView() {
         with(binding) {
             btnLogin.setOnClickListener {
-                if (etLoginEmail.text.isEmpty()) {
+                if (etLoginEmail.text?.isEmpty() == true) {
                     handleLoginFailure(etLoginEmail)
                     binding.emailFailedText.visibility = View.VISIBLE
                     passwordFailedText.visibility = View.GONE
                     etLoginPassword.background = ContextCompat.getDrawable(etLoginPassword.context, R.drawable.bac_object)
                     return@setOnClickListener
                 }
-                if (etLoginPassword.text.isEmpty()) {
+                if (etLoginPassword.text?.isEmpty() == true) {
                     handleLoginFailure(etLoginPassword)
                     binding.passwordFailedText.visibility = View.VISIBLE
                     emailFailedText.visibility = View.GONE

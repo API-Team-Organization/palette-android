@@ -1,5 +1,6 @@
 package com.api.palette.data
 
+import com.api.palette.BuildConfig
 import com.api.palette.common.json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -8,7 +9,9 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private const val BASE_URL = "https://api.paletteapp.xyz/"
+    private val BASE_URL: String by lazy {
+        BuildConfig.BASE_URL
+    }
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()

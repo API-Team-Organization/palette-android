@@ -39,19 +39,28 @@
                 android:textSize="14sp"
                 android:textColor="@color/darkGray"
                 android:fontFamily="@font/pretendard_medium"/>
-            <EditText
-                android:id="@+id/etLoginEmail"
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:hint="이메일"
-                android:fontFamily="@font/pretendard_medium"
-                android:textColor="@color/black"
-                android:textColorHint="@color/semiLightGray"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
-                android:inputType="textEmailAddress"
-                android:textColorHighlight="@color/lightBlue"
-                android:textCursorDrawable="@drawable/cursor_drawable"
-                android:importantForAutofill="no"/>
+                android:hint="이메일"
+                android:textColorHint="@color/semiLightGray"
+                app:hintTextColor="@color/primaryColor">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLoginEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/semiLightGray"
+                    android:inputType="textEmailAddress"
+                    android:textColorHighlight="@color/lightBlue"
+                    android:textCursorDrawable="@drawable/cursor_drawable" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <TextView
                 android:id="@+id/emailFailedText"
                 android:layout_width="wrap_content"
@@ -62,18 +71,30 @@
                 android:layout_marginStart="4dp"
                 android:visibility="gone"
                 android:fontFamily="@font/pretendard_medium" />
-            <EditText
-                android:id="@+id/etLoginPassword"
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:hint="비밀번호"
-                android:fontFamily="@font/pretendard_medium"
-                android:textColor="@color/black"
-                android:textColorHint="@color/semiLightGray"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:inputType="textPassword"
-                android:textColorHighlight="@color/lightBlue"
-                android:textCursorDrawable="@drawable/cursor_drawable"/>
+                android:hint="비밀번호"
+                android:textColorHint="@color/semiLightGray"
+                app:hintTextColor="@color/primaryColor"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/semiLightGray">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLoginPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/semiLightGray"
+                    android:inputType="textPassword"
+                    android:textColorHighlight="@color/lightBlue"
+                    android:textCursorDrawable="@drawable/cursor_drawable"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <TextView
                 android:id="@+id/passwordFailedText"
                 android:layout_width="wrap_content"

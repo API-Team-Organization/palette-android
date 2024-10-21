@@ -11,19 +11,18 @@ import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.error.CustomException
 import com.api.palette.databinding.FragmentWorkPosterBinding
-import com.api.palette.ui.util.log
 import com.api.palette.ui.util.logE
 import com.api.palette.ui.util.shortToast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class WorkPosterFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkPosterBinding
     private lateinit var imageAdapter: ImageAdapter
-    private lateinit var rvImageList: RecyclerView
+    private var isLoading = false
+    private var currentPage = 0
+    private val pageSize = 10
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,50 +30,101 @@ class WorkPosterFragment : Fragment() {
     ): View {
         binding = FragmentWorkPosterBinding.inflate(inflater, container, false)
 
-        rvImageList = binding.rvImageList
-        rvImageList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
-            gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
-        }
-        imageAdapter = ImageAdapter(listOf())
-        rvImageList.adapter = imageAdapter
+        ContextRetainer.init(requireActivity())
 
-        loadImageList()
+        setupRecyclerView()
+        setupSwipeRefresh()
+        loadImageList(isRefresh = true)
 
         return binding.root
     }
 
-    private fun loadImageList() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val token = PaletteApplication.prefs.token
-                val page = 0
-                val size = 20 // TODO: Constants로 분리
-                log("aaaa")
-                val response = try {
-                    val m = ChatRequestManager.getImageList(token, page, size)
-                    log("$m")
-                    m
-                } catch (e: CustomException) {
-                    shortToast(e.errorResponse.message)
-                    null
-                } ?: return@launch
+    private fun setupRecyclerView() {
+        binding.rvImageList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
+            gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        }
+        imageAdapter = ImageAdapter(mutableListOf())
+        binding.rvImageList.adapter = imageAdapter
 
-                val imageList = response.data
-
-                withContext(Dispatchers.Main) {
-                    if (imageList.images.isEmpty()) {
-                        binding.tvNoImages.visibility = View.VISIBLE
-                        rvImageList.visibility = View.GONE
-                    } else {
-                        binding.tvNoImages.visibility = View.GONE
-                        rvImageList.visibility = View.VISIBLE
-                        imageAdapter.updateImages(imageList.images)
+        binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!isLoading && !binding.swipeRefreshLayout.isRefreshing) {
+                    val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
+                    val totalItemCount = layoutManager.itemCount
+                    val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
+                    val lastVisibleItem = lastVisibleItemPositions.maxOrNull() ?: 0
+                    if (totalItemCount <= lastVisibleItem + 1) {
+                        loadImageList()
                     }
                 }
-            } catch (e: Exception) {
-                logE("Error: ${e.message}")
+            }
+        })
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            if (!isLoading) {
+                loadImageList(isRefresh = true)
             }
         }
     }
 
+    private fun loadImageList(isRefresh: Boolean = false) {
+        if (isLoading) return
+
+        if (isRefresh) {
+            currentPage = 0
+            imageAdapter.clearImages()
+        }
+
+        isLoading = true
+        binding.swipeRefreshLayout.isRefreshing = true
+
+        coroutineScope.launch {
+            try {
+                val token = PaletteApplication.prefs.token
+                val response = withContext(Dispatchers.IO) {
+                    try {
+                        ChatRequestManager.getImageList(token, currentPage, pageSize)
+                    } catch (e: CustomException) {
+                        withContext(Dispatchers.Main) {
+                            shortToast(e.errorResponse.message)
+                        }
+                        null
+                    }
+                } ?: return@launch
+
+                val imageList = response.data
+
+                updateUI(imageList.images, isRefresh)
+                currentPage++
+            } catch (e: Exception) {
+                logE("Error: ${e.message}")
+            } finally {
+                isLoading = false
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        }
+    }
+
+    private fun updateUI(images: List<String>, isRefresh: Boolean) {
+        if (images.isEmpty() && currentPage == 0) {
+            binding.tvNoImages.visibility = View.VISIBLE
+            binding.rvImageList.visibility = View.GONE
+        } else {
+            binding.tvNoImages.visibility = View.GONE
+            binding.rvImageList.visibility = View.VISIBLE
+            if (isRefresh) {
+                imageAdapter.updateImages(images)
+            } else {
+                imageAdapter.addImages(images)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
+    }
 }
