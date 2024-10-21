@@ -37,21 +37,23 @@
             android:id="@+id/chattingRecycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingBottom="16dp"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/chatUserInputBox"
             app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout" />
 
         <LinearLayout
             android:id="@+id/positionBox"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
             app:layout_constraintBottom_toTopOf="@id/chatUserInputBox"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:gravity="end"
+            android:background="@drawable/bac_position"
+            android:gravity="center"
             android:visibility="gone">
             <TextView
                 android:id="@+id/position_label"
@@ -59,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:text="앞에 있는 사용자 : "
                 android:textColor="@color/black"
+                android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"
                 app:layout_constraintBottom_toTopOf="@id/chatUserInputBox"
                 app:layout_constraintStart_toStartOf="parent"
@@ -69,6 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2"
+                android:textSize="16sp"
                 android:textColor="@color/primaryColor"
                 android:fontFamily="@font/pretendard_bold"/>
         </LinearLayout>
