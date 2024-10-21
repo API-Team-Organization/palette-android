@@ -37,6 +37,7 @@ class CreateMediaFragment : Fragment() {
     private val itemList = ArrayList<RoomData>()
     private lateinit var workAdapter: CreateMediaAdapter
     private lateinit var roomList: DataResponse<List<RoomData>>
+    private var isDeleting = false
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -68,10 +69,12 @@ class CreateMediaFragment : Fragment() {
 
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
+                if (isDeleting) return // item 삭제 중 삭호작용 막음 -> block index error
                 startChatting(roomList.data[position].id, roomList.data[position].title.toString())
             }
 
             override fun onItemLongClick(position: Int) {
+                if (isDeleting) return // item 삭제 중 삭호작용 막음 -> block index error
                 deleteChatDialog(requireActivity(), position)
             }
         }
@@ -139,6 +142,7 @@ class CreateMediaFragment : Fragment() {
         }
 
         yesButton.setOnClickListener {
+            isDeleting = true
             deleteRoom(position)
             dialog.dismiss()
         }
@@ -194,6 +198,7 @@ class CreateMediaFragment : Fragment() {
                 if (response.isSuccessful) {
                     itemList.removeAt(position)
                     workAdapter.notifyItemRemoved(position)
+                    isDeleting = false
                     if (itemList.isEmpty()) {
                         binding.roomListEmptyText.visibility = View.VISIBLE
                     }
