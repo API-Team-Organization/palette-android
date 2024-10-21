@@ -104,13 +104,6 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                     return
                 }
 
-                if (chat.resource == ChatResource.INTERNAL_CHAT_LOADING) {
-                    chattingLoadImage.visibility = View.GONE
-                    textGchatMessagePalette.visibility = View.VISIBLE
-                    textGchatMessagePalette.text = "로딩 중..."
-                    return
-                }
-
                 // 실제 데이터를 표시할 뷰
                 chattingLoadImage.visibility = View.GONE
                 textGchatMessagePalette.visibility = View.VISIBLE

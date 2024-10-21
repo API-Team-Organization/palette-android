@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.error.CustomException
@@ -40,7 +40,9 @@ class WorkPosterFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvImageList.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.rvImageList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
+            gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        }
         imageAdapter = ImageAdapter(mutableListOf())
         binding.rvImageList.adapter = imageAdapter
 
@@ -48,10 +50,11 @@ class WorkPosterFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoading && !binding.swipeRefreshLayout.isRefreshing) {
-                    val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                    val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
                     val totalItemCount = layoutManager.itemCount
-                    val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-                    if (totalItemCount <= lastVisibleItem + 2) {
+                    val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
+                    val lastVisibleItem = lastVisibleItemPositions.maxOrNull() ?: 0
+                    if (totalItemCount <= lastVisibleItem + 1) {
                         loadImageList()
                     }
                 }

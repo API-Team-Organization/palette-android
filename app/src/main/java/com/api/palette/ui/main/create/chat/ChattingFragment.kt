@@ -37,6 +37,7 @@ import com.api.palette.data.error.CustomException
 import com.api.palette.data.room.RoomRequestManager
 import com.api.palette.data.room.data.TitleData
 import com.api.palette.data.socket.BaseResponseMessage
+import com.api.palette.data.socket.ChatResource
 import com.api.palette.data.socket.MessageResponse
 import com.api.palette.data.socket.WebSocketManager
 import com.api.palette.databinding.FragmentChattingBinding
@@ -49,6 +50,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import java.util.Timer
 import java.util.TimerTask
 
@@ -101,7 +103,15 @@ class ChattingFragment(
                 log("ChattingFragment onCreateView handleChatMessage 호출됨")
                 firstMsgReceived = true
                 viewLifecycleOwner.lifecycleScope.launch {
-                    handleChatMessage(chatMessage)
+                    when(chatMessage) {
+                        is BaseResponseMessage.ChatMessage -> {
+                            handleChatMessage(chatMessage)
+                        }
+                        is BaseResponseMessage.PositionMessage -> {
+                            handleCurrentPositionVisible(true, chatMessage.position.toString())
+                        }
+                        else -> return@launch
+                    }
                 }
             }
             webSocketManager.start()
@@ -290,12 +300,11 @@ class ChattingFragment(
                 before = before,
             )?.data
 
-            if (newChats.isNullOrEmpty()) {
-            } else {
-                newChats.reverse()
-                chatList.addAll(0, newChats)
-                recyclerAdapter.setData(chatList)
-            }
+            if (newChats.isNullOrEmpty()) return@launch
+
+            newChats.reverse()
+            chatList.addAll(0, newChats)
+            recyclerAdapter.setData(chatList)
 
             isLoading = false // 로딩 종료 플래그 설정
         }
@@ -307,8 +316,10 @@ class ChattingFragment(
                 // EditText 내용이 변경된 후 호출됩니다.
                 if (s.isNullOrBlank()) {
                     binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_gray)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send)
                 } else {
-                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_black)
+                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_blue)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_ok)
                 }
             }
 
@@ -334,14 +345,58 @@ class ChattingFragment(
 
         if (chatList.isEmpty()) return
 
-        if (chatList.last().isAi && chatList.last().promptId != null) {
-            val lastMessage = chatList.last()
-            val qna = qnaList.find { it.id == lastMessage.promptId }!!
-
-            managementInputTool(qna)
-        }
-
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+
+        if (!chatList.last().isAi) return
+        val lastMessage = chatList.last()
+
+        if (chatList.last().promptId != null) {
+            val qna = qnaList.find { it.id == lastMessage.promptId }!!
+            handleCurrentPositionVisible(false)
+            managementInputTool(qna)
+        } else {
+            handleCurrentPositionVisible(true)
+
+            if (lastMessage.resource == ChatResource.IMAGE) {
+                handleLoadingVisible(false)
+            } else {
+                handleLoadingVisible(true)
+            }
+        }
+    }
+
+    private fun handleCurrentPositionVisible(visibleState: Boolean, position: String = "") {
+        with(binding) {
+            positionBox.visibility = if (visibleState) View.VISIBLE else View.GONE
+            currentPositionText.text = position
+            if (position == "0") {
+                positionLabel.visibility = View.GONE
+                currentPositionText.text = "그리는 중.."
+            }
+        }
+    }
+
+    private fun handleLoadingVisible(visibleState: Boolean) {
+        if (visibleState) {
+            chatList.add(
+                MessageResponse(
+                    id = "",
+                    promptId = null,
+                    message = "",
+                    roomId = roomId,
+                    userId = 0,
+                    datetime = Clock.System.now(),
+                    resource = ChatResource.INTERNAL_IMAGE_LOADING,
+                    isAi = true
+                )
+            )
+            recyclerAdapter.setData(chatList)
+            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+        } else {
+            chatList.removeAt(chatList.size - 2)
+            handleCurrentPositionVisible(false)
+            recyclerAdapter.setData(chatList)
+        }
     }
 
     private fun updateSelectableUI(qna: PromptData.Selectable) {

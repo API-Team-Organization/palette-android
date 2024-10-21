@@ -9,7 +9,7 @@ import okhttp3.*
 class WebSocketManager(token: String, roomId: Int) {
     private val client = OkHttpClient()
     private lateinit var webSocket: WebSocket
-    private var onMessageReceived: ((BaseResponseMessage.ChatMessage) -> Unit)? = null
+    private var onMessageReceived: ((BaseResponseMessage) -> Unit)? = null
     private var onConnect: (() -> Unit)? = null
 
     private val request: Request = Request.Builder()
@@ -36,6 +36,9 @@ class WebSocketManager(token: String, roomId: Int) {
                         log("WebSocketManager onMessage json변환 value : $baseMessage")
                         onMessageReceived?.invoke(baseMessage)
                     }
+                    is BaseResponseMessage.PositionMessage -> {
+                        onMessageReceived?.invoke(baseMessage)
+                    }
                 }
             } catch (e: SerializationException) {
                 logE("WebSocket 메시지 파싱 오류: ${e.message}")
@@ -55,7 +58,7 @@ class WebSocketManager(token: String, roomId: Int) {
         webSocket.close(1000, "종료")
     }
 
-    fun setOnMessageReceivedListener(listener: (BaseResponseMessage.ChatMessage) -> Unit) {
+    fun setOnMessageReceivedListener(listener: (BaseResponseMessage) -> Unit) {
         log(" WebSocketManager setOnMessageReceivedListener listener $listener")
         this.onMessageReceived = listener
     }
