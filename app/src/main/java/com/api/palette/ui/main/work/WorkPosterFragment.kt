@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.error.CustomException
@@ -32,8 +32,9 @@ class WorkPosterFragment : Fragment() {
         binding = FragmentWorkPosterBinding.inflate(inflater, container, false)
 
         rvImageList = binding.rvImageList
-        rvImageList.layoutManager = GridLayoutManager(requireContext(), 2)
-
+        rvImageList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
+            gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        }
         imageAdapter = ImageAdapter(listOf())
         rvImageList.adapter = imageAdapter
 
