@@ -127,8 +127,8 @@
 
                 <ImageView
                     android:id="@+id/chattingSubmitButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
                     android:layout_marginStart="10dp"
                     android:background="@drawable/bac_circle_gray"
                     android:padding="13dp"
