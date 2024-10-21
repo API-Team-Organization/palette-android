@@ -210,7 +210,6 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 dialog.dismiss()
             }
 
-            // 다이얼로그 표시
             dialog.show()
 
             dialog.window?.setLayout(
@@ -221,37 +220,56 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     }
 
     private fun showCopyPaletteDialog(context: Context, binding: ItemChattingPaletteBoxBinding) {
-        AlertDialog.Builder(context).apply {
-            setTitle("설명 복사")
-            setMessage("홍보물 설명을 복사하시겠습니까?")
-            setPositiveButton("예") { _, _ ->
-                val clipboardManager =
-                    binding.cardGchatMessagePalette.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                val clipData =
-                    ClipData.newPlainText("Palette", binding.textGchatMessagePalette.text)
-                clipboardManager?.setPrimaryClip(clipData)
-                Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
-            }
-            setNegativeButton("아니오", null)
-            show()
+        val dialogBuilder = AlertDialog.Builder(context)
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_copy, null)
+        dialogBuilder.setView(dialogView)
+
+        val dialog = dialogBuilder.create()
+
+        val copyTextView = dialogView.findViewById<TextView>(R.id.tv_copy)
+
+        copyTextView.setOnClickListener {
+            val clipboardManager =
+                binding.cardGchatMessagePalette.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+            val clipData =
+                ClipData.newPlainText("Palette", binding.textGchatMessagePalette.text)
+            clipboardManager?.setPrimaryClip(clipData)
+
+            Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
+
+            dialog.dismiss()
         }
+
+        dialog.show()
     }
 
+
     private fun showCopyMeDialog(context: Context, binding: ItemChattingMeBoxBinding) {
-        AlertDialog.Builder(context).apply {
-            setTitle("글 복사")
-            setMessage("글을 복사하시겠습니까?")
-            setPositiveButton("예") { _, _ ->
-                val clipboardManager =
-                    binding.cardGchatMessageMe.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                val clipData = ClipData.newPlainText("Palette", binding.textGchatMessageMe.text)
-                clipboardManager?.setPrimaryClip(clipData)
-                Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
-            }
-            setNegativeButton("아니오", null)
-            show()
+        val dialogBuilder = AlertDialog.Builder(context)
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_copy, null)
+        dialogBuilder.setView(dialogView)
+
+        val dialog = dialogBuilder.create()
+
+        val copyTextView = dialogView.findViewById<TextView>(R.id.tv_copy)
+
+        copyTextView.setOnClickListener {
+            val clipboardManager =
+                binding.cardGchatMessageMe.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+            val clipData =
+                ClipData.newPlainText("Palette", binding.textGchatMessageMe.text)
+            clipboardManager?.setPrimaryClip(clipData)
+
+            Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
+
+            dialog.dismiss()
         }
+
+        dialog.show()
     }
+
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
         val dialog = Dialog(context)

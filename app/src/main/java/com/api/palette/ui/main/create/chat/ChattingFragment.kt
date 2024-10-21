@@ -408,7 +408,7 @@ class ChattingFragment(
             pickerLayout.addView(numberPicker)
 
             val instructionText = TextView(context).apply {
-                text = "원하는 선택지를 선택해 주세요."
+                text = "원하시는 포스터의 비율을 선택해 주세요."
                 textSize = 18f
                 gravity = Gravity.START
                 setTextColor(ContextCompat.getColor(context, R.color.black))
@@ -433,6 +433,9 @@ class ChattingFragment(
                     gravity = Gravity.CENTER
                 }
                 setPadding(100, 20, 100, 20)
+
+                stateListAnimator = null
+                elevation = 0f
 
                 setOnClickListener {
                     binding.chattingEditText.setText(selectedChoice)
@@ -594,10 +597,17 @@ class ChattingFragment(
                 }
                 setPadding(100, 20, 100, 20)
 
+                stateListAnimator = null
+                elevation = 0f
+
                 setOnClickListener {
-                    updateChattingEditText(selectedPositions)
-                    binding.chattingSelectLayout.visibility = View.GONE
-                    sendData()
+                    if (selectedPositions.isEmpty()) {
+                        shortToast("최소 1개는 선택해야 합니다")
+                    } else {
+                        updateChattingEditText(selectedPositions)
+                        binding.chattingSelectLayout.visibility = View.GONE
+                        sendData()
+                    }
                 }
             }
 

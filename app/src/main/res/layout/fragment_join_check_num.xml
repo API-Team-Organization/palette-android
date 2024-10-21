@@ -49,19 +49,27 @@
                 android:inputType="textEmailAddress"
                 android:enabled="false"/>
 
-            <EditText
-                android:id="@+id/etJoinCheckNum"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:hint="인증번호"
-                android:maxLength="6"
-                android:fontFamily="@font/pretendard_medium"
-                android:textColor="@color/black"
-                android:textColorHint="@color/semiLightGray"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:inputType="number"
-                android:textColorHighlight="@color/lightBlue"
-                android:textCursorDrawable="@drawable/cursor_drawable"/>
+                android:hint="인증번호"
+                android:textColorHint="@color/semiLightGray"
+                app:hintTextColor="@color/primaryColor">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etJoinCheckNum"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:maxLength="6"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/semiLightGray"
+                    android:inputType="number"
+                    android:textColorHighlight="@color/lightBlue"
+                    android:textCursorDrawable="@drawable/cursor_drawable"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/tvResend"

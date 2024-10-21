@@ -39,19 +39,26 @@
                 android:layout_marginTop="3dp"
                 android:layout_marginStart="1dp"/>
 
-            <EditText
-                android:id="@+id/etJoinName"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:hint="이름"
-                android:importantForAutofill="no"
-                android:fontFamily="@font/pretendard_medium"
-                android:textColor="@color/black"
-                android:textColorHint="@color/semiLightGray"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
-                android:inputType="textPersonName"
-                android:textColorHighlight="@color/lightBlue"
-                android:textCursorDrawable="@drawable/cursor_drawable"/>
+                android:hint="이름"
+                android:textColorHint="@color/semiLightGray"
+                app:hintTextColor="@color/primaryColor">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etJoinName"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/semiLightGray"
+                    android:inputType="textPersonName"
+                    android:textColorHighlight="@color/lightBlue"
+                    android:textCursorDrawable="@drawable/cursor_drawable"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/failedNameEmpty"
