@@ -395,6 +395,7 @@ class ChattingFragment(
             binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
         } else {
             chatList.removeAt(chatList.size - 2)
+            handleCurrentPositionVisible(false)
             recyclerAdapter.setData(chatList)
         }
     }
