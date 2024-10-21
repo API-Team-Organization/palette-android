@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.provider.MediaStore
@@ -25,25 +24,32 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
-import java.net.URL
 
 class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView: SubsamplingScaleImageView = itemView.findViewById(R.id.imageView)
+        private var currentBitmap: Bitmap? = null
 
         fun bind(imageUrl: String) {
+            imageView.recycle()
+            currentBitmap?.recycle()
+            currentBitmap = null
+
             Glide.with(itemView.context)
                 .asBitmap()
                 .load(imageUrl)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        imageView.clipToOutline = true
-                        imageView.setImage(ImageSource.bitmap(resource))
+                        currentBitmap = resource.copy(resource.config, true)
+                        imageView.setImage(ImageSource.bitmap(currentBitmap!!))
                     }
 
-                    override fun onLoadCleared(placeholder: Drawable?) {}
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        imageView.recycle()
+                        currentBitmap?.recycle()
+                        currentBitmap = null
+                    }
                 })
 
             imageView.setOnClickListener {
@@ -54,6 +60,12 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
                 showDownloadDialog(itemView.context, imageUrl)
                 true
             }
+        }
+
+        fun recycle() {
+            imageView.recycle()
+            currentBitmap?.recycle()
+            currentBitmap = null
         }
     }
 
@@ -68,6 +80,11 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
 
     override fun getItemCount(): Int = images.size
 
+    override fun onViewRecycled(holder: ImageViewHolder) {
+        super.onViewRecycled(holder)
+        holder.recycle()
+    }
+
     fun updateImages(newImages: List<String>) {
         images.clear()
         images.addAll(newImages)
@@ -78,6 +95,12 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
         val previousSize = images.size
         images.addAll(newImages)
         notifyItemRangeInserted(previousSize, newImages.size)
+    }
+
+    fun clearImages() {
+        val size = images.size
+        images.clear()
+        notifyItemRangeRemoved(0, size)
     }
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
@@ -96,7 +119,9 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
                     imageView.setImage(ImageSource.bitmap(resource))
                 }
 
-                override fun onLoadCleared(placeholder: Drawable?) {}
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    imageView.recycle()
+                }
             })
 
         dialog.setContentView(dialogView)
@@ -128,6 +153,7 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
                 val bitmap = downloadBitmap(imageUrl)
                 bitmap?.let {
                     saveImageToGallery(context, it)
+                    it.recycle()
                 }
                 Toast.makeText(context, "다운로드되었습니다.", Toast.LENGTH_SHORT).show()
             }
@@ -142,19 +168,16 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
         )
     }
 
-    private suspend fun downloadBitmap(urlString: String): Bitmap? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val url = URL(urlString)
-                val connection = url.openConnection() as HttpURLConnection
-                connection.doInput = true
-                connection.connect()
-                val inputStream = connection.inputStream
-                BitmapFactory.decodeStream(inputStream)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
+    private suspend fun downloadBitmap(urlString: String): Bitmap? = withContext(Dispatchers.IO) {
+        try {
+            Glide.with(ContextRetainer.getContext())
+                .asBitmap()
+                .load(urlString)
+                .submit()
+                .get()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
@@ -178,5 +201,17 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
         }
+    }
+}
+
+object ContextRetainer {
+    private lateinit var context: Context
+
+    fun init(context: Context) {
+        this.context = context.applicationContext
+    }
+
+    fun getContext(): Context {
+        return context
     }
 }

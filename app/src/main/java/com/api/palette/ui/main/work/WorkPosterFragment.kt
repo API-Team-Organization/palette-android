@@ -11,18 +11,18 @@ import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.error.CustomException
 import com.api.palette.databinding.FragmentWorkPosterBinding
-import com.api.palette.ui.util.log
 import com.api.palette.ui.util.logE
 import com.api.palette.ui.util.shortToast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class WorkPosterFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkPosterBinding
     private lateinit var imageAdapter: ImageAdapter
+    private var isLoading = false
+    private var currentPage = 0
+    private val pageSize = 10
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,80 +30,98 @@ class WorkPosterFragment : Fragment() {
     ): View {
         binding = FragmentWorkPosterBinding.inflate(inflater, container, false)
 
-        binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = recyclerView.layoutManager as GridLayoutManager
-                val totalItemCount = layoutManager.itemCount
-                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+        ContextRetainer.init(requireActivity())
 
-                if (!binding.swipeRefreshLayout.isRefreshing && totalItemCount <= lastVisibleItem + 2) {
-                    loadImageList()
-                }
-            }
-        })
-
-
-        binding.rvImageList.layoutManager = GridLayoutManager(requireContext(), 2)
-        imageAdapter = ImageAdapter(mutableListOf())
-        binding.rvImageList.adapter = imageAdapter
-
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            loadImageList()
-        }
-
-        loadImageList()
+        setupRecyclerView()
+        setupSwipeRefresh()
+        loadImageList(isRefresh = true)
 
         return binding.root
     }
 
-    private var currentPage = 0
-    private val pageSize = 10
+    private fun setupRecyclerView() {
+        binding.rvImageList.layoutManager = GridLayoutManager(requireContext(), 2)
+        imageAdapter = ImageAdapter(mutableListOf())
+        binding.rvImageList.adapter = imageAdapter
+
+        binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!isLoading && !binding.swipeRefreshLayout.isRefreshing) {
+                    val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                    val totalItemCount = layoutManager.itemCount
+                    val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                    if (totalItemCount <= lastVisibleItem + 2) {
+                        loadImageList()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            if (!isLoading) {
+                loadImageList(isRefresh = true)
+            }
+        }
+    }
 
     private fun loadImageList(isRefresh: Boolean = false) {
+        if (isLoading) return
+
         if (isRefresh) {
             currentPage = 0
+            imageAdapter.clearImages()
         }
 
+        isLoading = true
         binding.swipeRefreshLayout.isRefreshing = true
 
-        CoroutineScope(Dispatchers.IO).launch {
+        coroutineScope.launch {
             try {
                 val token = PaletteApplication.prefs.token
-                val response = try {
-                    val m = ChatRequestManager.getImageList(token, currentPage, pageSize)
-                    log("$m")
-                    m
-                } catch (e: CustomException) {
-                    shortToast(e.errorResponse.message)
-                    null
+                val response = withContext(Dispatchers.IO) {
+                    try {
+                        ChatRequestManager.getImageList(token, currentPage, pageSize)
+                    } catch (e: CustomException) {
+                        withContext(Dispatchers.Main) {
+                            shortToast(e.errorResponse.message)
+                        }
+                        null
+                    }
                 } ?: return@launch
 
                 val imageList = response.data
 
-                withContext(Dispatchers.Main) {
-                    if (imageList.images.isEmpty()) {
-                        if (currentPage == 0) {
-                            binding.tvNoImages.visibility = View.VISIBLE
-                            binding.rvImageList.visibility = View.GONE
-                        }
-                    } else {
-                        binding.tvNoImages.visibility = View.GONE
-                        binding.rvImageList.visibility = View.VISIBLE
-                        if (isRefresh) {
-                            imageAdapter.updateImages(imageList.images)
-                        } else {
-                            imageAdapter.addImages(imageList.images)
-                        }
-                        currentPage++
-                    }
-                    binding.swipeRefreshLayout.isRefreshing = false
-                }
+                updateUI(imageList.images, isRefresh)
+                currentPage++
             } catch (e: Exception) {
                 logE("Error: ${e.message}")
+            } finally {
+                isLoading = false
                 binding.swipeRefreshLayout.isRefreshing = false
             }
         }
     }
 
+    private fun updateUI(images: List<String>, isRefresh: Boolean) {
+        if (images.isEmpty() && currentPage == 0) {
+            binding.tvNoImages.visibility = View.VISIBLE
+            binding.rvImageList.visibility = View.GONE
+        } else {
+            binding.tvNoImages.visibility = View.GONE
+            binding.rvImageList.visibility = View.VISIBLE
+            if (isRefresh) {
+                imageAdapter.updateImages(images)
+            } else {
+                imageAdapter.addImages(images)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
+    }
 }
