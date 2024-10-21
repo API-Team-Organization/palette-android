@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView: SubsamplingScaleImageView = itemView.findViewById(R.id.imageView)
@@ -69,8 +69,15 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
     override fun getItemCount(): Int = images.size
 
     fun updateImages(newImages: List<String>) {
-        images = newImages
+        images.clear()
+        images.addAll(newImages)
         notifyDataSetChanged()
+    }
+
+    fun addImages(newImages: List<String>) {
+        val previousSize = images.size
+        images.addAll(newImages)
+        notifyItemRangeInserted(previousSize, newImages.size)
     }
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
@@ -127,7 +134,6 @@ class ImageAdapter(private var images: List<String>) : RecyclerView.Adapter<Imag
             dialog.dismiss()
         }
 
-        // 다이얼로그 표시
         dialog.show()
 
         dialog.window?.setLayout(

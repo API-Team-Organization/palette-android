@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.error.CustomException
@@ -22,7 +23,6 @@ class WorkPosterFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkPosterBinding
     private lateinit var imageAdapter: ImageAdapter
-    private var imageCount = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,8 +30,22 @@ class WorkPosterFragment : Fragment() {
     ): View {
         binding = FragmentWorkPosterBinding.inflate(inflater, container, false)
 
+        binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+                if (!binding.swipeRefreshLayout.isRefreshing && totalItemCount <= lastVisibleItem + 2) {
+                    loadImageList()
+                }
+            }
+        })
+
+
         binding.rvImageList.layoutManager = GridLayoutManager(requireContext(), 2)
-        imageAdapter = ImageAdapter(listOf())
+        imageAdapter = ImageAdapter(mutableListOf())
         binding.rvImageList.adapter = imageAdapter
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -43,16 +57,21 @@ class WorkPosterFragment : Fragment() {
         return binding.root
     }
 
-    private fun loadImageList() {
+    private var currentPage = 0
+    private val pageSize = 10
+
+    private fun loadImageList(isRefresh: Boolean = false) {
+        if (isRefresh) {
+            currentPage = 0
+        }
+
         binding.swipeRefreshLayout.isRefreshing = true
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val token = PaletteApplication.prefs.token
-                val page = 0
-                val size = 20 // TODO: Constants로 분리
                 val response = try {
-                    val m = ChatRequestManager.getImageList(token, page, size)
+                    val m = ChatRequestManager.getImageList(token, currentPage, pageSize)
                     log("$m")
                     m
                 } catch (e: CustomException) {
@@ -64,15 +83,19 @@ class WorkPosterFragment : Fragment() {
 
                 withContext(Dispatchers.Main) {
                     if (imageList.images.isEmpty()) {
-                        binding.tvNoImages.visibility = View.VISIBLE
-                        binding.rvImageList.visibility = View.GONE
+                        if (currentPage == 0) {
+                            binding.tvNoImages.visibility = View.VISIBLE
+                            binding.rvImageList.visibility = View.GONE
+                        }
                     } else {
                         binding.tvNoImages.visibility = View.GONE
                         binding.rvImageList.visibility = View.VISIBLE
-                        if (imageList.images.size != imageCount) {
+                        if (isRefresh) {
                             imageAdapter.updateImages(imageList.images)
-                            imageCount = imageList.images.size
+                        } else {
+                            imageAdapter.addImages(imageList.images)
                         }
+                        currentPage++
                     }
                     binding.swipeRefreshLayout.isRefreshing = false
                 }
@@ -82,4 +105,5 @@ class WorkPosterFragment : Fragment() {
             }
         }
     }
+
 }
