@@ -108,8 +108,8 @@ class ChattingFragment(
                             handleChatMessage(chatMessage)
                         }
 
-                        is BaseResponseMessage.PositionMessage -> {
-                            handleCurrentPositionVisible(true, chatMessage.position.toString())
+                        is BaseResponseMessage.GenerateStatusMessage -> {
+                            handleCurrentPositionVisible(chatMessage.generating, chatMessage.position.toString(), chatMessage.generating)
                         }
 
                         else -> return@launch
@@ -375,8 +375,9 @@ class ChattingFragment(
         }
     }
 
-    private fun handleCurrentPositionVisible(visibleState: Boolean, position: String = "") {
+    private fun handleCurrentPositionVisible(visibleState: Boolean, position: String = "", generating: Boolean = false) {
         with(binding) {
+            if (generating) handleLoadingVisible(true)
             positionBox.visibility = if (visibleState) View.VISIBLE else View.GONE
             positionLabel.visibility = if (position == "init") {
                 currentPositionText.text = "대기열 받아오는 중.."
@@ -397,7 +398,7 @@ class ChattingFragment(
     }
 
     private fun handleLoadingVisible(visibleState: Boolean) {
-        if (visibleState) {
+        if (visibleState && chatList.last().resource != ChatResource.INTERNAL_IMAGE_LOADING) {
             chatList.add(
                 MessageResponse(
                     id = "",

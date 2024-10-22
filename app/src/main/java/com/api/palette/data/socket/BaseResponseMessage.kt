@@ -25,8 +25,9 @@ sealed class BaseResponseMessage {
     ) : BaseResponseMessage()
 
     @Serializable
-    data class PositionMessage(
-        val position: Int
+    data class GenerateStatusMessage(
+        val position: Int,
+        val generating: Boolean
     ) : BaseResponseMessage()
 
     @Serializable
@@ -48,7 +49,6 @@ enum class ChatResource {
     PROMPT,
 
     INTERNAL_IMAGE_LOADING,
-    INTERNAL_CHAT_LOADING,
 }
 
 @Serializable
@@ -68,7 +68,7 @@ class BaseResponseMessageSerializer : JsonContentPolymorphicSerializer<BaseRespo
         return when (element.jsonObject["type"]?.jsonPrimitive?.content) {
             "NEW_CHAT" -> BaseResponseMessage.ChatMessage.serializer()
             "ERROR" -> BaseResponseMessage.ErrorMessage.serializer()
-            "QUEUE_POSITION_UPDATE" -> BaseResponseMessage.PositionMessage.serializer()
+            "GENERATE_STATUS" -> BaseResponseMessage.GenerateStatusMessage.serializer()
             else -> throw SerializationException("Unknown type: ${element.jsonObject["type"]}")
         }
     }
