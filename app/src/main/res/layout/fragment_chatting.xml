@@ -42,6 +42,24 @@
             app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout"
             android:layout_marginBottom="16dp"/>
 
+        <Button
+            android:id="@+id/regenButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="다시 생성하기"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bac_regen_button"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="12dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:layout_gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"/>
+
         <LinearLayout
             android:id="@+id/positionBox"
             android:layout_width="wrap_content"

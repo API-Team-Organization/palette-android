@@ -103,13 +103,15 @@ class ChattingFragment(
                 log("ChattingFragment onCreateView handleChatMessage 호출됨")
                 firstMsgReceived = true
                 viewLifecycleOwner.lifecycleScope.launch {
-                    when(chatMessage) {
+                    when (chatMessage) {
                         is BaseResponseMessage.ChatMessage -> {
                             handleChatMessage(chatMessage)
                         }
+
                         is BaseResponseMessage.PositionMessage -> {
                             handleCurrentPositionVisible(true, chatMessage.position.toString())
                         }
+
                         else -> return@launch
                     }
                 }
@@ -145,6 +147,13 @@ class ChattingFragment(
 
         binding.chattingSubmitButton.setOnClickListener {
             sendData()
+        }
+
+        binding.regenButton.setOnClickListener {
+            handleRegenButtonVisible(false)
+            viewLifecycleOwner.lifecycleScope.launch {
+                RoomRequestManager.regenRoom(PaletteApplication.prefs.token, roomId)
+            }
         }
 
         binding.chattingRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -260,6 +269,7 @@ class ChattingFragment(
                 qna = qnaList[0]
             } else {
                 val lastMessage = chatList.last()
+                if (chatList.last().resource == ChatResource.IMAGE) handleRegenButtonVisible(true)
                 if (chatList.last().promptId == null) return@launch
                 qna = qnaList.find { it.id == lastMessage.promptId }!!
             }
@@ -356,8 +366,10 @@ class ChattingFragment(
             managementInputTool(qna)
         } else { // 그냥 메세지일 경우
             if (lastMessage.resource == ChatResource.IMAGE) {
+                handleRegenButtonVisible(true)
                 handleLoadingVisible(false)
             } else {
+                handleCurrentPositionVisible(true, "init")
                 handleLoadingVisible(true)
             }
         }
@@ -366,12 +378,22 @@ class ChattingFragment(
     private fun handleCurrentPositionVisible(visibleState: Boolean, position: String = "") {
         with(binding) {
             positionBox.visibility = if (visibleState) View.VISIBLE else View.GONE
-            currentPositionText.text = position
+            positionLabel.visibility = if (position == "init") {
+                currentPositionText.text = "대기열 받아오는 중.."
+                View.GONE
+            } else {
+                currentPositionText.text = position
+                View.VISIBLE
+            }
             if (position == "0") {
                 positionLabel.visibility = View.GONE
                 currentPositionText.text = "그리는 중.."
             }
         }
+    }
+
+    private fun handleRegenButtonVisible(visibleState: Boolean) {
+        binding.regenButton.visibility = if (visibleState) View.VISIBLE else View.GONE
     }
 
     private fun handleLoadingVisible(visibleState: Boolean) {
@@ -570,7 +592,7 @@ class ChattingFragment(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(0,16,0,0)
+                    setMargins(0, 16, 0, 0)
                 }
             }
 
