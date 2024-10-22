@@ -13,13 +13,13 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvImageList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/tvNoImages"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No images available"
+            android:text="생성한 포스터가 없습니다"
             android:visibility="gone"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
