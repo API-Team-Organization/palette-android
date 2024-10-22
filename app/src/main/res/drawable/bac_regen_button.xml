@@ -4,9 +4,8 @@
             <!-- 둥근 모서리 -->
             <corners android:radius="12dp" />
             <!-- 그라데이션 배경 -->
-            <gradient
-                android:startColor="@color/primaryColor"
-                android:endColor="#6013FF"
+            <solid
+                android:color="@color/primaryColor"
                 android:angle="45" />
         </shape>
     </item>
