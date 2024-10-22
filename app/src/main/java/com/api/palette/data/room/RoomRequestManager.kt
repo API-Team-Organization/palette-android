@@ -37,4 +37,8 @@ object RoomRequestManager {
         }
         return response
     }
+
+    suspend fun regenRoom(token: String, roomId: Int) {
+        roomService.regenRoom(token = token, roomId = roomId)
+    }
 }
