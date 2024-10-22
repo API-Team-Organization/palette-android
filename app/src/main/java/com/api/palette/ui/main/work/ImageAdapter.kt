@@ -20,6 +20,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.api.palette.R
+import com.api.palette.ui.util.ContextRetainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -201,17 +202,5 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
         }
-    }
-}
-
-object ContextRetainer {
-    private lateinit var context: Context
-
-    fun init(context: Context) {
-        this.context = context.applicationContext
-    }
-
-    fun getContext(): Context {
-        return context
     }
 }

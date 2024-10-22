@@ -1,6 +1,7 @@
 package com.api.palette.ui.main.work
 
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.error.CustomException
 import com.api.palette.databinding.FragmentWorkPosterBinding
+import com.api.palette.ui.util.ContextRetainer
 import com.api.palette.ui.util.logE
 import com.api.palette.ui.util.shortToast
 import kotlinx.coroutines.*
@@ -24,6 +26,8 @@ class WorkPosterFragment : Fragment() {
     private val pageSize = 10
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
 
+    private var layoutManagerState: Parcelable? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,15 +38,21 @@ class WorkPosterFragment : Fragment() {
 
         setupRecyclerView()
         setupSwipeRefresh()
+
+        if (layoutManagerState != null) {
+            binding.rvImageList.layoutManager?.onRestoreInstanceState(layoutManagerState)
+        }
+
         loadImageList(isRefresh = true)
 
         return binding.root
     }
 
     private fun setupRecyclerView() {
-        binding.rvImageList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
+        val staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
             gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
         }
+        binding.rvImageList.layoutManager = staggeredGridLayoutManager
         imageAdapter = ImageAdapter(mutableListOf())
         binding.rvImageList.adapter = imageAdapter
 
@@ -53,6 +63,7 @@ class WorkPosterFragment : Fragment() {
                     val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
                     val totalItemCount = layoutManager.itemCount
                     val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
+
                     val lastVisibleItem = lastVisibleItemPositions.maxOrNull() ?: 0
                     if (totalItemCount <= lastVisibleItem + 1) {
                         loadImageList()
@@ -96,7 +107,6 @@ class WorkPosterFragment : Fragment() {
                 } ?: return@launch
 
                 val imageList = response.data
-
                 updateUI(imageList.images, isRefresh)
                 currentPage++
             } catch (e: Exception) {
@@ -121,10 +131,37 @@ class WorkPosterFragment : Fragment() {
                 imageAdapter.addImages(images)
             }
         }
+
+        binding.rvImageList.layoutManager?.apply {
+            if (this is StaggeredGridLayoutManager) {
+                invalidateSpanAssignments() // 가로 세로 재배치 무시
+            }
+        }
+
+        binding.rvImageList.requestLayout() // 재배치 요청
     }
 
     override fun onDestroy() {
         super.onDestroy()
         coroutineScope.cancel()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        layoutManagerState = binding.rvImageList.layoutManager?.onSaveInstanceState()
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        layoutManagerState?.let {
+            binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        layoutManagerState?.let {
+            binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
+        }
     }
 }
