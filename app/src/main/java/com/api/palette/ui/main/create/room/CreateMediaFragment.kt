@@ -228,9 +228,8 @@ class CreateMediaFragment : Fragment() {
                 try {
                     val profileResponse = profileInfoRequest(PaletteApplication.prefs.token)
                     if (profileResponse != null && profileResponse.code <= 400) {
-                        val username = profileResponse.data.name
-                        PaletteApplication.prefs.username = username
-                        binding.userName.text = username
+                        PaletteApplication.prefs.username = profileResponse.data.name
+                        binding.userName.text = profileResponse.data.name
                         binding.today.text = "환영합니다!"
                     } else {
                         log("프로필 정보를 가져오는 데 실패했습니다: ${profileResponse?.message}")
