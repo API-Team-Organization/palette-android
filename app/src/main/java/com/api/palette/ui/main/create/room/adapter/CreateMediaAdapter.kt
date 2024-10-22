@@ -52,14 +52,17 @@ class CreateMediaAdapter(
                         itemClickListener.onItemLongClick(position)
                     }, 600)
                 }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    // 터치 종료 시 Handler에서 호출된 Runnable을 제거
+                MotionEvent.ACTION_UP -> {
+                    // 터치 종료 시 Handler에서 호출된 Runnable을 제거d
                     handler.removeCallbacksAndMessages(null)
 
                     // 롱 클릭 상태가 아닐 경우에만 클릭 이벤트 처리
                     if (!touchHandled && !isLongClick) {
                         itemClickListener.onItemClick(position)
                     }
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    handler.removeCallbacksAndMessages(null)
                 }
             }
 

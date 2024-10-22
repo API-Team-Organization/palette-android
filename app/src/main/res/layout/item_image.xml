@@ -8,6 +8,6 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/view_round_white_7"/>
+        android:background="@drawable/view_round"/>
 
 </FrameLayout>
