@@ -12,6 +12,7 @@ import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.error.CustomException
 import com.api.palette.databinding.FragmentWorkPosterBinding
+import com.api.palette.ui.util.ContextRetainer
 import com.api.palette.ui.util.logE
 import com.api.palette.ui.util.shortToast
 import kotlinx.coroutines.*
@@ -55,7 +56,6 @@ class WorkPosterFragment : Fragment() {
         imageAdapter = ImageAdapter(mutableListOf())
         binding.rvImageList.adapter = imageAdapter
 
-        // Scroll Listener for pagination
         binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -64,7 +64,6 @@ class WorkPosterFragment : Fragment() {
                     val totalItemCount = layoutManager.itemCount
                     val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
 
-                    // Check if we are at the end of the list
                     val lastVisibleItem = lastVisibleItemPositions.maxOrNull() ?: 0
                     if (totalItemCount <= lastVisibleItem + 1) {
                         loadImageList()
