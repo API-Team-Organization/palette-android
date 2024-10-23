@@ -758,7 +758,8 @@ class ChattingFragment(
                 dialog.dismiss()
             }
         }
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
+
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
     }
