@@ -105,16 +105,31 @@ class ChattingFragment(
                 viewLifecycleOwner.lifecycleScope.launch {
                     when (chatMessage) {
                         is BaseResponseMessage.ChatMessage -> {
-                            handleChatMessage(chatMessage)
+                            chatList.add(
+                                MessageResponse(
+                                    id = chatMessage.id,
+                                    promptId = chatMessage.promptId,
+                                    message = chatMessage.message,
+                                    roomId = chatMessage.roomId,
+                                    userId = chatMessage.userId,
+                                    datetime = chatMessage.datetime,
+                                    resource = chatMessage.resource,
+                                    regenScope = chatMessage.regenScope,
+                                    isAi = chatMessage.isAi
+                                )
+                            )
+                            recyclerAdapter.setData(chatList)
+
+                            handleChatMessage()
                         }
 
                         is BaseResponseMessage.GenerateStatusMessage -> {
                             log("generating : ${chatMessage.generating}")
-                            if (chatMessage.generating) {
-                                handleLoadingVisible(true)
-                            } else {
-                                handleLoadingVisible(false)
-                            }
+//                            if (chatMessage.generating) {
+//                                handleLoadingVisible(true)
+//                            } else {
+//                                handleLoadingVisible(false)
+//                            }
                             handleCurrentPositionVisible(
                                 chatMessage.generating,
                                 chatMessage.position.toString(),
@@ -275,18 +290,14 @@ class ChattingFragment(
             binding.chattingRecycler.scrollToPosition(chatList.size - 1)
 
             log("ChattingFragment initView \nqnaList: $qnaList\nchatList: $chatList")
-            val qna: PromptData?
+
+
 
             if (chatList.isEmpty()) {
-                qna = qnaList[0]
-            } else {
-                val lastMessage = chatList.last()
-                if (chatList.last().resource == ChatResource.IMAGE) handleRegenButtonVisible(true)
-                if (chatList.last().promptId == null) return@launch
-                qna = qnaList.find { it.id == lastMessage.promptId }!!
+                managementInputTool(qnaList[0])
+                return@launch
             }
-
-            managementInputTool(qna)
+            handleChatMessage()
         }
     }
 
@@ -350,36 +361,23 @@ class ChattingFragment(
         })
     }
 
-    private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
-        chatList.add(
-            MessageResponse(
-                id = chatMessage.id,
-                promptId = chatMessage.promptId,
-                message = chatMessage.message,
-                roomId = chatMessage.roomId,
-                userId = chatMessage.userId,
-                datetime = chatMessage.datetime,
-                resource = chatMessage.resource,
-                isAi = chatMessage.isAi
-            )
-        )
-        recyclerAdapter.setData(chatList)
-
+    private fun handleChatMessage() {
         if (chatList.isEmpty()) return
 
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-        if (!chatList.last().isAi) return // 내 채팅일 경우
+        if (!chatList.last().isAi) return // 내 채팅일 경우 핸들링 X
         val lastMessage = chatList.last()
 
-        if (lastMessage.promptId != null) { // prompt 질의응답 식일 경우
-            val qna = qnaList.find { it.id == lastMessage.promptId }!!
+        if (lastMessage.resource == ChatResource.PROMPT) { // prompt 질의응답 식일 경우
+            val qna = qnaList.find { it.id == lastMessage.promptId!! }!!
             handleCurrentPositionVisible(false)
-            handleLoadingVisible(false)
+//            handleLoadingVisible(false)
             managementInputTool(qna)
         } else { // 그냥 메세지일 경우
             if (lastMessage.regenScope) {
-                handleLoadingVisible(false)
+//                handleLoadingVisible(false)
                 handleCurrentPositionVisible(false, "")
+                handleRegenButtonVisible(true)
             }
         }
     }

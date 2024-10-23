@@ -70,7 +70,7 @@ class CreateMediaFragment : Fragment() {
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 if (isDeleting) return // item 삭제 중 삭호작용 막음 -> block index error
-                startChatting(roomList.data[position].id, roomList.data[position].title.toString())
+                startChatting(itemList[position].id, itemList[position].title.toString())
             }
 
             override fun onItemLongClick(position: Int) {
@@ -89,8 +89,9 @@ class CreateMediaFragment : Fragment() {
                         binding.roomListEmptyText.visibility = View.VISIBLE
                     } else {
                         binding.roomListEmptyText.visibility = View.GONE
+                        val list = roomList.data.reversed()
                         itemList.clear()
-                        itemList.addAll(roomList.data)
+                        itemList.addAll(list)
 
                         initWorkAdapter()
 

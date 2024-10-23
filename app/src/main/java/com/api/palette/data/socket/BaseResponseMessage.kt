@@ -21,6 +21,7 @@ sealed class BaseResponseMessage {
         val roomId: Int,
         val userId: Int,
         val isAi: Boolean,
+        val regenScope: Boolean,
         val promptId: String?,
     ) : BaseResponseMessage()
 

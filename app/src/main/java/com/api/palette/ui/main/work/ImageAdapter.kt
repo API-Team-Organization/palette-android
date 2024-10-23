@@ -110,7 +110,7 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
 
-        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP)
 
         Glide.with(context)
             .asBitmap()
