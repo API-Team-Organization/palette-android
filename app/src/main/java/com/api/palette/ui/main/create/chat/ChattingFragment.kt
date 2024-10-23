@@ -86,7 +86,7 @@ class ChattingFragment(
                     viewLifecycleOwner.lifecycleScope.launch {
                         val m = async {
                             while (isFirst && !firstMsgReceived && chatList.isEmpty()) {
-                                if (System.currentTimeMillis() - connection > 3000) {
+                                if (System.currentTimeMillis() - connection > 4000) {
                                     delay(500L)
                                     loadChatData()
                                 }
