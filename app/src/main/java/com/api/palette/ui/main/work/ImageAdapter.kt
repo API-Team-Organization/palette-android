@@ -106,7 +106,8 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
         val dialog = Dialog(context)
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_image, null)
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
 
