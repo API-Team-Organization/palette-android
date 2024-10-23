@@ -36,7 +36,7 @@ class WebSocketManager(token: String, roomId: Int) {
                         log("WebSocketManager onMessage json변환 value : $baseMessage")
                         onMessageReceived?.invoke(baseMessage)
                     }
-                    is BaseResponseMessage.PositionMessage -> {
+                    is BaseResponseMessage.GenerateStatusMessage -> {
                         onMessageReceived?.invoke(baseMessage)
                     }
                 }

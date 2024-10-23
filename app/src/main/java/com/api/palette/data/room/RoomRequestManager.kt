@@ -38,7 +38,11 @@ object RoomRequestManager {
         return response
     }
 
-    suspend fun regenRoom(token: String, roomId: Int) {
-        roomService.regenRoom(token = token, roomId = roomId)
+    suspend fun regenRoom(token: String, roomId: Int): Response<VoidResponse> {
+        val response = roomService.regenRoom(token = token, roomId = roomId)
+        if (!response.isSuccessful) {
+            Log.d(Constant.TAG, "RoomRequestManager regenRoom 실패했습니다. $response")
+        }
+        return response
     }
 }
