@@ -109,7 +109,16 @@ class ChattingFragment(
                         }
 
                         is BaseResponseMessage.GenerateStatusMessage -> {
-                            handleCurrentPositionVisible(chatMessage.generating, chatMessage.position.toString(), chatMessage.generating)
+                            log("generating : ${chatMessage.generating}")
+                            if (chatMessage.generating) {
+                                handleLoadingVisible(true)
+                            } else {
+                                handleLoadingVisible(false)
+                            }
+                            handleCurrentPositionVisible(
+                                chatMessage.generating,
+                                chatMessage.position.toString(),
+                            )
                         }
 
                         else -> return@launch
@@ -152,7 +161,10 @@ class ChattingFragment(
         binding.regenButton.setOnClickListener {
             handleRegenButtonVisible(false)
             viewLifecycleOwner.lifecycleScope.launch {
-                RoomRequestManager.regenRoom(PaletteApplication.prefs.token, roomId)
+                val response = RoomRequestManager.regenRoom(PaletteApplication.prefs.token, roomId)
+                if (!response.isSuccessful) {
+                    shortToast("재생성 실패: wi-fi를 확인해주세요")
+                }
             }
         }
 
@@ -356,28 +368,27 @@ class ChattingFragment(
         if (chatList.isEmpty()) return
 
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-
         if (!chatList.last().isAi) return // 내 채팅일 경우
         val lastMessage = chatList.last()
 
-        if (chatList.last().promptId != null) { // prompt 질의응답 식일 경우
+        if (lastMessage.promptId != null) { // prompt 질의응답 식일 경우
             val qna = qnaList.find { it.id == lastMessage.promptId }!!
             handleCurrentPositionVisible(false)
+            handleLoadingVisible(false)
             managementInputTool(qna)
         } else { // 그냥 메세지일 경우
-            if (lastMessage.resource == ChatResource.IMAGE) {
-                handleRegenButtonVisible(true)
+            if (lastMessage.regenScope) {
                 handleLoadingVisible(false)
-            } else {
-                handleCurrentPositionVisible(true, "init")
-                handleLoadingVisible(true)
+                handleCurrentPositionVisible(false, "")
             }
         }
     }
 
-    private fun handleCurrentPositionVisible(visibleState: Boolean, position: String = "", generating: Boolean = false) {
+    private fun handleCurrentPositionVisible(
+        visibleState: Boolean,
+        position: String = "",
+    ) {
         with(binding) {
-            if (generating) handleLoadingVisible(true)
             positionBox.visibility = if (visibleState) View.VISIBLE else View.GONE
             positionLabel.visibility = if (position == "init") {
                 currentPositionText.text = "대기열 받아오는 중.."
@@ -408,14 +419,19 @@ class ChattingFragment(
                     userId = 0,
                     datetime = Clock.System.now(),
                     resource = ChatResource.INTERNAL_IMAGE_LOADING,
-                    isAi = true
+                    isAi = true,
+                    regenScope = false
                 )
             )
             recyclerAdapter.setData(chatList)
             binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
         } else {
-            chatList.removeAt(chatList.size - 2)
+            val index = chatList.indexOfFirst { it.resource == ChatResource.INTERNAL_IMAGE_LOADING }
+            if (index == -1) return
+
+            chatList.removeAt(index)
             handleCurrentPositionVisible(false)
+            handleRegenButtonVisible(true)
             recyclerAdapter.setData(chatList)
         }
     }

@@ -21,7 +21,7 @@ sealed class BaseResponseMessage {
         val roomId: Int,
         val userId: Int,
         val isAi: Boolean,
-        val promptId: String?
+        val promptId: String?,
     ) : BaseResponseMessage()
 
     @Serializable
@@ -60,7 +60,8 @@ data class MessageResponse(
     val roomId: Int,
     val userId: Int,
     val isAi: Boolean,
-    val promptId: String?
+    val promptId: String?,
+    val regenScope: Boolean = false
 )
 
 class BaseResponseMessageSerializer : JsonContentPolymorphicSerializer<BaseResponseMessage>(BaseResponseMessage::class) {
