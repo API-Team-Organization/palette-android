@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.provider.MediaStore
@@ -126,6 +128,7 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
             })
 
         dialog.setContentView(dialogView)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
 
         val screenHeight = context.resources.displayMetrics.heightPixels
