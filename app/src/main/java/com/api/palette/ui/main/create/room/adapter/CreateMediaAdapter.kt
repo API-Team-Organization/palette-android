@@ -49,7 +49,7 @@ class CreateMediaAdapter(
                     isLongClick = false // 초기화
                     handler.postDelayed({
                         isLongClick = true // 롱 클릭 상태로 변경
-                        itemClickListener.onItemLongClick(position)
+                        itemClickListener.onItemLongClick(holder.bindingAdapterPosition)
                     }, 600)
                 }
                 MotionEvent.ACTION_UP -> {
@@ -58,7 +58,7 @@ class CreateMediaAdapter(
 
                     // 롱 클릭 상태가 아닐 경우에만 클릭 이벤트 처리
                     if (!touchHandled && !isLongClick) {
-                        itemClickListener.onItemClick(position)
+                        itemClickListener.onItemClick(holder.bindingAdapterPosition)
                     }
                 }
                 MotionEvent.ACTION_CANCEL -> {
