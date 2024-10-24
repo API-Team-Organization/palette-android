@@ -110,7 +110,7 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
 
-        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE) // 스케일링 변경
+        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
 
         Glide.with(context)
             .asBitmap()
@@ -128,12 +128,14 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
         dialog.setContentView(dialogView)
         dialog.show()
 
+        val screenHeight = context.resources.displayMetrics.heightPixels
+        val dialogHeight = (screenHeight * 0.8).toInt()
+
         dialog.window?.setLayout(
             (context.resources.displayMetrics.widthPixels),
-            (context.resources.displayMetrics.heightPixels) // 높이도 전체 화면에 맞추기
+            dialogHeight
         )
     }
-
 
     private fun showDownloadDialog(context: Context, imageUrl: String) {
         val dialogBuilder = AlertDialog.Builder(context)
