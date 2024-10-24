@@ -398,6 +398,7 @@ class ChattingFragment(
             if (position == "0") {
                 positionLabel.visibility = View.GONE
                 currentPositionText.text = "그리는 중.."
+                (positionBox.layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin = 10
             }
         }
     }
