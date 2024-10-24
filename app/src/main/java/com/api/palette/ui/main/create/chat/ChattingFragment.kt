@@ -86,7 +86,7 @@ class ChattingFragment(
                     viewLifecycleOwner.lifecycleScope.launch {
                         val m = async {
                             while (isFirst && !firstMsgReceived && chatList.isEmpty()) {
-                                if (System.currentTimeMillis() - connection > 4000) {
+                                if (System.currentTimeMillis() - connection > 2000) {
                                     delay(500L)
                                     loadChatData()
                                 }
@@ -477,6 +477,7 @@ class ChattingFragment(
 
             val numberPicker = NumberPicker(context).apply {
                 wrapSelectorWheel = true
+                descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
 
                 selectableQuestion?.choices?.let { choices ->
                     minValue = 0
