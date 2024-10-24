@@ -106,12 +106,11 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
         val dialog = Dialog(context)
-
         val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
 
-        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP)
+        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE) // 스케일링 변경
 
         Glide.with(context)
             .asBitmap()
@@ -131,9 +130,10 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
 
         dialog.window?.setLayout(
             (context.resources.displayMetrics.widthPixels),
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            (context.resources.displayMetrics.heightPixels) // 높이도 전체 화면에 맞추기
         )
     }
+
 
     private fun showDownloadDialog(context: Context, imageUrl: String) {
         val dialogBuilder = AlertDialog.Builder(context)
