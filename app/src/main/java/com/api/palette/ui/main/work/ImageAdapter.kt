@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.provider.MediaStore
@@ -106,7 +108,7 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
         val dialog = Dialog(context)
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_image, null)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
 
@@ -126,11 +128,15 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
             })
 
         dialog.setContentView(dialogView)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
+
+        val screenHeight = context.resources.displayMetrics.heightPixels
+        val dialogHeight = (screenHeight * 0.8).toInt()
 
         dialog.window?.setLayout(
             (context.resources.displayMetrics.widthPixels),
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            dialogHeight
         )
     }
 
