@@ -53,7 +53,10 @@ class WorkPosterFragment : Fragment() {
             gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
         }
         binding.rvImageList.layoutManager = staggeredGridLayoutManager
-        imageAdapter = ImageAdapter(mutableListOf())
+
+        imageAdapter = ImageAdapter(mutableListOf()) {
+            loadImageList(isRefresh = true)
+        }
         binding.rvImageList.adapter = imageAdapter
 
         binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {

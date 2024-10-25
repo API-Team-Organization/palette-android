@@ -16,7 +16,7 @@
         android:gravity="center"
         android:minHeight="50dp"
         android:textSize="16sp"
-        android:text="이미지를 다운로드 하시겠습니까?"
+        android:text="이미지를 저장 또는 공유하시겠습니까?"
         android:textColor="@color/black" />
 
     <LinearLayout
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:text="취소"
+            android:text="공유"
             android:textSize="14sp"
             android:textColor="@color/black"
             android:fontFamily="@font/pretendard_medium"
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:text="확인"
+            android:text="다운로드"
             android:textSize="14sp"
             android:textColor="@color/primaryColor"
             android:fontFamily="@font/pretendard_semibold"
