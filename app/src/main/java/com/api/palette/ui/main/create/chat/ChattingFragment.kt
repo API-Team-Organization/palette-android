@@ -388,7 +388,6 @@ class ChattingFragment(
         }
 
         binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-
     }
 
     private fun handleCurrentPositionVisible(
