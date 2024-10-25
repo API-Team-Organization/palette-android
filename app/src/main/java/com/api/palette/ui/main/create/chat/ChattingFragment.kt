@@ -370,7 +370,6 @@ class ChattingFragment(
     private fun handleChatMessage() {
         if (chatList.isEmpty()) return
 
-        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
         if (!chatList.last().isAi) return // 내 채팅일 경우 핸들링 X
         val lastMessage = chatList.last()
 
@@ -387,6 +386,9 @@ class ChattingFragment(
                 handleRegenButtonVisible(true)
             }
         }
+
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+
     }
 
     private fun handleCurrentPositionVisible(

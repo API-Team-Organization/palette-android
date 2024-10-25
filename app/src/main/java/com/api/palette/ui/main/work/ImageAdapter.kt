@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -111,8 +112,13 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
         val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
 
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
+        val closeButton = dialogView.findViewById<ImageView>(R.id.btn_close)
 
         imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+
+        closeButton.setOnClickListener {
+            dialog.dismiss()
+        }
 
         Glide.with(context)
             .asBitmap()
@@ -132,7 +138,7 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
         dialog.show()
 
         val screenHeight = context.resources.displayMetrics.heightPixels
-        val dialogHeight = (screenHeight * 0.8).toInt()
+        val dialogHeight = (screenHeight * 0.9).toInt()
 
         dialog.window?.setLayout(
             (context.resources.displayMetrics.widthPixels),
