@@ -584,7 +584,7 @@ class ChattingFragment(
             }
 
             val instructionText = TextView(context).apply {
-                text = "원하는 위치를 순서대로 선택해주세요"
+                text = "원하는 제목의 위치를 선택해주세요"
                 textSize = 18f
                 gravity = Gravity.START
                 setTextColor(ContextCompat.getColor(context, R.color.black))
