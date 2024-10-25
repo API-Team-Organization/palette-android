@@ -42,7 +42,7 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         currentBitmap = resource.copy(resource.config, true)
-                        imageView.setImage(ImageSource.bitmap(currentBitmap!!))
+                        imageView.setImage(ImageSource.bitmap(currentBitmap))
                     }
 
                     override fun onLoadCleared(placeholder: Drawable?) {

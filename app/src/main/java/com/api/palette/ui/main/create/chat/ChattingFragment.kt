@@ -283,7 +283,7 @@ class ChattingFragment(
                 val lastMessage = chatList.last()
                 if (chatList.last().resource == ChatResource.IMAGE) handleRegenButtonVisible(true)
                 if (chatList.last().promptId == null) return@launch
-                qna = qnaList.find { it.id == lastMessage.promptId }!!
+                qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList[0] // 서버 보장 ^^7
             }
 
             managementInputTool(qna)
@@ -372,7 +372,7 @@ class ChattingFragment(
         val lastMessage = chatList.last()
 
         if (lastMessage.promptId != null) { // prompt 질의응답 식일 경우
-            val qna = qnaList.find { it.id == lastMessage.promptId }!!
+            val qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList[0]
             handleCurrentPositionVisible(false)
             handleLoadingVisible(false)
             managementInputTool(qna)
@@ -547,8 +547,8 @@ class ChattingFragment(
     }
 
     private fun updateGridUI(qna: PromptData.Grid) {
-        val gridQuestion = qna.question as? ChatQuestion.GridQuestion
-        val maxCount: Int = gridQuestion!!.maxCount
+        val gridQuestion = qna.question
+        val maxCount: Int = gridQuestion.maxCount
         hideKeyboard()
         with(binding) {
             chattingSelectLayout.removeAllViews()

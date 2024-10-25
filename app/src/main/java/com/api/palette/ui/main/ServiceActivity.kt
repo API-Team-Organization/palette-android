@@ -122,7 +122,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         // RiveAnimationView에서 click_home 이벤트를 강제로 실행
         riveAnimationView.addEventListener(eventListener)
 
-        vibrator = (getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator)!!
+        vibrator = (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
 
         setContentView(binding.root)
     }
