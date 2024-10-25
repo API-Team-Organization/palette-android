@@ -234,6 +234,7 @@ class ChattingFragment(
             }
 
             "USER_INPUT" -> {
+                binding.chattingTextBox.visibility = View.GONE
                 chat = ChatAnswer.UserInputAnswer(
                     input = input,
                     type = sendType
@@ -291,13 +292,18 @@ class ChattingFragment(
 
             log("ChattingFragment initView \nqnaList: $qnaList\nchatList: $chatList")
 
-
+            val qna: PromptData
 
             if (chatList.isEmpty()) {
-                managementInputTool(qnaList[0])
-                return@launch
+                qna = qnaList[0]
+            } else {
+                val lastMessage = chatList.last()
+                if (chatList.last().resource == ChatResource.IMAGE) handleRegenButtonVisible(true)
+                if (chatList.last().promptId == null) return@launch
+                qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList[0] // 서버 보장 ^^7
             }
-            handleChatMessage()
+//            handleChatMessage()
+            managementInputTool(qna)
         }
     }
 
@@ -368,8 +374,9 @@ class ChattingFragment(
         if (!chatList.last().isAi) return // 내 채팅일 경우 핸들링 X
         val lastMessage = chatList.last()
 
-        if (lastMessage.resource == ChatResource.PROMPT) { // prompt 질의응답 식일 경우
-            val qna = qnaList.find { it.id == lastMessage.promptId!! }!!
+        if (lastMessage.promptId != null) { // prompt 질의응답 식일 경우
+            val qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList[0]
+
             handleCurrentPositionVisible(false)
 //            handleLoadingVisible(false)
             managementInputTool(qna)
@@ -547,8 +554,8 @@ class ChattingFragment(
     }
 
     private fun updateGridUI(qna: PromptData.Grid) {
-        val gridQuestion = qna.question as? ChatQuestion.GridQuestion
-        val maxCount: Int = gridQuestion!!.maxCount
+        val gridQuestion = qna.question
+        val maxCount: Int = gridQuestion.maxCount
         hideKeyboard()
         with(binding) {
             chattingSelectLayout.removeAllViews()
