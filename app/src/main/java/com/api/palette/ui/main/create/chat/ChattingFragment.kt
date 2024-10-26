@@ -736,6 +736,8 @@ class ChattingFragment(
         val input = dialogView.findViewById<EditText>(R.id.etChangeTitle)
         val applyButton = dialogView.findViewById<TextView>(R.id.tv_apply)
 
+        input.setText(binding.chattingToolbar.title)
+
         input.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 input.backgroundTintList =
