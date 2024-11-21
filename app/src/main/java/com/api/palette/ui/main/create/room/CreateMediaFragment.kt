@@ -173,16 +173,15 @@ class CreateMediaFragment : Fragment() {
             try {
                 val roomResponse = RoomRequestManager.roomRequest(PaletteApplication.prefs.token)
 
-                if (roomResponse.isSuccessful) {
+                roomResponse.body()?.let {
                     startChatting(
-                        roomResponse.body()!!.data.id,
-                        title = roomResponse.body()!!.data.title.toString(),
+                        it.data.id,
+                        title = it.data.title.toString(),
                         isFirst = true,
                     )
-                    log("생성된 roomId == ${roomResponse.body()!!.data.id}")
-                } else {
-                    shortToast("생성 실패 errorCode: 34533")
-                }
+                    log("생성된 roomId == ${it.data.id}")
+                } ?: shortToast("룸 생성 오류")
+
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "ChattingFragment createRoom error : ", e)
             }

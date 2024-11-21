@@ -234,6 +234,7 @@ class ChattingFragment(
             }
 
             "USER_INPUT" -> {
+                binding.chattingTextBox.visibility = View.GONE
                 chat = ChatAnswer.UserInputAnswer(
                     input = input,
                     type = sendType
@@ -291,13 +292,18 @@ class ChattingFragment(
 
             log("ChattingFragment initView \nqnaList: $qnaList\nchatList: $chatList")
 
-
+            val qna: PromptData
 
             if (chatList.isEmpty()) {
-                managementInputTool(qnaList[0])
-                return@launch
+                qna = qnaList[0]
+            } else {
+                val lastMessage = chatList.last()
+                if (chatList.last().resource == ChatResource.IMAGE) handleRegenButtonVisible(true)
+                if (chatList.last().promptId == null) return@launch
+                qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList[0] // 서버 보장 ^^7
             }
-            handleChatMessage()
+//            handleChatMessage()
+            managementInputTool(qna)
         }
     }
 
@@ -364,12 +370,12 @@ class ChattingFragment(
     private fun handleChatMessage() {
         if (chatList.isEmpty()) return
 
-        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
         if (!chatList.last().isAi) return // 내 채팅일 경우 핸들링 X
         val lastMessage = chatList.last()
 
-        if (lastMessage.resource == ChatResource.PROMPT) { // prompt 질의응답 식일 경우
-            val qna = qnaList.find { it.id == lastMessage.promptId!! }!!
+        if (lastMessage.promptId != null) { // prompt 질의응답 식일 경우
+            val qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList[0]
+
             handleCurrentPositionVisible(false)
 //            handleLoadingVisible(false)
             managementInputTool(qna)
@@ -380,6 +386,8 @@ class ChattingFragment(
                 handleRegenButtonVisible(true)
             }
         }
+
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
 
     private fun handleCurrentPositionVisible(
@@ -547,8 +555,8 @@ class ChattingFragment(
     }
 
     private fun updateGridUI(qna: PromptData.Grid) {
-        val gridQuestion = qna.question as? ChatQuestion.GridQuestion
-        val maxCount: Int = gridQuestion!!.maxCount
+        val gridQuestion = qna.question
+        val maxCount: Int = gridQuestion.maxCount
         hideKeyboard()
         with(binding) {
             chattingSelectLayout.removeAllViews()
@@ -576,7 +584,7 @@ class ChattingFragment(
             }
 
             val instructionText = TextView(context).apply {
-                text = "원하는 위치를 순서대로 선택해주세요"
+                text = "원하는 제목의 위치를 선택해주세요"
                 textSize = 18f
                 gravity = Gravity.START
                 setTextColor(ContextCompat.getColor(context, R.color.black))
@@ -727,6 +735,8 @@ class ChattingFragment(
 
         val input = dialogView.findViewById<EditText>(R.id.etChangeTitle)
         val applyButton = dialogView.findViewById<TextView>(R.id.tv_apply)
+
+        input.setText(binding.chattingToolbar.title)
 
         input.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {

@@ -122,15 +122,47 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         // RiveAnimationView에서 click_home 이벤트를 강제로 실행
         riveAnimationView.addEventListener(eventListener)
 
-        vibrator = (getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator)!!
+        vibrator = (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
 
         setContentView(binding.root)
     }
 
     private fun handleTabClick(event: BottomTab) {
         if (currentTab != event) {
+            val transaction = supportFragmentManager.beginTransaction()
+
+            when (event) {
+                BottomTab.SEARCH -> {
+                    transaction.setCustomAnimations(
+                        R.anim.anim_slide_in_from_left_fade_in,
+                        R.anim.anim_fade_out_200
+                    )
+                }
+                BottomTab.HOME -> {
+                    if (currentTab == BottomTab.SEARCH) {
+                        transaction.setCustomAnimations(
+                            R.anim.anim_slide_in_from_right_fade_in,
+                            R.anim.anim_fade_out_200
+                        )
+                    } else {
+                        transaction.setCustomAnimations(
+                            R.anim.anim_slide_in_from_left_fade_in,
+                            R.anim.anim_fade_out_200
+                        )
+                    }
+                }
+                BottomTab.SETTING -> {
+                    transaction.setCustomAnimations(
+                        R.anim.anim_slide_in_from_right_fade_in,
+                        R.anim.anim_fade_out_200
+                    )
+                }
+            }
+
+            transaction.replace(binding.mainContent.id, getFragment(event))
+            transaction.commit()
+
             currentTab = event
-            changeFragment(getFragment(event), supportFragmentManager, false)
         }
     }
 

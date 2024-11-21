@@ -2,6 +2,7 @@ package com.api.palette.application
 
 import android.app.Application
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 
 class PaletteApplication : Application() {
 
@@ -16,6 +17,7 @@ class PaletteApplication : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         instance = this
     }
 }
