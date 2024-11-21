@@ -3,16 +3,21 @@ package com.api.palette.ui.main.work
 import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -20,12 +25,17 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.api.palette.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.api.palette.ui.util.ContextRetainer
+import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileOutputStream
 
-class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+class ImageAdapter(
+    private var images: MutableList<String>,
+    private val onActionCompleted: (() -> Unit)? = null
+) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
+    private var currentDialog: Dialog? = null
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView: SubsamplingScaleImageView = itemView.findViewById(R.id.imageView)
@@ -41,14 +51,20 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
                 .load(imageUrl)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        currentBitmap = resource.copy(resource.config, true)
-                        imageView.setImage(ImageSource.bitmap(currentBitmap))
+                        if (!resource.isRecycled) {
+                            currentBitmap = resource.copy(resource.config, true)
+                            imageView.setImage(ImageSource.bitmap(currentBitmap))
+                        }
                     }
 
                     override fun onLoadCleared(placeholder: Drawable?) {
-                        imageView.recycle()
-                        currentBitmap?.recycle()
+                        currentBitmap?.let {
+                            if (!it.isRecycled) {
+                                it.recycle()
+                            }
+                        }
                         currentBitmap = null
+                        imageView.recycle()
                     }
                 })
 
@@ -57,14 +73,18 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
             }
 
             imageView.setOnLongClickListener {
-                showDownloadDialog(itemView.context, imageUrl)
+                showDownloadOrShareDialog(itemView.context, imageUrl)
                 true
             }
         }
 
         fun recycle() {
             imageView.recycle()
-            currentBitmap?.recycle()
+            currentBitmap?.let {
+                if (!it.isRecycled) {
+                    it.recycle()
+                }
+            }
             currentBitmap = null
         }
     }
@@ -104,68 +124,142 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
     }
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
-        val dialog = Dialog(context)
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_image, null)
+        currentDialog?.dismiss()
 
+        val dialog = Dialog(context)
+        currentDialog = dialog
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
+        val closeButton = dialogView.findViewById<ImageView>(R.id.btn_close)
 
         imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+
+        closeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        var dialogBitmap: Bitmap? = null
 
         Glide.with(context)
             .asBitmap()
             .load(imageUrl)
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    imageView.setImage(ImageSource.bitmap(resource))
+                    dialogBitmap = resource.copy(resource.config, true)
+                    imageView.setImage(ImageSource.bitmap(dialogBitmap))
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
+                    dialogBitmap?.let {
+                        if (!it.isRecycled) {
+                            it.recycle()
+                        }
+                    }
                     imageView.recycle()
                 }
             })
 
+        dialog.setOnDismissListener {
+            dialogBitmap?.let {
+                if (!it.isRecycled) {
+                    it.recycle()
+                }
+            }
+            imageView.recycle()
+            currentDialog = null
+        }
+
         dialog.setContentView(dialogView)
-        dialog.show()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val screenHeight = context.resources.displayMetrics.heightPixels
+        val dialogHeight = (screenHeight * 0.9).toInt()
 
         dialog.window?.setLayout(
             (context.resources.displayMetrics.widthPixels),
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            dialogHeight
         )
+
+        dialog.show()
     }
 
-    private fun showDownloadDialog(context: Context, imageUrl: String) {
+    private fun showDownloadOrShareDialog(context: Context, imageUrl: String) {
         val dialogBuilder = AlertDialog.Builder(context)
-
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_download_image, null)
         dialogBuilder.setView(dialogView)
 
         val dialog = dialogBuilder.create()
 
-        val noButton: TextView = dialogView.findViewById(R.id.noTextView)
-        val yesButton: TextView = dialogView.findViewById(R.id.yesTextView)
+        val shareButton: TextView = dialogView.findViewById(R.id.noTextView)
+        val downloadButton: TextView = dialogView.findViewById(R.id.yesTextView)
 
-        noButton.setOnClickListener {
+        shareButton.setOnClickListener {
+            coroutineScope.launch {
+                shareImage(context, imageUrl)
+            }
             dialog.dismiss()
+            onActionCompleted?.invoke()
         }
 
-        yesButton.setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
+        downloadButton.setOnClickListener {
+            coroutineScope.launch {
                 val bitmap = downloadBitmap(imageUrl)
                 bitmap?.let {
                     saveImageToGallery(context, it)
-                    it.recycle()
+                    if (!it.isRecycled) {
+                        it.recycle()
+                    }
                 }
                 Toast.makeText(context, "다운로드되었습니다.", Toast.LENGTH_SHORT).show()
             }
             dialog.dismiss()
+            onActionCompleted?.invoke()
         }
 
         dialog.show()
-
         dialog.window?.setLayout(
             (context.resources.displayMetrics.widthPixels * 0.9).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+
+    private suspend fun shareImage(context: Context, imageUrl: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                val bitmap = downloadBitmap(imageUrl) ?: return@withContext
+                val cachePath = File(context.cacheDir, "images")
+                cachePath.mkdirs()
+
+                val file = File(cachePath, "shared_image.jpg")
+                FileOutputStream(file).use { stream ->
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                }
+                if (!bitmap.isRecycled) {
+                    bitmap.recycle()
+                }
+
+                val contentUri = FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    file
+                )
+
+                withContext(Dispatchers.Main) {
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "image/jpeg"
+                        putExtra(Intent.EXTRA_STREAM, contentUri)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(Intent.createChooser(intent, "이미지 공유"))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "이미지 공유 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private suspend fun downloadBitmap(urlString: String): Bitmap? = withContext(Dispatchers.IO) {
@@ -201,17 +295,5 @@ class ImageAdapter(private var images: MutableList<String>) : RecyclerView.Adapt
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
         }
-    }
-}
-
-object ContextRetainer {
-    private lateinit var context: Context
-
-    fun init(context: Context) {
-        this.context = context.applicationContext
-    }
-
-    fun getContext(): Context {
-        return context
     }
 }

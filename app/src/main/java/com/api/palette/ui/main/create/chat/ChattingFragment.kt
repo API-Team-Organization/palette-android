@@ -86,7 +86,7 @@ class ChattingFragment(
                     viewLifecycleOwner.lifecycleScope.launch {
                         val m = async {
                             while (isFirst && !firstMsgReceived && chatList.isEmpty()) {
-                                if (System.currentTimeMillis() - connection > 4000) {
+                                if (System.currentTimeMillis() - connection > 2000) {
                                     delay(500L)
                                     loadChatData()
                                 }
@@ -105,16 +105,31 @@ class ChattingFragment(
                 viewLifecycleOwner.lifecycleScope.launch {
                     when (chatMessage) {
                         is BaseResponseMessage.ChatMessage -> {
-                            handleChatMessage(chatMessage)
+                            chatList.add(
+                                MessageResponse(
+                                    id = chatMessage.id,
+                                    promptId = chatMessage.promptId,
+                                    message = chatMessage.message,
+                                    roomId = chatMessage.roomId,
+                                    userId = chatMessage.userId,
+                                    datetime = chatMessage.datetime,
+                                    resource = chatMessage.resource,
+                                    regenScope = chatMessage.regenScope,
+                                    isAi = chatMessage.isAi
+                                )
+                            )
+                            recyclerAdapter.setData(chatList)
+
+                            handleChatMessage()
                         }
 
                         is BaseResponseMessage.GenerateStatusMessage -> {
                             log("generating : ${chatMessage.generating}")
-                            if (chatMessage.generating) {
-                                handleLoadingVisible(true)
-                            } else {
-                                handleLoadingVisible(false)
-                            }
+//                            if (chatMessage.generating) {
+//                                handleLoadingVisible(true)
+//                            } else {
+//                                handleLoadingVisible(false)
+//                            }
                             handleCurrentPositionVisible(
                                 chatMessage.generating,
                                 chatMessage.position.toString(),
@@ -219,6 +234,7 @@ class ChattingFragment(
             }
 
             "USER_INPUT" -> {
+                binding.chattingTextBox.visibility = View.GONE
                 chat = ChatAnswer.UserInputAnswer(
                     input = input,
                     type = sendType
@@ -275,7 +291,8 @@ class ChattingFragment(
             binding.chattingRecycler.scrollToPosition(chatList.size - 1)
 
             log("ChattingFragment initView \nqnaList: $qnaList\nchatList: $chatList")
-            val qna: PromptData?
+
+            val qna: PromptData
 
             if (chatList.isEmpty()) {
                 qna = qnaList[0]
@@ -285,7 +302,7 @@ class ChattingFragment(
                 if (chatList.last().promptId == null) return@launch
                 qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList[0] // 서버 보장 ^^7
             }
-
+//            handleChatMessage()
             managementInputTool(qna)
         }
     }
@@ -350,38 +367,27 @@ class ChattingFragment(
         })
     }
 
-    private fun handleChatMessage(chatMessage: BaseResponseMessage.ChatMessage) {
-        chatList.add(
-            MessageResponse(
-                id = chatMessage.id,
-                promptId = chatMessage.promptId,
-                message = chatMessage.message,
-                roomId = chatMessage.roomId,
-                userId = chatMessage.userId,
-                datetime = chatMessage.datetime,
-                resource = chatMessage.resource,
-                isAi = chatMessage.isAi
-            )
-        )
-        recyclerAdapter.setData(chatList)
-
+    private fun handleChatMessage() {
         if (chatList.isEmpty()) return
 
-        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-        if (!chatList.last().isAi) return // 내 채팅일 경우
+        if (!chatList.last().isAi) return // 내 채팅일 경우 핸들링 X
         val lastMessage = chatList.last()
 
         if (lastMessage.promptId != null) { // prompt 질의응답 식일 경우
             val qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList[0]
+
             handleCurrentPositionVisible(false)
-            handleLoadingVisible(false)
+//            handleLoadingVisible(false)
             managementInputTool(qna)
         } else { // 그냥 메세지일 경우
             if (lastMessage.regenScope) {
-                handleLoadingVisible(false)
+//                handleLoadingVisible(false)
                 handleCurrentPositionVisible(false, "")
+                handleRegenButtonVisible(true)
             }
         }
+
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
     }
 
     private fun handleCurrentPositionVisible(
@@ -400,6 +406,7 @@ class ChattingFragment(
             if (position == "0") {
                 positionLabel.visibility = View.GONE
                 currentPositionText.text = "그리는 중.."
+                (positionBox.layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin = 20
             }
         }
     }
@@ -479,6 +486,7 @@ class ChattingFragment(
 
             val numberPicker = NumberPicker(context).apply {
                 wrapSelectorWheel = true
+                descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
 
                 selectableQuestion?.choices?.let { choices ->
                     minValue = 0
@@ -576,7 +584,7 @@ class ChattingFragment(
             }
 
             val instructionText = TextView(context).apply {
-                text = "원하는 위치를 순서대로 선택해주세요"
+                text = "원하는 제목의 위치를 선택해주세요"
                 textSize = 18f
                 gravity = Gravity.START
                 setTextColor(ContextCompat.getColor(context, R.color.black))
@@ -728,6 +736,8 @@ class ChattingFragment(
         val input = dialogView.findViewById<EditText>(R.id.etChangeTitle)
         val applyButton = dialogView.findViewById<TextView>(R.id.tv_apply)
 
+        input.setText(binding.chattingToolbar.title)
+
         input.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 input.backgroundTintList =
@@ -760,7 +770,8 @@ class ChattingFragment(
                 dialog.dismiss()
             }
         }
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
+
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
     }
