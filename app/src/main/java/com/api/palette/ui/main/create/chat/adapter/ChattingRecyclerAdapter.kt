@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,10 +70,12 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val chat = listOfChat[position]
+        val isLast = position == listOfChat.size - 1 // 마지막 아이템인지 확인
+
         if (!chat.isAi) {
-            (holder as RightViewHolder).bind(chat)
+            (holder as RightViewHolder).bind(chat) // RightViewHolder에는 isLast 필요 없음
         } else {
-            (holder as LeftViewHolder).bind(chat)
+            (holder as LeftViewHolder).bind(chat, isLast) // LeftViewHolder에 isLast 전달
         }
     }
 
@@ -90,7 +93,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(chat: MessageResponse) {
+        fun bind(chat: MessageResponse, isLast: Boolean) {
             binding.apply {
                 // 초기화
                 chattingCreatedImage.setImageDrawable(null) // 이미지 초기화
@@ -134,6 +137,24 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                         showCopyPaletteDialog(itemView.context, binding)
                         true
                     }
+                }
+
+                val maxWidthInDp = if (isLast) 300 else 240 // (DP 단위)
+                val maxWidthInPx = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    maxWidthInDp.toFloat(),
+                    itemView.context.resources.displayMetrics
+                ).toInt()
+
+                // 마지막 아이템일 경우 추가적인 설정
+                if (isLast) {
+                    textGchatMessagePalette.textSize = 20f
+                    textGchatMessagePalette.maxWidth = maxWidthInPx
+                    root.requestLayout() // 레이아웃 갱신
+                } else {
+                    textGchatMessagePalette.textSize = 16f
+                    textGchatMessagePalette.maxWidth = maxWidthInPx
+                    root.requestLayout()
                 }
             }
         }
