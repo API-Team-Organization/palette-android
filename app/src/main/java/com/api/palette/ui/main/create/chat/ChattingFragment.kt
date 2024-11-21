@@ -50,7 +50,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import java.util.Timer
 import java.util.TimerTask
 
@@ -288,7 +287,7 @@ class ChattingFragment(
 
             recyclerAdapter.setQnAList(qnaList)
             recyclerAdapter.setData(chatList)
-            binding.chattingRecycler.scrollToPosition(chatList.size - 1)
+            binding.chattingRecycler.scrollToPosition(chatList.size)
 
             log("ChattingFragment initView \nqnaList: $qnaList\nchatList: $chatList")
 
@@ -387,7 +386,7 @@ class ChattingFragment(
             }
         }
 
-        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount)
     }
 
     private fun handleCurrentPositionVisible(
@@ -415,33 +414,34 @@ class ChattingFragment(
         binding.regenButton.visibility = if (visibleState) View.VISIBLE else View.GONE
     }
 
-    private fun handleLoadingVisible(visibleState: Boolean) {
-        if (visibleState && chatList.last().resource != ChatResource.INTERNAL_IMAGE_LOADING) {
-            chatList.add(
-                MessageResponse(
-                    id = "",
-                    promptId = null,
-                    message = "",
-                    roomId = roomId,
-                    userId = 0,
-                    datetime = Clock.System.now(),
-                    resource = ChatResource.INTERNAL_IMAGE_LOADING,
-                    isAi = true,
-                    regenScope = false
-                )
-            )
-            recyclerAdapter.setData(chatList)
-            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-        } else {
-            val index = chatList.indexOfFirst { it.resource == ChatResource.INTERNAL_IMAGE_LOADING }
-            if (index == -1) return
-
-            chatList.removeAt(index)
-            handleCurrentPositionVisible(false)
-            handleRegenButtonVisible(true)
-            recyclerAdapter.setData(chatList)
-        }
-    }
+    // 언젠가는 쓰겠지..
+//    private fun handleLoadingVisible(visibleState: Boolean) {
+//        if (visibleState && chatList.last().resource != ChatResource.INTERNAL_IMAGE_LOADING) {
+//            chatList.add(
+//                MessageResponse(
+//                    id = "",
+//                    promptId = null,
+//                    message = "",
+//                    roomId = roomId,
+//                    userId = 0,
+//                    datetime = Clock.System.now(),
+//                    resource = ChatResource.INTERNAL_IMAGE_LOADING,
+//                    isAi = true,
+//                    regenScope = false
+//                )
+//            )
+//            recyclerAdapter.setData(chatList)
+//            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount)
+//        } else {
+//            val index = chatList.indexOfFirst { it.resource == ChatResource.INTERNAL_IMAGE_LOADING }
+//            if (index == -1) return
+//
+//            chatList.removeAt(index)
+//            handleCurrentPositionVisible(false)
+//            handleRegenButtonVisible(true)
+//            recyclerAdapter.setData(chatList)
+//        }
+//    }
 
     private fun updateSelectableUI(qna: PromptData.Selectable) {
         val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
