@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.api.palette.application.PaletteApplication
@@ -15,6 +16,7 @@ import com.api.palette.databinding.FragmentWorkPosterBinding
 import com.api.palette.ui.util.ContextRetainer
 import com.api.palette.ui.util.logE
 import com.api.palette.ui.util.shortToast
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 
 class WorkPosterFragment : Fragment() {
@@ -24,7 +26,6 @@ class WorkPosterFragment : Fragment() {
     private var isLoading = false
     private var currentPage = 0
     private val pageSize = 10
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
 
     private var layoutManagerState: Parcelable? = null
 
@@ -87,15 +88,15 @@ class WorkPosterFragment : Fragment() {
     private fun loadImageList(isRefresh: Boolean = false) {
         if (isLoading) return
 
-        if (isRefresh) {
-            currentPage = 0
-            imageAdapter.clearImages()
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (isRefresh) {
+                currentPage = 0
+                imageAdapter.clearImages()
+            }
 
-        isLoading = true
-        binding.swipeRefreshLayout.isRefreshing = true
+            isLoading = true
+            binding.swipeRefreshLayout.isRefreshing = true
 
-        coroutineScope.launch {
             try {
                 val token = PaletteApplication.prefs.token
                 val response = withContext(Dispatchers.IO) {
@@ -137,16 +138,16 @@ class WorkPosterFragment : Fragment() {
 
         binding.rvImageList.layoutManager?.apply {
             if (this is StaggeredGridLayoutManager) {
-                invalidateSpanAssignments() // 가로 세로 재배치 무시
+                invalidateSpanAssignments()
             }
         }
 
-        binding.rvImageList.requestLayout() // 재배치 요청
+        binding.rvImageList.requestLayout()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        coroutineScope.cancel()
+        Glide.get(requireContext()).clearMemory()
     }
 
     override fun onPause() {
@@ -165,6 +166,13 @@ class WorkPosterFragment : Fragment() {
         super.onResume()
         layoutManagerState?.let {
             binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            Glide.get(requireContext()).clearDiskCache()
         }
     }
 }

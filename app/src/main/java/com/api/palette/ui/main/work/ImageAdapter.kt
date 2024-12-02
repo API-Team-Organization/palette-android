@@ -26,6 +26,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.api.palette.R
 import com.api.palette.ui.util.ContextRetainer
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.*
 
 class ImageAdapter(
@@ -36,7 +37,7 @@ class ImageAdapter(
     private var currentDialog: Dialog? = null
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: SubsamplingScaleImageView = itemView.findViewById(R.id.imageView)
+        val imageView: SubsamplingScaleImageView = itemView.findViewById(R.id.imageView)
         private var currentBitmap: Bitmap? = null
 
         fun bind(imageUrl: String) {
@@ -46,6 +47,8 @@ class ImageAdapter(
 
             Glide.with(itemView.context)
                 .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(true)
                 .load(imageUrl)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -100,6 +103,7 @@ class ImageAdapter(
 
     override fun onViewRecycled(holder: ImageViewHolder) {
         super.onViewRecycled(holder)
+        Glide.with(holder.itemView.context).clear(holder.imageView)
         holder.recycle()
     }
 
@@ -141,6 +145,8 @@ class ImageAdapter(
 
         Glide.with(context)
             .asBitmap()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .skipMemoryCache(true)
             .load(imageUrl)
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -247,6 +253,8 @@ class ImageAdapter(
         try {
             Glide.with(ContextRetainer.getContext())
                 .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(true)
                 .load(urlString)
                 .submit()
                 .get()
