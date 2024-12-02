@@ -31,6 +31,7 @@ class WorkPosterFragment : Fragment() {
     private val pageSize = 10
 
     private val totalImageList = mutableListOf<String>()
+    private var hasMoreImages = true
 
     private var layoutManagerState: Parcelable? = null
     private var lastVisibleItemPosition = 0
@@ -50,6 +51,7 @@ class WorkPosterFragment : Fragment() {
             layoutManagerState = savedInstanceState.getParcelable("layoutManagerState")
             currentPage = savedInstanceState.getInt("currentPage", 0)
             totalImageList.addAll(savedInstanceState.getStringArrayList("totalImageList") ?: listOf())
+            hasMoreImages = savedInstanceState.getBoolean("hasMoreImages", true)
         }
 
         if (totalImageList.isEmpty()) {
@@ -76,8 +78,7 @@ class WorkPosterFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                // Wait for layout sorting to complete and no current loading before allowing scroll
-                if (!isLayoutSorting && !isLoading && !recyclerView.canScrollVertically(1)) {
+                if (hasMoreImages && !isLayoutSorting && !isLoading && !recyclerView.canScrollVertically(1)) {
                     loadImageList()
                 }
             }
@@ -90,7 +91,6 @@ class WorkPosterFragment : Fragment() {
             }
         })
 
-        // Add a global layout listener to detect when layout sorting is complete
         binding.rvImageList.viewTreeObserver.addOnGlobalLayoutListener {
             isLayoutSorting = false
         }
@@ -107,11 +107,17 @@ class WorkPosterFragment : Fragment() {
     private fun loadImageList(isRefresh: Boolean = false) {
         if (isLoading || isLayoutSorting) return
 
+        if (!isRefresh && !hasMoreImages) {
+            binding.swipeRefreshLayout.isRefreshing = false
+            return
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             if (isRefresh) {
                 currentPage = 0
                 totalImageList.clear()
                 imageAdapter.clearImages()
+                hasMoreImages = true
             }
 
             isLoading = true
@@ -133,6 +139,14 @@ class WorkPosterFragment : Fragment() {
 
                 val imageList = response.data
 
+                if (imageList.images.isEmpty()) {
+                    hasMoreImages = false
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    isLoading = false
+                    isLayoutSorting = false
+                    return@launch
+                }
+
                 totalImageList.addAll(imageList.images)
 
                 updateUI(imageList.images, isRefresh)
@@ -142,7 +156,6 @@ class WorkPosterFragment : Fragment() {
             } finally {
                 isLoading = false
 
-                // Use a slight delay to ensure layout sorting is complete
                 binding.rvImageList.postDelayed({
                     isLayoutSorting = false
                     binding.swipeRefreshLayout.isRefreshing = false
@@ -172,7 +185,6 @@ class WorkPosterFragment : Fragment() {
             }
         }
 
-        // Invalidate span assignments and request layout
         staggeredGridLayoutManager.invalidateSpanAssignments()
         binding.rvImageList.requestLayout()
     }
@@ -182,6 +194,7 @@ class WorkPosterFragment : Fragment() {
         outState.putParcelable("layoutManagerState", binding.rvImageList.layoutManager?.onSaveInstanceState())
         outState.putInt("currentPage", currentPage)
         outState.putStringArrayList("totalImageList", ArrayList(totalImageList))
+        outState.putBoolean("hasMoreImages", hasMoreImages)
     }
 
     override fun onDestroy() {
