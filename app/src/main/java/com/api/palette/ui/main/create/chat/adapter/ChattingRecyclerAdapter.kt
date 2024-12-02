@@ -8,15 +8,16 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -139,21 +140,24 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                     }
                 }
 
-                val maxWidthInDp = if (isLast) 300 else 240 // (DP 단위)
-                val maxWidthInPx = TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    maxWidthInDp.toFloat(),
-                    itemView.context.resources.displayMetrics
-                ).toInt()
+                val lastBorderDrawable = GradientDrawable().apply {
+                    setColor(ContextCompat.getColor(binding.root.context, R.color.darkGray)) // 내부 배경색 (투명)
+                    cornerRadius = 16f
+                }
+
+                val borderDrawable = GradientDrawable().apply {
+                    cornerRadius = 16f
+                    setColor(ContextCompat.getColor(binding.root.context, R.color.lightGray)) // 내부 배경색 (투명)
+                }
 
                 // 마지막 아이템일 경우 추가적인 설정
                 if (isLast) {
-                    textGchatMessagePalette.textSize = 20f
-                    textGchatMessagePalette.maxWidth = maxWidthInPx
+                    textGchatMessagePalette.setTextColor(ContextCompat.getColor(binding.root.context, R.color.white))
+                    textGchatMessagePalette.background = lastBorderDrawable // 테두리 설정
                     root.requestLayout() // 레이아웃 갱신
                 } else {
-                    textGchatMessagePalette.textSize = 16f
-                    textGchatMessagePalette.maxWidth = maxWidthInPx
+                    textGchatMessagePalette.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                    textGchatMessagePalette.background = borderDrawable // 테두리 설정
                     root.requestLayout()
                 }
             }

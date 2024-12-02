@@ -138,6 +138,15 @@ class ChattingFragment(
                             )
                         }
 
+                        is BaseResponseMessage.ImageProgressMessage -> {
+                            log("IMAGE progress : ${chatMessage.max} ${chatMessage.value}")
+
+                            handleProgressBar(
+                                chatMessage.value,
+                                chatMessage.max,
+                            )
+                        }
+
                         else -> return@launch
                     }
                 }
@@ -407,8 +416,27 @@ class ChattingFragment(
             }
             if (position == "0") {
                 positionLabel.visibility = View.GONE
-                currentPositionText.text = "그리는 중.."
-                (positionBox.layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin = 20
+                currentPositionText.text = "제작 중.."
+                handleProgressBar(0, 6)
+            }
+            if (position == "complete") {
+                positionLabel.visibility = View.GONE
+                currentPositionText.text = "제작 완료!"
+            }
+        }
+    }
+
+    private fun handleProgressBar(
+        value: Int,
+        max: Int
+    ) {
+        with(binding) {
+            if (max == value) {
+                progressBar.visibility = View.GONE
+                handleCurrentPositionVisible(true, "complete")
+            } else {
+                progressBar.visibility = View.VISIBLE
+                progressBar.progress = value
             }
         }
     }

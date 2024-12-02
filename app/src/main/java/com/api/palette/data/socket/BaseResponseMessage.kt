@@ -32,6 +32,9 @@ sealed class BaseResponseMessage {
     ) : BaseResponseMessage()
 
     @Serializable
+    data class ImageProgressMessage(val value: Int, val max: Int) : BaseResponseMessage()
+
+    @Serializable
     data class ErrorMessage(
         val kind: String,
         val message: String
@@ -65,12 +68,14 @@ data class MessageResponse(
     val regenScope: Boolean = false
 )
 
-class BaseResponseMessageSerializer : JsonContentPolymorphicSerializer<BaseResponseMessage>(BaseResponseMessage::class) {
+class BaseResponseMessageSerializer :
+    JsonContentPolymorphicSerializer<BaseResponseMessage>(BaseResponseMessage::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out BaseResponseMessage> {
         return when (element.jsonObject["type"]?.jsonPrimitive?.content) {
             "NEW_CHAT" -> BaseResponseMessage.ChatMessage.serializer()
             "ERROR" -> BaseResponseMessage.ErrorMessage.serializer()
             "GENERATE_STATUS" -> BaseResponseMessage.GenerateStatusMessage.serializer()
+            "IMAGE_PROGRESS" -> BaseResponseMessage.ImageProgressMessage.serializer()
             else -> throw SerializationException("Unknown type: ${element.jsonObject["type"]}")
         }
     }
