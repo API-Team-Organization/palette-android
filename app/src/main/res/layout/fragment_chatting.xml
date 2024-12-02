@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.create.chat.ChattingFragment"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".ui.main.create.chat.ChattingFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -37,74 +37,90 @@
             android:id="@+id/chattingRecycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@+id/chatUserInputBox"
-            app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout"
-            android:layout_marginBottom="16dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/chattingAppBarLayout" />
 
         <LinearLayout
             android:id="@+id/chatUserInputBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:orientation="vertical"
-            android:gravity="center">
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="6"
+                android:progress="0"
+                android:layout_marginBottom="12dp"
+                android:progressTint="@color/primaryColor"
+                app:layout_constraintBottom_toTopOf="@id/positionBox"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/positionBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                app:layout_constraintBottom_toTopOf="@id/chatUserInputBox"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:background="@drawable/bac_position"
                 android:gravity="center"
-                android:visibility="gone">
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:visibility="gone"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toTopOf="@id/chatUserInputBox"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
                 <TextView
                     android:id="@+id/position_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="앞에 있는 사용자 : "
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_medium"
                     app:layout_constraintBottom_toTopOf="@id/chatUserInputBox"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/current_position_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_bold"
                     android:text="2"
-                    android:textSize="16sp"
                     android:textColor="@color/primaryColor"
-                    android:fontFamily="@font/pretendard_bold"/>
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <Button
                 android:id="@+id/regenButton"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="다시 생성하기"
-                android:fontFamily="@font/pretendard_semibold"
+                android:layout_gravity="center"
                 android:layout_marginHorizontal="20dp"
-                android:textSize="16sp"
-                android:textColor="#FFFFFF"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/bac_regen_button"
+                android:fontFamily="@font/pretendard_semibold"
                 android:paddingHorizontal="24dp"
                 android:paddingVertical="12dp"
-                android:layout_marginBottom="16dp"
-                android:layout_gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="다시 생성하기"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
                 android:visibility="gone"
-                style="?android:attr/borderlessButtonStyle"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <LinearLayout
                 android:id="@+id/chattingSelectLayout"
@@ -120,26 +136,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
                 android:layout_marginBottom="15dp"
-                android:orientation="horizontal"
                 android:gravity="bottom"
+                android:orientation="horizontal"
                 android:visibility="gone">
 
                 <EditText
                     android:id="@+id/chattingEditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:minHeight="50dp"
                     android:layout_weight="1"
                     android:background="@drawable/bac_chatting_edit_text"
                     android:fontFamily="@font/pretendard_medium"
                     android:hint="당신의 팔레트를 그려보세요"
-                    android:padding="15dp"
-                    android:minLines="1"
-                    android:maxLines="4"
-                    android:scrollbars="vertical"
                     android:inputType="textMultiLine"
-                    android:singleLine="false"
+                    android:maxLines="4"
+                    android:minHeight="50dp"
+                    android:minLines="1"
                     android:overScrollMode="always"
+                    android:padding="15dp"
+                    android:scrollbars="vertical"
+                    android:singleLine="false"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
                     android:textSize="16sp" />
@@ -151,8 +167,8 @@
                     android:layout_marginStart="10dp"
                     android:background="@drawable/bac_circle_gray"
                     android:padding="13dp"
-                    android:src="@drawable/ic_send"
-                    android:rotation="-30"/>
+                    android:rotation="-30"
+                    android:src="@drawable/ic_send" />
             </LinearLayout>
         </LinearLayout>
 

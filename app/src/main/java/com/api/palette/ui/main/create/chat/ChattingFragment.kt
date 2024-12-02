@@ -48,6 +48,8 @@ import com.api.palette.ui.base.BaseControllable
 import com.api.palette.ui.main.create.chat.adapter.ChattingRecyclerAdapter
 import com.api.palette.ui.util.log
 import com.api.palette.ui.util.logE
+import com.api.palette.ui.util.progress.animateTo
+import com.api.palette.ui.util.progress.setBigMax
 import com.api.palette.ui.util.shortToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -436,7 +438,8 @@ class ChattingFragment(
                 handleCurrentPositionVisible(true, "complete")
             } else {
                 progressBar.visibility = View.VISIBLE
-                progressBar.progress = value
+                progressBar.setBigMax(6)
+                progressBar.animateTo(value)
             }
         }
     }
