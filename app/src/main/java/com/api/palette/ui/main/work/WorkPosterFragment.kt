@@ -61,20 +61,21 @@ class WorkPosterFragment : Fragment() {
         binding.rvImageList.adapter = imageAdapter
 
         binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (!isLoading && !binding.swipeRefreshLayout.isRefreshing) {
-                    val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
-                    val totalItemCount = layoutManager.itemCount
-                    val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
 
-                    val lastVisibleItem = lastVisibleItemPositions.maxOrNull() ?: 0
-                    if (totalItemCount <= lastVisibleItem + 1) {
-                        loadImageList()
-                    }
+                if (!binding.rvImageList.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    loadImageList()
                 }
             }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (dy < 0) return
+            }
         })
+
     }
 
     private fun setupSwipeRefresh() {
