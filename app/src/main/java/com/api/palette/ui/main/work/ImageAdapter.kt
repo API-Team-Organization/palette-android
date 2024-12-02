@@ -32,7 +32,7 @@ import java.io.FileOutputStream
 
 class ImageAdapter(
     private var images: MutableList<String>,
-    private val onActionCompleted: (() -> Unit)? = null
+//    private val onActionCompleted: (() -> Unit)? = null
 ) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     private var currentDialog: Dialog? = null
@@ -199,7 +199,6 @@ class ImageAdapter(
                 shareImage(context, imageUrl)
             }
             dialog.dismiss()
-            onActionCompleted?.invoke()
         }
 
         downloadButton.setOnClickListener {
@@ -214,7 +213,6 @@ class ImageAdapter(
                 Toast.makeText(context, "다운로드되었습니다.", Toast.LENGTH_SHORT).show()
             }
             dialog.dismiss()
-            onActionCompleted?.invoke()
         }
 
         dialog.show()
