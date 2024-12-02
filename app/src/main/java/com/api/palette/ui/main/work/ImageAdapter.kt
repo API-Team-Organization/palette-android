@@ -32,7 +32,7 @@ import java.io.FileOutputStream
 
 class ImageAdapter(
     private var images: MutableList<String>,
-//    private val onActionCompleted: (() -> Unit)? = null
+    private val onActionCompleted: (() -> Unit)? = null
 ) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     private var currentDialog: Dialog? = null
@@ -229,12 +229,9 @@ class ImageAdapter(
                 val cachePath = File(context.cacheDir, "images")
                 cachePath.mkdirs()
 
-                val file = File(cachePath, "shared_image.jpg")
+                val file = File(cachePath, "shared_image_${System.currentTimeMillis()}.jpg")
                 FileOutputStream(file).use { stream ->
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                }
-                if (!bitmap.isRecycled) {
-                    bitmap.recycle()
                 }
 
                 val contentUri = FileProvider.getUriForFile(
@@ -274,6 +271,10 @@ class ImageAdapter(
     }
 
     private fun saveImageToGallery(context: Context, bitmap: Bitmap) {
+        if (bitmap.isRecycled) {
+            return
+        }
+
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
