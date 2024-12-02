@@ -23,7 +23,10 @@ class WorkPosterFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkPosterBinding
     private lateinit var imageAdapter: ImageAdapter
+    private lateinit var staggeredGridLayoutManager: StaggeredGridLayoutManager
+
     private var isLoading = false
+    private var isLayoutSorting = false
     private var currentPage = 0
     private val pageSize = 10
 
@@ -59,7 +62,7 @@ class WorkPosterFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
+        staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
             gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
         }
         binding.rvImageList.layoutManager = staggeredGridLayoutManager
@@ -73,7 +76,8 @@ class WorkPosterFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                if (!isLoading && !recyclerView.canScrollVertically(1)) {
+                // Wait for layout sorting to complete and no current loading before allowing scroll
+                if (!isLayoutSorting && !isLoading && !recyclerView.canScrollVertically(1)) {
                     loadImageList()
                 }
             }
@@ -81,23 +85,27 @@ class WorkPosterFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
-                val lastPositions = layoutManager.findLastVisibleItemPositions(null)
+                val lastPositions = staggeredGridLayoutManager.findLastVisibleItemPositions(null)
                 lastVisibleItemPosition = lastPositions.maxOrNull() ?: 0
             }
         })
+
+        // Add a global layout listener to detect when layout sorting is complete
+        binding.rvImageList.viewTreeObserver.addOnGlobalLayoutListener {
+            isLayoutSorting = false
+        }
     }
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            if (!isLoading) {
+            if (!isLoading && !isLayoutSorting) {
                 loadImageList(isRefresh = true)
             }
         }
     }
 
     private fun loadImageList(isRefresh: Boolean = false) {
-        if (isLoading) return
+        if (isLoading || isLayoutSorting) return
 
         viewLifecycleOwner.lifecycleScope.launch {
             if (isRefresh) {
@@ -107,6 +115,7 @@ class WorkPosterFragment : Fragment() {
             }
 
             isLoading = true
+            isLayoutSorting = true
             binding.swipeRefreshLayout.isRefreshing = true
 
             try {
@@ -132,7 +141,12 @@ class WorkPosterFragment : Fragment() {
                 logE("Error: ${e.message}")
             } finally {
                 isLoading = false
-                binding.swipeRefreshLayout.isRefreshing = false
+
+                // Use a slight delay to ensure layout sorting is complete
+                binding.rvImageList.postDelayed({
+                    isLayoutSorting = false
+                    binding.swipeRefreshLayout.isRefreshing = false
+                }, 300)
             }
         }
     }
@@ -158,11 +172,8 @@ class WorkPosterFragment : Fragment() {
             }
         }
 
-        binding.rvImageList.layoutManager?.apply {
-            if (this is StaggeredGridLayoutManager) {
-                invalidateSpanAssignments()
-            }
-        }
+        // Invalidate span assignments and request layout
+        staggeredGridLayoutManager.invalidateSpanAssignments()
         binding.rvImageList.requestLayout()
     }
 
