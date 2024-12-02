@@ -47,17 +47,28 @@ class WorkPosterFragment : Fragment() {
         setupRecyclerView()
         setupSwipeRefresh()
 
+
+
         if (savedInstanceState != null) {
-            layoutManagerState = savedInstanceState.getParcelable("layoutManagerState")
+            val layoutManagerState: Parcelable? = savedInstanceState.getParcelable("layoutManagerState")
+
             currentPage = savedInstanceState.getInt("currentPage", 0)
             totalImageList.addAll(savedInstanceState.getStringArrayList("totalImageList") ?: listOf())
             hasMoreImages = savedInstanceState.getBoolean("hasMoreImages", true)
+
+            val lastPositions = savedInstanceState.getIntArray("lastVisiblePositions")
+            lastPositions?.let {
+                lastVisibleItemPosition = it.maxOrNull() ?: 0
+            }
         }
 
         if (totalImageList.isEmpty()) {
             loadImageList(isRefresh = true)
         } else {
             restoreImages()
+            layoutManagerState?.let {
+                binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
+            }
         }
 
         return binding.root
@@ -167,7 +178,9 @@ class WorkPosterFragment : Fragment() {
     private fun restoreImages() {
         updateUI(totalImageList, true)
 
-        binding.rvImageList.layoutManager?.scrollToPosition(lastVisibleItemPosition)
+        binding.rvImageList.post {
+            staggeredGridLayoutManager.scrollToPositionWithOffset(lastVisibleItemPosition, 0)
+        }
     }
 
     private fun updateUI(images: List<String>, isRefresh: Boolean) {
@@ -191,10 +204,16 @@ class WorkPosterFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable("layoutManagerState", binding.rvImageList.layoutManager?.onSaveInstanceState())
+
+        val layoutManagerState = binding.rvImageList.layoutManager?.onSaveInstanceState()
+        outState.putParcelable("layoutManagerState", layoutManagerState)
+
         outState.putInt("currentPage", currentPage)
         outState.putStringArrayList("totalImageList", ArrayList(totalImageList))
         outState.putBoolean("hasMoreImages", hasMoreImages)
+
+        val lastPositions = staggeredGridLayoutManager.findLastVisibleItemPositions(null)
+        outState.putIntArray("lastVisiblePositions", lastPositions)
     }
 
     override fun onDestroy() {
