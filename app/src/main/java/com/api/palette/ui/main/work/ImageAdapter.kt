@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -17,7 +18,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -27,8 +27,6 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.api.palette.R
 import com.api.palette.ui.util.ContextRetainer
 import kotlinx.coroutines.*
-import java.io.File
-import java.io.FileOutputStream
 
 class ImageAdapter(
     private var images: MutableList<String>,
@@ -226,24 +224,12 @@ class ImageAdapter(
         withContext(Dispatchers.IO) {
             try {
                 val bitmap = downloadBitmap(imageUrl) ?: return@withContext
-                val cachePath = File(context.cacheDir, "images")
-                cachePath.mkdirs()
-
-                val file = File(cachePath, "shared_image_${System.currentTimeMillis()}.jpg")
-                FileOutputStream(file).use { stream ->
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                }
-
-                val contentUri = FileProvider.getUriForFile(
-                    context,
-                    "${context.packageName}.fileprovider",
-                    file
-                )
+                val uri = saveImageToGallery(context, bitmap) ?: return@withContext
 
                 withContext(Dispatchers.Main) {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "image/jpeg"
-                        putExtra(Intent.EXTRA_STREAM, contentUri)
+                        putExtra(Intent.EXTRA_STREAM, uri)
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                     context.startActivity(Intent.createChooser(intent, "이미지 공유"))
@@ -270,13 +256,11 @@ class ImageAdapter(
         }
     }
 
-    private fun saveImageToGallery(context: Context, bitmap: Bitmap) {
-        if (bitmap.isRecycled) {
-            return
-        }
+    private fun saveImageToGallery(context: Context, bitmap: Bitmap): Uri? {
+        if (bitmap.isRecycled) return null
 
         val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image.jpg")
+            put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image_${System.currentTimeMillis()}.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
             put(MediaStore.Images.Media.IS_PENDING, 1)
@@ -286,13 +270,15 @@ class ImageAdapter(
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
         uri?.let {
-            resolver.openOutputStream(it).use { outputStream ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream!!)
+            resolver.openOutputStream(it)?.use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             }
-
             contentValues.clear()
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
         }
+
+        return uri
     }
+
 }
