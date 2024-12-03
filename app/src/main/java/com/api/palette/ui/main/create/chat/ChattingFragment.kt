@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.NumberPicker
@@ -29,6 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
+import com.api.palette.common.Constant
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.chat.qna.ChatAnswer
 import com.api.palette.data.chat.qna.ChatQuestion
@@ -45,12 +48,13 @@ import com.api.palette.ui.base.BaseControllable
 import com.api.palette.ui.main.create.chat.adapter.ChattingRecyclerAdapter
 import com.api.palette.ui.util.log
 import com.api.palette.ui.util.logE
+import com.api.palette.ui.util.progress.animateTo
+import com.api.palette.ui.util.progress.setBigMax
 import com.api.palette.ui.util.shortToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import java.util.Timer
 import java.util.TimerTask
 
@@ -133,6 +137,15 @@ class ChattingFragment(
                             handleCurrentPositionVisible(
                                 chatMessage.generating,
                                 chatMessage.position.toString(),
+                            )
+                        }
+
+                        is BaseResponseMessage.ImageProgressMessage -> {
+                            log("IMAGE progress : ${chatMessage.max} ${chatMessage.value}")
+
+                            handleProgressBar(
+                                chatMessage.value,
+                                chatMessage.max,
                             )
                         }
 
@@ -288,7 +301,7 @@ class ChattingFragment(
 
             recyclerAdapter.setQnAList(qnaList)
             recyclerAdapter.setData(chatList)
-            binding.chattingRecycler.scrollToPosition(chatList.size - 1)
+            binding.chattingRecycler.scrollToPosition(chatList.size)
 
             log("ChattingFragment initView \nqnaList: $qnaList\nchatList: $chatList")
 
@@ -387,7 +400,7 @@ class ChattingFragment(
             }
         }
 
-        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount)
     }
 
     private fun handleCurrentPositionVisible(
@@ -405,8 +418,28 @@ class ChattingFragment(
             }
             if (position == "0") {
                 positionLabel.visibility = View.GONE
-                currentPositionText.text = "그리는 중.."
-                (positionBox.layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin = 20
+                currentPositionText.text = "제작 중.."
+                handleProgressBar(0, 6)
+            }
+            if (position == "complete") {
+                positionLabel.visibility = View.GONE
+                currentPositionText.text = "제작 완료!"
+            }
+        }
+    }
+
+    private fun handleProgressBar(
+        value: Int,
+        max: Int
+    ) {
+        with(binding) {
+            if (max == value) {
+                progressBar.visibility = View.GONE
+                handleCurrentPositionVisible(true, "complete")
+            } else {
+                progressBar.visibility = View.VISIBLE
+                progressBar.setBigMax(6)
+                progressBar.animateTo(value)
             }
         }
     }
@@ -415,38 +448,40 @@ class ChattingFragment(
         binding.regenButton.visibility = if (visibleState) View.VISIBLE else View.GONE
     }
 
-    private fun handleLoadingVisible(visibleState: Boolean) {
-        if (visibleState && chatList.last().resource != ChatResource.INTERNAL_IMAGE_LOADING) {
-            chatList.add(
-                MessageResponse(
-                    id = "",
-                    promptId = null,
-                    message = "",
-                    roomId = roomId,
-                    userId = 0,
-                    datetime = Clock.System.now(),
-                    resource = ChatResource.INTERNAL_IMAGE_LOADING,
-                    isAi = true,
-                    regenScope = false
-                )
-            )
-            recyclerAdapter.setData(chatList)
-            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount - 1)
-        } else {
-            val index = chatList.indexOfFirst { it.resource == ChatResource.INTERNAL_IMAGE_LOADING }
-            if (index == -1) return
-
-            chatList.removeAt(index)
-            handleCurrentPositionVisible(false)
-            handleRegenButtonVisible(true)
-            recyclerAdapter.setData(chatList)
-        }
-    }
+    // 언젠가는 쓰겠지..
+//    private fun handleLoadingVisible(visibleState: Boolean) {
+//        if (visibleState && chatList.last().resource != ChatResource.INTERNAL_IMAGE_LOADING) {
+//            chatList.add(
+//                MessageResponse(
+//                    id = "",
+//                    promptId = null,
+//                    message = "",
+//                    roomId = roomId,
+//                    userId = 0,
+//                    datetime = Clock.System.now(),
+//                    resource = ChatResource.INTERNAL_IMAGE_LOADING,
+//                    isAi = true,
+//                    regenScope = false
+//                )
+//            )
+//            recyclerAdapter.setData(chatList)
+//            binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount)
+//        } else {
+//            val index = chatList.indexOfFirst { it.resource == ChatResource.INTERNAL_IMAGE_LOADING }
+//            if (index == -1) return
+//
+//            chatList.removeAt(index)
+//            handleCurrentPositionVisible(false)
+//            handleRegenButtonVisible(true)
+//            recyclerAdapter.setData(chatList)
+//        }
+//    }
 
     private fun updateSelectableUI(qna: PromptData.Selectable) {
         val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
 
         var selectedChoice = selectableQuestion?.choices?.get(0)?.id ?: "DISPLAY"
+        Log.d(Constant.TAG, "처음 값은 뭘까용? $selectedChoice")
         with(binding) {
             chattingSelectLayout.removeAllViews()
 
@@ -475,13 +510,24 @@ class ChattingFragment(
             }
 
             val pickerLayout = LinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
+                orientation = LinearLayout.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
 
                 setPadding(16, 16, 16, 16)
+            }
+
+            val preViewLayout = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                ).apply {
+                    setMargins(0, 0, 32, 0)
+                }
             }
 
             val numberPicker = NumberPicker(context).apply {
@@ -495,20 +541,48 @@ class ChattingFragment(
                         choices.map { it.displayName }.toTypedArray()  // 리스트를 문자열 배열로 변환하여 설정
                 }
 
-                // 값 선택 시 이벤트 리스너 설정
+                val newCardView = when (selectedChoice) {
+                    "DISPLAY" -> createCardView(context, 16f, 9f, "16:9 DISPLAY")
+                    "PAPER" -> createCardView(context, 1f, 1.41f, "1:1.41 PAPER")
+                    "SQUARE" -> createCardView(context, 1f, 1f, "1:1 SQUARE")
+                    "TABLET" -> createCardView(context, 4f, 3f, "4:3 TABLET")
+                    else -> null
+                }
+                newCardView?.let {
+                    preViewLayout.addView(it)
+                }
+
+                // 값 선택 시 이벤트 리스너
                 setOnValueChangedListener { _, _, newVal ->
-                    // newVal은 선택된 값의 인덱스
+                    // 새로운 선택값으로 UI 갱신
                     selectableQuestion?.choices?.let { choices ->
-                        selectedChoice = choices[newVal].id  // 선택된 항목
-                        setPadding(15, 15, 15, 15) // 카드뷰 내부 패딩 (텍스트, 그리드, 버튼 간 여백)
+                        Log.d(Constant.TAG, "Choices are: ${choices[newVal].id}")
+
+                        selectedChoice = choices[newVal].id
+                        preViewLayout.removeAllViews()  // 기존 뷰 제거
+
+                        val newCardView = when (selectedChoice) {
+                            "DISPLAY" -> createCardView(context, 16f, 9f, "16:9 DISPLAY")
+                            "PAPER" -> createCardView(context, 1f, 1.41f, "1:1.41 PAPER")
+                            "SQUARE" -> createCardView(context, 1f, 1f, "1:1 SQUARE")
+                            "TABLET" -> createCardView(context, 4f, 3f, "4:3 TABLET")
+                            else -> null
+                        }
+
+                        newCardView?.let {
+                            preViewLayout.addView(it)
+                        }
                     }
                 }
             }
 
-            pickerLayout.addView(numberPicker)
+            pickerLayout.apply {
+                addView(preViewLayout)
+                addView(numberPicker)
+            }
 
             val instructionText = TextView(context).apply {
-                text = "원하시는 포스터의 비율을 선택해 주세요."
+                text = "선택지 중 한가지를 선택해주세요."
                 textSize = 18f
                 gravity = Gravity.START
                 setTextColor(ContextCompat.getColor(context, R.color.black))
@@ -552,6 +626,33 @@ class ChattingFragment(
 
             chattingSelectLayout.addView(cardView)
         }
+    }
+
+    private fun createCardView(context: Context, widthRatio: Float, heightRatio: Float, textValue: String): CardView {
+        val cardView = CardView(context).apply {
+            radius = 16f // 모서리 둥글게
+            setCardBackgroundColor(Color.LTGRAY)
+            layoutParams = LinearLayout.LayoutParams(
+                400, // 가로 기준 크기 (필요하면 비율에 따라 동적 계산 가능)
+                (400 * heightRatio / widthRatio).toInt() // 주어진 비율로 높이 계산
+            ).apply {
+                setMargins(16, 16, 16, 16) // 여백 추가
+            }
+        }
+
+        // 카드뷰 안에 텍스트뷰 추가
+        val textView = TextView(context).apply {
+            text = textValue
+            textSize = 16f
+            gravity = Gravity.CENTER
+            setTextColor(ContextCompat.getColor(context, R.color.primaryColor))
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+        cardView.addView(textView)
+        return cardView
     }
 
     private fun updateGridUI(qna: PromptData.Grid) {

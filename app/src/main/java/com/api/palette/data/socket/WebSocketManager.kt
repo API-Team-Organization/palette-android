@@ -39,6 +39,10 @@ class WebSocketManager(token: String, roomId: Int) {
                     is BaseResponseMessage.GenerateStatusMessage -> {
                         onMessageReceived?.invoke(baseMessage)
                     }
+
+                    is BaseResponseMessage.ImageProgressMessage -> {
+                        onMessageReceived?.invoke(baseMessage)
+                    }
                 }
             } catch (e: SerializationException) {
                 logE("WebSocket 메시지 파싱 오류: ${e.message}")
