@@ -47,7 +47,7 @@ class ImageAdapter(
 
             Glide.with(itemView.context)
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(false)
                 .load(imageUrl)
                 .into(object : CustomTarget<Bitmap>() {
@@ -99,6 +99,12 @@ class ImageAdapter(
         holder.bind(images[position])
     }
 
+    fun setImages(newImages: List<String>) {
+        images.clear()
+        images.addAll(newImages)
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int = images.size
 
     override fun onViewRecycled(holder: ImageViewHolder) {
@@ -113,9 +119,9 @@ class ImageAdapter(
     }
 
     fun addImages(newImages: List<String>) {
-        val previousSize = images.size
+        val startPosition = images.size
         images.addAll(newImages)
-        notifyItemRangeInserted(previousSize, newImages.size)
+        notifyItemRangeInserted(startPosition, newImages.size)
     }
 
     fun clearImages() {
@@ -144,7 +150,7 @@ class ImageAdapter(
 
         Glide.with(context)
             .asBitmap()
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .skipMemoryCache(false)
             .load(imageUrl)
             .into(object : CustomTarget<Bitmap>() {

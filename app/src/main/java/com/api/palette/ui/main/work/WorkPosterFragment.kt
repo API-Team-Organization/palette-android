@@ -47,16 +47,27 @@ class WorkPosterFragment : Fragment() {
         setupRecyclerView()
         setupSwipeRefresh()
 
-        if (savedInstanceState != null) {
-            val layoutManagerState: Parcelable? = savedInstanceState.getParcelable("layoutManagerState")
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val restoredList = savedInstanceState?.getStringArrayList("totalImageList")
+
+        if (restoredList != null) {
+            totalImageList.clear()
+            totalImageList.addAll(restoredList)
+            imageAdapter.setImages(totalImageList)
+        }
+
+        if (savedInstanceState != null) {
+            layoutManagerState = savedInstanceState.getParcelable("layoutManagerState")
             currentPage = savedInstanceState.getInt("currentPage", 0)
             totalImageList.addAll(savedInstanceState.getStringArrayList("totalImageList") ?: listOf())
             hasMoreImages = savedInstanceState.getBoolean("hasMoreImages", true)
 
-            val lastPositions = savedInstanceState.getIntArray("lastVisiblePositions")
-            lastPositions?.let {
-                lastVisibleItemPosition = it.maxOrNull() ?: 0
+            layoutManagerState?.let {
+                binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
             }
         }
 
@@ -68,8 +79,6 @@ class WorkPosterFragment : Fragment() {
                 binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
             }
         }
-
-        return binding.root
     }
 
     private fun setupRecyclerView() {
@@ -96,11 +105,11 @@ class WorkPosterFragment : Fragment() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 val lastPositions = staggeredGridLayoutManager.findLastVisibleItemPositions(null)
                 lastVisibleItemPosition = lastPositions.maxOrNull() ?: 0
             }
         })
+
     }
 
     private fun setupSwipeRefresh() {
@@ -160,7 +169,9 @@ class WorkPosterFragment : Fragment() {
                 currentPage++
 
                 binding.rvImageList.viewTreeObserver.addOnGlobalLayoutListener {
-                    staggeredGridLayoutManager.invalidateSpanAssignments()
+                    if (layoutManagerState == null) {
+                        staggeredGridLayoutManager.invalidateSpanAssignments()
+                    }
                 }
             } catch (e: Exception) {
                 logE("Error: ${e.message}")
@@ -175,8 +186,12 @@ class WorkPosterFragment : Fragment() {
     private fun restoreImages() {
         updateUI(totalImageList, true)
 
-        binding.rvImageList.post {
-            staggeredGridLayoutManager.scrollToPositionWithOffset(lastVisibleItemPosition, 0)
+        layoutManagerState?.let { state ->
+            binding.rvImageList.layoutManager?.onRestoreInstanceState(state)
+        } ?: run {
+            binding.rvImageList.post {
+                staggeredGridLayoutManager.scrollToPositionWithOffset(lastVisibleItemPosition, 0)
+            }
         }
     }
 
@@ -213,6 +228,17 @@ class WorkPosterFragment : Fragment() {
 
         val lastPositions = staggeredGridLayoutManager.findLastVisibleItemPositions(null)
         outState.putIntArray("lastVisiblePositions", lastPositions)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            layoutManagerState = savedInstanceState.getParcelable("layoutManagerState")
+            currentPage = savedInstanceState.getInt("currentPage", 0)
+            totalImageList.addAll(savedInstanceState.getStringArrayList("totalImageList") ?: listOf())
+            hasMoreImages = savedInstanceState.getBoolean("hasMoreImages", true)
+        }
     }
 
     override fun onDestroy() {
