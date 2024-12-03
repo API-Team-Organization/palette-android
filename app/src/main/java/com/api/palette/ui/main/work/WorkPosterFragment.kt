@@ -47,8 +47,6 @@ class WorkPosterFragment : Fragment() {
         setupRecyclerView()
         setupSwipeRefresh()
 
-
-
         if (savedInstanceState != null) {
             val layoutManagerState: Parcelable? = savedInstanceState.getParcelable("layoutManagerState")
 
@@ -89,8 +87,10 @@ class WorkPosterFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                if (hasMoreImages && !isLayoutSorting && !isLoading && !recyclerView.canScrollVertically(1)) {
-                    loadImageList()
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (hasMoreImages && !isLayoutSorting && !isLoading && !recyclerView.canScrollVertically(1)) {
+                        loadImageList()
+                    }
                 }
             }
 
@@ -101,10 +101,6 @@ class WorkPosterFragment : Fragment() {
                 lastVisibleItemPosition = lastPositions.maxOrNull() ?: 0
             }
         })
-
-        binding.rvImageList.viewTreeObserver.addOnGlobalLayoutListener {
-            isLayoutSorting = false
-        }
     }
 
     private fun setupSwipeRefresh() {
@@ -162,15 +158,16 @@ class WorkPosterFragment : Fragment() {
 
                 updateUI(imageList.images, isRefresh)
                 currentPage++
+
+                binding.rvImageList.viewTreeObserver.addOnGlobalLayoutListener {
+                    staggeredGridLayoutManager.invalidateSpanAssignments()
+                }
             } catch (e: Exception) {
                 logE("Error: ${e.message}")
             } finally {
                 isLoading = false
-
-                binding.rvImageList.postDelayed({
-                    isLayoutSorting = false
-                    binding.swipeRefreshLayout.isRefreshing = false
-                }, 300)
+                isLayoutSorting = false
+                binding.swipeRefreshLayout.isRefreshing = false
             }
         }
     }
@@ -198,8 +195,10 @@ class WorkPosterFragment : Fragment() {
             }
         }
 
-        staggeredGridLayoutManager.invalidateSpanAssignments()
-        binding.rvImageList.requestLayout()
+        binding.rvImageList.post {
+            staggeredGridLayoutManager.invalidateSpanAssignments()
+            binding.rvImageList.requestLayout()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

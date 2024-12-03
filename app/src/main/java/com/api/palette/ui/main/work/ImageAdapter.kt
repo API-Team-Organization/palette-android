@@ -103,7 +103,6 @@ class ImageAdapter(
 
     override fun onViewRecycled(holder: ImageViewHolder) {
         super.onViewRecycled(holder)
-        Glide.with(holder.itemView.context).clear(holder.imageView)
         holder.recycle()
     }
 
