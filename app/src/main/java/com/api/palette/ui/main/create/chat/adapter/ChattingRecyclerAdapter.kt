@@ -8,6 +8,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -69,10 +71,12 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val chat = listOfChat[position]
+        val isLast = position == listOfChat.size - 1 // 마지막 아이템인지 확인
+
         if (!chat.isAi) {
-            (holder as RightViewHolder).bind(chat)
+            (holder as RightViewHolder).bind(chat) // RightViewHolder에는 isLast 필요 없음
         } else {
-            (holder as LeftViewHolder).bind(chat)
+            (holder as LeftViewHolder).bind(chat, isLast) // LeftViewHolder에 isLast 전달
         }
     }
 
@@ -90,7 +94,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(chat: MessageResponse) {
+        fun bind(chat: MessageResponse, isLast: Boolean) {
             binding.apply {
                 // 초기화
                 chattingCreatedImage.setImageDrawable(null) // 이미지 초기화
@@ -134,6 +138,27 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                         showCopyPaletteDialog(itemView.context, binding)
                         true
                     }
+                }
+
+                val lastBorderDrawable = GradientDrawable().apply {
+                    setColor(ContextCompat.getColor(binding.root.context, R.color.darkGray)) // 내부 배경색 (투명)
+                    cornerRadius = 16f
+                }
+
+                val borderDrawable = GradientDrawable().apply {
+                    cornerRadius = 16f
+                    setColor(ContextCompat.getColor(binding.root.context, R.color.lightGray)) // 내부 배경색 (투명)
+                }
+
+                // 마지막 아이템일 경우 추가적인 설정
+                if (isLast) {
+                    textGchatMessagePalette.setTextColor(ContextCompat.getColor(binding.root.context, R.color.white))
+                    textGchatMessagePalette.background = lastBorderDrawable // 테두리 설정
+                    root.requestLayout() // 레이아웃 갱신
+                } else {
+                    textGchatMessagePalette.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
+                    textGchatMessagePalette.background = borderDrawable // 테두리 설정
+                    root.requestLayout()
                 }
             }
         }
