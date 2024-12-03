@@ -38,39 +38,31 @@
         android:font="@font/pretendard_black" />
 
     <font android:fontStyle="normal"
-        android:fontWeight="100"
-        android:font="@font/suit_thin" />
-
-    <font android:fontStyle="normal"
-        android:fontWeight="200"
-        android:font="@font/suit_extralight" />
-
-    <font android:fontStyle="normal"
         android:fontWeight="300"
-        android:font="@font/suit_light" />
+        android:font="@font/figtree_light" />
 
     <font android:fontStyle="normal"
         android:fontWeight="400"
-        android:font="@font/suit_regular" />
+        android:font="@font/figtree_regular" />
 
     <font android:fontStyle="normal"
         android:fontWeight="500"
-        android:font="@font/suit_medium" />
+        android:font="@font/figtree_medium" />
 
     <font android:fontStyle="normal"
         android:fontWeight="600"
-        android:font="@font/suit_semibold" />
+        android:font="@font/figtree_semibold" />
 
     <font android:fontStyle="normal"
         android:fontWeight="700"
-        android:font="@font/suit_bold" />
+        android:font="@font/figtree_bold" />
 
     <font android:fontStyle="normal"
         android:fontWeight="800"
-        android:font="@font/suit_extrabold" />
+        android:font="@font/figtree_extrabold" />
 
     <font android:fontStyle="normal"
         android:fontWeight="900"
-        android:font="@font/suit_heavy" />
+        android:font="@font/figtree_black" />
 
 </font-family>

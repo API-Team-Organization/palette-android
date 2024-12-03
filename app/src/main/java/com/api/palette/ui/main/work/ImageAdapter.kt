@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -17,7 +18,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -26,9 +26,8 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.api.palette.R
 import com.api.palette.ui.util.ContextRetainer
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.*
-import java.io.File
-import java.io.FileOutputStream
 
 class ImageAdapter(
     private var images: MutableList<String>,
@@ -38,7 +37,7 @@ class ImageAdapter(
     private var currentDialog: Dialog? = null
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageView: SubsamplingScaleImageView = itemView.findViewById(R.id.imageView)
+        val imageView: SubsamplingScaleImageView = itemView.findViewById(R.id.imageView)
         private var currentBitmap: Bitmap? = null
 
         fun bind(imageUrl: String) {
@@ -48,6 +47,8 @@ class ImageAdapter(
 
             Glide.with(itemView.context)
                 .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
                 .load(imageUrl)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -98,6 +99,12 @@ class ImageAdapter(
         holder.bind(images[position])
     }
 
+    fun setImages(newImages: List<String>) {
+        images.clear()
+        images.addAll(newImages)
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int = images.size
 
     override fun onViewRecycled(holder: ImageViewHolder) {
@@ -112,9 +119,9 @@ class ImageAdapter(
     }
 
     fun addImages(newImages: List<String>) {
-        val previousSize = images.size
+        val startPosition = images.size
         images.addAll(newImages)
-        notifyItemRangeInserted(previousSize, newImages.size)
+        notifyItemRangeInserted(startPosition, newImages.size)
     }
 
     fun clearImages() {
@@ -143,6 +150,8 @@ class ImageAdapter(
 
         Glide.with(context)
             .asBitmap()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .skipMemoryCache(false)
             .load(imageUrl)
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -199,7 +208,6 @@ class ImageAdapter(
                 shareImage(context, imageUrl)
             }
             dialog.dismiss()
-            onActionCompleted?.invoke()
         }
 
         downloadButton.setOnClickListener {
@@ -214,7 +222,6 @@ class ImageAdapter(
                 Toast.makeText(context, "다운로드되었습니다.", Toast.LENGTH_SHORT).show()
             }
             dialog.dismiss()
-            onActionCompleted?.invoke()
         }
 
         dialog.show()
@@ -228,27 +235,12 @@ class ImageAdapter(
         withContext(Dispatchers.IO) {
             try {
                 val bitmap = downloadBitmap(imageUrl) ?: return@withContext
-                val cachePath = File(context.cacheDir, "images")
-                cachePath.mkdirs()
-
-                val file = File(cachePath, "shared_image.jpg")
-                FileOutputStream(file).use { stream ->
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                }
-                if (!bitmap.isRecycled) {
-                    bitmap.recycle()
-                }
-
-                val contentUri = FileProvider.getUriForFile(
-                    context,
-                    "${context.packageName}.fileprovider",
-                    file
-                )
+                val uri = saveImageToGallery(context, bitmap) ?: return@withContext
 
                 withContext(Dispatchers.Main) {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "image/jpeg"
-                        putExtra(Intent.EXTRA_STREAM, contentUri)
+                        putExtra(Intent.EXTRA_STREAM, uri)
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                     context.startActivity(Intent.createChooser(intent, "이미지 공유"))
@@ -266,6 +258,8 @@ class ImageAdapter(
         try {
             Glide.with(ContextRetainer.getContext())
                 .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(true)
                 .load(urlString)
                 .submit()
                 .get()
@@ -275,9 +269,11 @@ class ImageAdapter(
         }
     }
 
-    private fun saveImageToGallery(context: Context, bitmap: Bitmap) {
+    private fun saveImageToGallery(context: Context, bitmap: Bitmap): Uri? {
+        if (bitmap.isRecycled) return null
+
         val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image.jpg")
+            put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image_${System.currentTimeMillis()}.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
             put(MediaStore.Images.Media.IS_PENDING, 1)
@@ -287,13 +283,15 @@ class ImageAdapter(
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
         uri?.let {
-            resolver.openOutputStream(it).use { outputStream ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream!!)
+            resolver.openOutputStream(it)?.use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             }
-
             contentValues.clear()
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
         }
+
+        return uri
     }
+
 }
