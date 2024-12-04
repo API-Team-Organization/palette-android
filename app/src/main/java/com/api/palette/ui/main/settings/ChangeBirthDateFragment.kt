@@ -36,6 +36,10 @@ class ChangeBirthDateFragment : Fragment() {
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
         datePickerDefaultSettings()
 
+        binding.ivArrowBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         return binding.root
     }
 
