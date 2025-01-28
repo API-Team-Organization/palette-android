@@ -28,6 +28,11 @@ class ChangePasswordFragment : Fragment() {
         binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
         initView()
+
+        binding.ivArrowBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         return binding.root
     }
 

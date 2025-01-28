@@ -28,6 +28,10 @@ class MyInfoFragment : Fragment() {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
 
+        binding.ivArrowBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         initView()
         loadProfileInfo()
 

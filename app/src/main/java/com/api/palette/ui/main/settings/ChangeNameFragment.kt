@@ -38,6 +38,10 @@ class ChangeNameFragment : Fragment() {
                 )
         }
 
+        binding.ivArrowBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         return binding.root
     }
 

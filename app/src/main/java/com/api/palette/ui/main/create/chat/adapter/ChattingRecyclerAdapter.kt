@@ -7,6 +7,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Environment
@@ -14,6 +16,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -30,6 +33,7 @@ import com.api.palette.data.socket.ChatResource
 import com.api.palette.data.socket.MessageResponse
 import com.api.palette.databinding.ItemChattingMeBoxBinding
 import com.api.palette.databinding.ItemChattingPaletteBoxBinding
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,6 +47,7 @@ import java.net.URL
 class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val listOfChat = mutableListOf<MessageResponse>()
     private val qnaList = mutableListOf<PromptData>()
+    private var currentDialog: Dialog? = null
 
     companion object {
         const val VIEW_TYPE_LEFT = 1
@@ -290,20 +295,65 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
+        currentDialog?.dismiss()
+
         val dialog = Dialog(context)
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_image, null)
+        currentDialog = dialog
 
-        val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.zoomedImageView)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
+        val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
+        val closeButton = dialogView.findViewById<ImageView>(R.id.btn_close)
 
-        Glide.with(context).asBitmap().load(imageUrl).into(object : CustomTarget<Bitmap>() {
+        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+
+        closeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        var dialogBitmap: Bitmap? = null
+
+        Glide.with(context)
+            .asBitmap()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .skipMemoryCache(false)
+            .load(imageUrl)
+            .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    imageView.setImage(ImageSource.bitmap(resource))
+                    dialogBitmap = resource.copy(resource.config, true)
+                    imageView.setImage(ImageSource.bitmap(dialogBitmap))
                 }
 
-                override fun onLoadCleared(placeholder: Drawable?) {}
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    dialogBitmap?.let {
+                        if (!it.isRecycled) {
+                            it.recycle()
+                        }
+                    }
+                    imageView.recycle()
+                }
             })
 
+        dialog.setOnDismissListener {
+            dialogBitmap?.let {
+                if (!it.isRecycled) {
+                    it.recycle()
+                }
+            }
+            imageView.recycle()
+            currentDialog = null
+        }
+
         dialog.setContentView(dialogView)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val screenHeight = context.resources.displayMetrics.heightPixels
+        val dialogHeight = (screenHeight * 0.9).toInt()
+
+        dialog.window?.setLayout(
+            context.resources.displayMetrics.widthPixels,
+            dialogHeight
+        )
+
         dialog.show()
     }
 
