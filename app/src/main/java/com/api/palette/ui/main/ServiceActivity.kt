@@ -134,27 +134,27 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
             when (event) {
                 BottomTab.SEARCH -> {
                     transaction.setCustomAnimations(
-                        R.anim.anim_slide_in_from_left_fade_in,
-                        R.anim.anim_fade_out_200
+                        R.anim.anim_slide_in_left_fade_in,
+                        R.anim.anim_fade_out_200ms
                     )
                 }
                 BottomTab.HOME -> {
                     if (currentTab == BottomTab.SEARCH) {
                         transaction.setCustomAnimations(
-                            R.anim.anim_slide_in_from_right_fade_in,
-                            R.anim.anim_fade_out_200
+                            R.anim.anim_slide_in_right_fade_in,
+                            R.anim.anim_fade_out_200ms
                         )
                     } else {
                         transaction.setCustomAnimations(
-                            R.anim.anim_slide_in_from_left_fade_in,
-                            R.anim.anim_fade_out_200
+                            R.anim.anim_slide_in_left_fade_in,
+                            R.anim.anim_fade_out_200ms
                         )
                     }
                 }
                 BottomTab.SETTING -> {
                     transaction.setCustomAnimations(
-                        R.anim.anim_slide_in_from_right_fade_in,
-                        R.anim.anim_fade_out_200
+                        R.anim.anim_slide_in_right_fade_in,
+                        R.anim.anim_fade_out_200ms
                     )
                 }
             }
