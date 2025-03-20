@@ -171,7 +171,7 @@
                     android:background="@drawable/bac_circle_light_gray"
                     android:padding="13dp"
                     android:rotation="-30"
-                    android:src="@drawable/ic_send" />
+                    android:src="@drawable/ic_action_send" />
             </LinearLayout>
         </LinearLayout>
 
