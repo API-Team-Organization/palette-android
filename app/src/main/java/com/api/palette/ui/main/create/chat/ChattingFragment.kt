@@ -367,10 +367,10 @@ class ChattingFragment(
             override fun afterTextChanged(s: Editable?) {
                 // EditText 내용이 변경된 후 호출됩니다.
                 if (s.isNullOrBlank()) {
-                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_gray)
+                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_light_gray)
                     binding.chattingSubmitButton.setImageResource(R.drawable.ic_send)
                 } else {
-                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_blue)
+                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_primary)
                     binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_ok)
                 }
             }
@@ -597,7 +597,7 @@ class ChattingFragment(
                 text = "선택하기"
                 textSize = 16f
                 setTextColor(ContextCompat.getColor(context, R.color.white))
-                background = ContextCompat.getDrawable(context, R.drawable.bac_button)
+                background = ContextCompat.getDrawable(context, R.drawable.bac_button_solid)
                 typeface = ResourcesCompat.getFont(context, R.font.pretendard_semibold)
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -735,7 +735,7 @@ class ChattingFragment(
                             background =
                                 ContextCompat.getDrawable(
                                     context,
-                                    R.drawable.bac_grid_item_unselect
+                                    R.drawable.bac_grid_item_unselected
                                 )
                             layoutParams = GridLayout.LayoutParams().apply {
                                 rowSpec = GridLayout.spec(i)
@@ -750,7 +750,7 @@ class ChattingFragment(
                                     selectedPositions.remove(position)
                                     background = ContextCompat.getDrawable(
                                         context,
-                                        R.drawable.bac_grid_item_unselect
+                                        R.drawable.bac_grid_item_unselected
                                     )
                                 } else {
                                     if (selectedPositions.size < maxCount) {
@@ -763,7 +763,7 @@ class ChattingFragment(
                                         selectedPositions.add(position)
                                         background = ContextCompat.getDrawable(
                                             context,
-                                            R.drawable.bac_grid_item_select
+                                            R.drawable.bac_grid_item_selected
                                         )
                                     }
                                 }
@@ -788,7 +788,7 @@ class ChattingFragment(
                 textSize = 16f
                 setTextColor(ContextCompat.getColor(context, R.color.white))
                 typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
-                background = ContextCompat.getDrawable(context, R.drawable.bac_button)
+                background = ContextCompat.getDrawable(context, R.drawable.bac_button_solid)
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT

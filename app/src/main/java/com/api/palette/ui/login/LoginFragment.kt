@@ -87,7 +87,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun handleLoginFailure(loginText: EditText) {
-        loginText.background = ContextCompat.getDrawable(loginText.context, R.drawable.bac_edit_text_failed)
+        loginText.background = ContextCompat.getDrawable(loginText.context, R.drawable.bac_edit_text_error)
         loginText.requestFocus()
         loginText.selectAll()
     }

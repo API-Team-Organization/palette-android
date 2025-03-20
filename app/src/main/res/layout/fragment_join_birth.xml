@@ -67,6 +67,6 @@
             android:fontFamily="@font/pretendard_semibold"
             android:textColor="@color/white"
             style="?android:attr/borderlessButtonStyle"
-            android:background="@drawable/bac_button"/>
+            android:background="@drawable/bac_button_solid"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
