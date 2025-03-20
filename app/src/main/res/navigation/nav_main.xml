@@ -18,4 +18,5 @@
         android:label="settingFragment"
         android:name="com.api.palette.ui.main.settings.SettingFragment">
     </fragment>
+
 </navigation>
