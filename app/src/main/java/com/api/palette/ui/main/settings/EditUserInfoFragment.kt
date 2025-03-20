@@ -14,6 +14,7 @@ import com.api.palette.ui.util.changeFragment
 class EditUserInfoFragment : Fragment() {
 
     private lateinit var binding: FragmentEditUserInfoBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

@@ -40,6 +40,7 @@ object ChatRequestManager {
 
     suspend fun getImageList(token: String, page: Int, size: Int): DataResponse<ImageListResponse>? {
         val response = chatService.getImageList(token = token, page = page, size = size)
+
         ErrorHandler.handleError(response)
         return response.body()
     }

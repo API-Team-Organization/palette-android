@@ -12,14 +12,15 @@ import com.api.palette.ui.main.ServiceActivity
 import com.api.palette.ui.util.log
 
 class MainActivity : AppCompatActivity() {
+
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         PaletteApplication.prefs = PreferenceManager(application)
         handleAuth()
-
         initView()
     }
 
@@ -35,8 +36,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleAuth() {
         if (PaletteApplication.prefs.token.isNotEmpty()) {
-            Log.d(Constant.TAG,"token is not Empty")
-
             val intent = Intent(this, ServiceActivity::class.java)
             startActivity(intent)
             finish()

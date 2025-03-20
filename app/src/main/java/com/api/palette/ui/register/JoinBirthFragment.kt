@@ -14,6 +14,7 @@ import java.util.Calendar
 import java.util.Locale
 
 class JoinBirthFragment : Fragment() {
+
     private lateinit var binding: FragmentJoinBirthBinding
     private val registerViewModel: RegisterViewModel by activityViewModels()
 
@@ -21,7 +22,6 @@ class JoinBirthFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentJoinBirthBinding.inflate(inflater, container, false)
 
         datePickerDefaultSettings()
@@ -52,7 +52,6 @@ class JoinBirthFragment : Fragment() {
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         ) { view, year, monthOfYear, dayOfMonth ->
-            // 날짜가 변경될 때 실행할 작업
             val dateOfBirth = getSelectedDate()
             registerViewModel.setBirthdate(dateOfBirth)
         }

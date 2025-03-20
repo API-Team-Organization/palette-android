@@ -66,14 +66,11 @@ class ChangeBirthDateFragment : Fragment() {
                     PaletteApplication.prefs.token,
                     birthDate
                 )
-
                 if (response.isSuccessful) {
-                    // 프로필 업데이트 성공
                     shortToast("프로필이 성공적으로 업데이트되었습니다.")
                     Log.d("ProfileEditFragment", "Profile updated successfully.")
                     requireActivity().supportFragmentManager.popBackStack()
                 } else {
-                    // 프로필 업데이트 실패
                     shortToast("프로필 업데이트에 실패했습니다.")
                     Log.e("ProfileEditFragment", "Failed to update profile: ${response.code()} - ${response.message()}")
                     // 실패 시 처리 코드 추가
@@ -102,7 +99,6 @@ class ChangeBirthDateFragment : Fragment() {
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         ) { view, year, monthOfYear, dayOfMonth ->
-            // 날짜가 변경될 때 실행할 작업
             val dateOfBirth = getSelectedDate()
             registerViewModel.setBirthdate(dateOfBirth)
         }

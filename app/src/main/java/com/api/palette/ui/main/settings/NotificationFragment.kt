@@ -18,6 +18,7 @@ class NotificationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentNotificationBinding.inflate(inflater, container, false)
+
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         return binding.root

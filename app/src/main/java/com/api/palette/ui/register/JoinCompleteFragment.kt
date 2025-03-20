@@ -13,6 +13,7 @@ import com.api.palette.R
 import com.api.palette.databinding.FragmentJoinCompleteBinding
 
 class JoinCompleteFragment : Fragment() {
+
     private lateinit var binding : FragmentJoinCompleteBinding
 
     override fun onCreateView(
@@ -36,7 +37,6 @@ class JoinCompleteFragment : Fragment() {
             intArrayOf(Color.parseColor("#6389E9"), Color.parseColor("#555FE8")),
             floatArrayOf(0f, 1f), Shader.TileMode.CLAMP
         )
-
         good.paint.shader = textShader
     }
 }

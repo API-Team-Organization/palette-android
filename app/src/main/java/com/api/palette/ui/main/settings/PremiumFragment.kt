@@ -18,6 +18,7 @@ class PremiumFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPremiumBinding.inflate(inflater, container, false)
+
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
 
         return binding.root

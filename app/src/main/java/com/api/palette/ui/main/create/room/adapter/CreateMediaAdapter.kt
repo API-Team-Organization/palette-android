@@ -20,8 +20,7 @@ class CreateMediaAdapter(
     private val itemList: ArrayList<RoomData>
 ) : RecyclerView.Adapter<CreateMediaAdapter.WorkViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_work_recycler, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_work_recycler, parent, false)
         return WorkViewHolder(view)
     }
 
@@ -34,29 +33,21 @@ class CreateMediaAdapter(
         holder.tv_poster_title.text = itemList[position].title
         holder.tv_poster_desc.text = itemList[position].message
 
-        // 터치 이벤트를 통해 클릭 처리
         holder.tv_poster_desc.setOnTouchListener { v, event ->
             val textView = v as TextView
             val movementMethod: MovementMethod = textView.movementMethod
-
-            // 링크 터치 이벤트 처리
-            val touchHandled =
-                movementMethod.onTouchEvent(textView, textView.text as Spannable, event)
+            val touchHandled = movementMethod.onTouchEvent(textView, textView.text as Spannable, event)
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    // 터치 시작 시 Handler를 사용하여 1.5초 후에 롱 클릭 이벤트 발생
-                    isLongClick = false // 초기화
+                    isLongClick = false
                     handler.postDelayed({
-                        isLongClick = true // 롱 클릭 상태로 변경
+                        isLongClick = true
                         itemClickListener.onItemLongClick(holder.bindingAdapterPosition)
                     }, 600)
                 }
                 MotionEvent.ACTION_UP -> {
-                    // 터치 종료 시 Handler에서 호출된 Runnable을 제거d
                     handler.removeCallbacksAndMessages(null)
-
-                    // 롱 클릭 상태가 아닐 경우에만 클릭 이벤트 처리
                     if (!touchHandled && !isLongClick) {
                         itemClickListener.onItemClick(holder.bindingAdapterPosition)
                     }
@@ -65,10 +56,8 @@ class CreateMediaAdapter(
                     handler.removeCallbacksAndMessages(null)
                 }
             }
-
             touchHandled
         }
-
         holder.tv_poster_desc.movementMethod = LinkMovementMethod.getInstance()
         holder.tv_poster_desc.ellipsize = TextUtils.TruncateAt.MARQUEE
         holder.tv_poster_desc.setSelected(true)

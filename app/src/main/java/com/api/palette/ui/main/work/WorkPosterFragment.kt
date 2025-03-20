@@ -85,11 +85,10 @@ class WorkPosterFragment : Fragment() {
         staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
             gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
         }
+
         binding.rvImageList.layoutManager = staggeredGridLayoutManager
 
-        imageAdapter = ImageAdapter(mutableListOf()) {
-            loadImageList(isRefresh = true)
-        }
+        imageAdapter = ImageAdapter(mutableListOf())
         binding.rvImageList.adapter = imageAdapter
 
         binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -109,7 +108,6 @@ class WorkPosterFragment : Fragment() {
                 lastVisibleItemPosition = lastPositions.maxOrNull() ?: 0
             }
         })
-
     }
 
     private fun setupSwipeRefresh() {
@@ -202,7 +200,6 @@ class WorkPosterFragment : Fragment() {
         } else {
             binding.tvNoImages.visibility = View.GONE
             binding.rvImageList.visibility = View.VISIBLE
-
             if (isRefresh) {
                 imageAdapter.updateImages(images)
             } else {
@@ -221,7 +218,6 @@ class WorkPosterFragment : Fragment() {
 
         val layoutManagerState = binding.rvImageList.layoutManager?.onSaveInstanceState()
         outState.putParcelable("layoutManagerState", layoutManagerState)
-
         outState.putInt("currentPage", currentPage)
         outState.putStringArrayList("totalImageList", ArrayList(totalImageList))
         outState.putBoolean("hasMoreImages", hasMoreImages)

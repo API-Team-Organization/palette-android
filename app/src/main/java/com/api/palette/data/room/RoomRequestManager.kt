@@ -27,6 +27,7 @@ object RoomRequestManager {
             Log.d(Constant.TAG,"RoomRequestManager deleteRoom response is ${response}")
             throw HttpException(response)
         }
+
         return response
     }
 
@@ -35,6 +36,7 @@ object RoomRequestManager {
         if (!response.isSuccessful) {
             Log.d(Constant.TAG, "RoomRequestManager setRoomTitle 실패했습니다. $response")
         }
+
         return response
     }
 
@@ -43,6 +45,7 @@ object RoomRequestManager {
         if (!response.isSuccessful) {
             Log.d(Constant.TAG, "RoomRequestManager regenRoom 실패했습니다. $response")
         }
+
         return response
     }
 }

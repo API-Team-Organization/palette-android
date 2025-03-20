@@ -54,12 +54,12 @@ sealed interface PromptData {
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<PromptData> {
             val m = element.jsonObject["type"]?.jsonPrimitive?.content?.let { PromptType.valueOf(it) }
                 ?: throw SerializationException("$element")
+
             return when (m) {
                 PromptType.SELECTABLE -> Selectable.serializer()
                 PromptType.GRID -> Grid.serializer()
                 PromptType.USER_INPUT -> UserInput.serializer()
             }
         }
-
     }
 }

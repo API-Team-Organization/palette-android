@@ -16,8 +16,10 @@ import com.api.palette.databinding.FragmentJoinEmailBinding
 import java.util.regex.Pattern
 
 class JoinEmailFragment : Fragment() {
+
     private lateinit var binding : FragmentJoinEmailBinding
     private val registerViewModel: RegisterViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

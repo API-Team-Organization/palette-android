@@ -20,18 +20,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.api.palette.R
 import com.api.palette.ui.util.ContextRetainer
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ImageAdapter(
-    private var images: MutableList<String>,
-    private val onActionCompleted: (() -> Unit)? = null
+    private var images: MutableList<String>
 ) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     private var currentDialog: Dialog? = null
@@ -60,19 +63,14 @@ class ImageAdapter(
 
                     override fun onLoadCleared(placeholder: Drawable?) {
                         currentBitmap?.let {
-                            if (!it.isRecycled) {
-                                it.recycle()
-                            }
+                            if (!it.isRecycled) it.recycle()
                         }
                         currentBitmap = null
                         imageView.recycle()
                     }
                 })
 
-            imageView.setOnClickListener {
-                showZoomedImageDialog(itemView.context, imageUrl)
-            }
-
+            imageView.setOnClickListener { showZoomedImageDialog(itemView.context, imageUrl) }
             imageView.setOnLongClickListener {
                 showDownloadOrShareDialog(itemView.context, imageUrl)
                 true
@@ -82,9 +80,7 @@ class ImageAdapter(
         fun recycle() {
             imageView.recycle()
             currentBitmap?.let {
-                if (!it.isRecycled) {
-                    it.recycle()
-                }
+                if (!it.isRecycled) it.recycle()
             }
             currentBitmap = null
         }
@@ -99,17 +95,17 @@ class ImageAdapter(
         holder.bind(images[position])
     }
 
-    fun setImages(newImages: List<String>) {
-        images.clear()
-        images.addAll(newImages)
-        notifyDataSetChanged()
-    }
-
     override fun getItemCount(): Int = images.size
 
     override fun onViewRecycled(holder: ImageViewHolder) {
         super.onViewRecycled(holder)
         holder.recycle()
+    }
+
+    fun setImages(newImages: List<String>) {
+        images.clear()
+        images.addAll(newImages)
+        notifyDataSetChanged()
     }
 
     fun updateImages(newImages: List<String>) {
@@ -132,19 +128,14 @@ class ImageAdapter(
 
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
         currentDialog?.dismiss()
-
         val dialog = Dialog(context)
         currentDialog = dialog
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
         val closeButton = dialogView.findViewById<ImageView>(R.id.btn_close)
-
         imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-
-        closeButton.setOnClickListener {
-            dialog.dismiss()
-        }
+        closeButton.setOnClickListener { dialog.dismiss() }
 
         var dialogBitmap: Bitmap? = null
 
@@ -158,38 +149,23 @@ class ImageAdapter(
                     dialogBitmap = resource.copy(resource.config, true)
                     imageView.setImage(ImageSource.bitmap(dialogBitmap))
                 }
-
                 override fun onLoadCleared(placeholder: Drawable?) {
-                    dialogBitmap?.let {
-                        if (!it.isRecycled) {
-                            it.recycle()
-                        }
-                    }
+                    dialogBitmap?.let { if (!it.isRecycled) it.recycle() }
                     imageView.recycle()
                 }
             })
 
         dialog.setOnDismissListener {
-            dialogBitmap?.let {
-                if (!it.isRecycled) {
-                    it.recycle()
-                }
-            }
+            dialogBitmap?.let { if (!it.isRecycled) it.recycle() }
             imageView.recycle()
             currentDialog = null
         }
-
         dialog.setContentView(dialogView)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val screenHeight = context.resources.displayMetrics.heightPixels
         val dialogHeight = (screenHeight * 0.9).toInt()
-
-        dialog.window?.setLayout(
-            (context.resources.displayMetrics.widthPixels),
-            dialogHeight
-        )
-
+        dialog.window?.setLayout(context.resources.displayMetrics.widthPixels, dialogHeight)
         dialog.show()
     }
 
@@ -199,14 +175,11 @@ class ImageAdapter(
         dialogBuilder.setView(dialogView)
 
         val dialog = dialogBuilder.create()
-
         val shareButton: TextView = dialogView.findViewById(R.id.noTextView)
         val downloadButton: TextView = dialogView.findViewById(R.id.yesTextView)
 
         shareButton.setOnClickListener {
-            coroutineScope.launch {
-                shareImage(context, imageUrl)
-            }
+            coroutineScope.launch { shareImage(context, imageUrl) }
             dialog.dismiss()
         }
 
@@ -215,20 +188,14 @@ class ImageAdapter(
                 val bitmap = downloadBitmap(imageUrl)
                 bitmap?.let {
                     saveImageToGallery(context, it)
-                    if (!it.isRecycled) {
-                        it.recycle()
-                    }
+                    if (!it.isRecycled) it.recycle()
                 }
                 Toast.makeText(context, "다운로드되었습니다.", Toast.LENGTH_SHORT).show()
             }
             dialog.dismiss()
         }
-
         dialog.show()
-        dialog.window?.setLayout(
-            (context.resources.displayMetrics.widthPixels * 0.9).toInt(),
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        dialog.window?.setLayout((context.resources.displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private suspend fun shareImage(context: Context, imageUrl: String) {
@@ -236,7 +203,6 @@ class ImageAdapter(
             try {
                 val bitmap = downloadBitmap(imageUrl) ?: return@withContext
                 val uri = saveImageToGallery(context, bitmap) ?: return@withContext
-
                 withContext(Dispatchers.Main) {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "image/jpeg"
@@ -271,17 +237,14 @@ class ImageAdapter(
 
     private fun saveImageToGallery(context: Context, bitmap: Bitmap): Uri? {
         if (bitmap.isRecycled) return null
-
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image_${System.currentTimeMillis()}.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
             put(MediaStore.Images.Media.IS_PENDING, 1)
         }
-
         val resolver = context.contentResolver
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
         uri?.let {
             resolver.openOutputStream(it)?.use { outputStream ->
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -290,8 +253,6 @@ class ImageAdapter(
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
         }
-
         return uri
     }
-
 }

@@ -28,8 +28,7 @@ class OnboardingDefaultFragment : Fragment() {
             findNavController().navigate(R.id.action_onboardingDefaultFragment_to_startFragment)
         }
 
-        binding.registerViewpager.adapter =
-            RegisterPagerAdapter(requireActivity().supportFragmentManager)
+        binding.registerViewpager.adapter = RegisterPagerAdapter(requireActivity().supportFragmentManager)
         binding.registerViewpager.offscreenPageLimit = 2
         binding.dotsIndicator.attachTo(binding.registerViewpager)
     }

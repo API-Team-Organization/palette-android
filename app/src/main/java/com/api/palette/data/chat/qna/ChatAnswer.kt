@@ -33,6 +33,7 @@ sealed class ChatAnswer {
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<ChatAnswer> {
             val m = element.jsonObject["type"]?.jsonPrimitive?.content?.let { PromptType.valueOf(it) }
                 ?: throw SerializationException("$element")
+
             return when (m) {
                 PromptType.SELECTABLE -> SelectableAnswer.serializer()
                 PromptType.GRID -> GridAnswer.serializer()

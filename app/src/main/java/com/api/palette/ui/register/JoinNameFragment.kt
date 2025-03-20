@@ -26,6 +26,7 @@ import java.net.SocketTimeoutException
 import java.util.regex.Pattern
 
 class JoinNameFragment : Fragment() {
+
     private lateinit var binding : FragmentJoinNameBinding
     private val registerViewModel: RegisterViewModel by activityViewModels()
 
@@ -66,12 +67,12 @@ class JoinNameFragment : Fragment() {
 
                 if (isNameValid) {
                     registerViewModel.username.observe(viewLifecycleOwner) {
-                        binding.etJoinName.setText(
-                            it
-                        )
+                        binding.etJoinName.setText(it)
                     }
                     registerViewModel.setUsername(binding.etJoinName.text.toString())
+
                     registerRequest()
+
                     findNavController().navigate(R.id.action_joinNameFragment_to_joinCheckNumFragment)
                 } else {
                     checkNameFailed(etJoinName)
@@ -82,11 +83,8 @@ class JoinNameFragment : Fragment() {
         }
     }
 
-
     private fun registerRequest() {
-        // ViewModel에서 데이터를 observe하여 가져옵니다.
         registerViewModel.getRegisterRequestData().observe(viewLifecycleOwner) { registerRequest ->
-            // observe에서 새로운 데이터가 전달되었을 때만 동작합니다.
             registerRequest?.let {
                 val request = RegisterRequest(
                     email = it.email,
@@ -114,28 +112,23 @@ class JoinNameFragment : Fragment() {
                             Log.d(Constant.TAG, response.message())
                             return@launch
                         }
-                        val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
-                        Log.d(Constant.TAG, "token is $token")
 
+                        val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
                         PaletteApplication.prefs.token = token ?: ""
                         shortToast("이메일 인증을 진행해주세요")
-
                     } catch (e: SocketTimeoutException) {
                         Log.e(Constant.TAG, "Network timeout", e)
                         shortToast("네트워크 연결 시간 초과")
-
                     } catch (e: HttpException) {
                         Log.e(Constant.TAG, "HTTP error: ${e.code()}", e)
                         shortToast("http 문제 발생")
                         findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
-
                     } catch (e: Exception) {
                         Log.e(Constant.TAG, "알 수 없는 오류 발생", e)
                         shortToast("알 수 없는 오류 발생")
                     }
                 }
             } ?: run {
-                // registerRequest가 null인 경우에 대한 처리
                 Log.e(Constant.TAG, "registerRequest is null")
                 shortToast("회원가입 데이터를 가져오는 데 실패했습니다")
             }

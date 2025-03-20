@@ -26,6 +26,7 @@ class MyInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMyInfoBinding.inflate(inflater, container, false)
+
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
 
         binding.ivArrowBack.setOnClickListener {

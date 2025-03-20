@@ -9,7 +9,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Environment
 import android.provider.MediaStore
@@ -23,6 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -33,7 +33,6 @@ import com.api.palette.data.socket.ChatResource
 import com.api.palette.data.socket.MessageResponse
 import com.api.palette.databinding.ItemChattingMeBoxBinding
 import com.api.palette.databinding.ItemChattingPaletteBoxBinding
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,7 +63,6 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 val binding = ItemChattingPaletteBoxBinding.inflate(inflater, parent, false)
                 LeftViewHolder(binding)
             }
-
             else -> {
                 val binding = ItemChattingMeBoxBinding.inflate(inflater, parent, false)
                 RightViewHolder(binding)
@@ -76,13 +74,9 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val chat = listOfChat[position]
-        val isLast = position == listOfChat.size - 1 // 마지막 아이템인지 확인
-
-        if (!chat.isAi) {
-            (holder as RightViewHolder).bind(chat) // RightViewHolder에는 isLast 필요 없음
-        } else {
-            (holder as LeftViewHolder).bind(chat, isLast) // LeftViewHolder에 isLast 전달
-        }
+        val isLast = position == listOfChat.size - 1
+        if (!chat.isAi) (holder as RightViewHolder).bind(chat)
+        else (holder as LeftViewHolder).bind(chat, isLast)
     }
 
     fun setQnAList(list: List<PromptData>) {
@@ -94,75 +88,130 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     fun setData(list: List<MessageResponse>) {
         listOfChat.clear()
         listOfChat.addAll(list)
-        notifyDataSetChanged() // 전체 데이터가 변경되었음을 알림
+        notifyDataSetChanged()
+    }
+
+    private fun showCopyDialog(context: Context, text: CharSequence, sourceView: View) {
+        val builder = AlertDialog.Builder(context)
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_copy, null)
+
+        builder.setView(view)
+
+        val dialog = builder.create()
+
+        view.findViewById<TextView>(R.id.tv_copy).setOnClickListener {
+            val clipboardManager = sourceView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+            val clipData = ClipData.newPlainText("Palette", text)
+            clipboardManager?.setPrimaryClip(clipData)
+            Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    private fun showZoomedImageDialog(context: Context, imageUrl: String) {
+        currentDialog?.dismiss()
+        val dialog = Dialog(context)
+        currentDialog = dialog
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
+        val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
+        val closeButton = dialogView.findViewById<ImageView>(R.id.btn_close)
+        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+        closeButton.setOnClickListener { dialog.dismiss() }
+
+        var dialogBitmap: Bitmap? = null
+
+        Glide.with(context)
+            .asBitmap()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .skipMemoryCache(false)
+            .load(imageUrl)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    dialogBitmap = resource.copy(resource.config, true)
+                    imageView.setImage(ImageSource.bitmap(dialogBitmap))
+                }
+                override fun onLoadCleared(placeholder: android.graphics.drawable.Drawable?) {
+                    dialogBitmap?.let { if (!it.isRecycled) it.recycle() }
+                    imageView.recycle()
+                }
+            })
+
+        dialog.setOnDismissListener {
+            dialogBitmap?.let { if (!it.isRecycled) it.recycle() }
+            imageView.recycle()
+            currentDialog = null
+        }
+
+        dialog.setContentView(dialogView)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val screenHeight = context.resources.displayMetrics.heightPixels
+        val dialogHeight = (screenHeight * 0.9).toInt()
+        dialog.window?.setLayout(context.resources.displayMetrics.widthPixels, dialogHeight)
+        dialog.show()
     }
 
     inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(chat: MessageResponse, isLast: Boolean) {
             binding.apply {
-                // 초기화
-                chattingCreatedImage.setImageDrawable(null) // 이미지 초기화
-                textGchatMessagePalette.text = null // 텍스트 초기화
-                textGchatTimePalette.text = null // 텍스트 초기화
+                chattingCreatedImage.setImageDrawable(null)
+                textGchatMessagePalette.text = null
+                textGchatTimePalette.text = null
 
                 if (chat.resource == ChatResource.INTERNAL_IMAGE_LOADING) {
-                    // 로딩 애니메이션을 표시할 뷰
                     chattingLoadImage.visibility = View.VISIBLE
                     textGchatMessagePalette.visibility = View.GONE
                     return
                 }
 
-                // 실제 데이터를 표시할 뷰
                 chattingLoadImage.visibility = View.GONE
                 textGchatMessagePalette.visibility = View.VISIBLE
                 textGchatMessagePalette.text = chat.message
 
                 if (chat.resource == ChatResource.IMAGE) {
-                    Glide.with(itemView).load(chat.message) // 이미지 URL
-                        .override(600, 900) // 최대 너비 600, 최대 높이 900으로 제한 (원하는 크기로 조정)
-                        .into(chattingCreatedImage) // ImageView 설정
+                    Glide.with(itemView)
+                        .load(chat.message)
+                        .override(600, 900)
+                        .into(chattingCreatedImage)
                     textGchatMessagePalette.visibility = View.GONE
                     chattingCreatedImage.visibility = View.VISIBLE
-
                     chattingCreatedImage.setOnLongClickListener {
                         showDownloadDialog(itemView.context, chat.message)
                         true
                     }
-
                     chattingCreatedImage.setOnClickListener {
                         showZoomedImageDialog(itemView.context, chat.message)
                     }
                 } else {
                     textGchatMessagePalette.visibility = View.VISIBLE
                     chattingCreatedImage.visibility = View.GONE
-                    textGchatMessagePalette.text = chat.message // 텍스트 설정
-                    textGchatTimePalette.text = formatChatTime(chat.datetime) // 텍스트 설정
-
+                    textGchatMessagePalette.text = chat.message
+                    textGchatTimePalette.text = formatChatTime(chat.datetime)
                     textGchatMessagePalette.setOnLongClickListener {
-                        showCopyPaletteDialog(itemView.context, binding)
+                        showCopyDialog(itemView.context, textGchatMessagePalette.text, binding.cardGchatMessagePalette)
                         true
                     }
                 }
 
                 val lastBorderDrawable = GradientDrawable().apply {
-                    setColor(ContextCompat.getColor(binding.root.context, R.color.darkGray)) // 내부 배경색 (투명)
+                    setColor(ContextCompat.getColor(root.context, R.color.darkGray))
                     cornerRadius = 16f
                 }
-
                 val borderDrawable = GradientDrawable().apply {
                     cornerRadius = 16f
-                    setColor(ContextCompat.getColor(binding.root.context, R.color.lightGray)) // 내부 배경색 (투명)
+                    setColor(ContextCompat.getColor(root.context, R.color.lightGray))
                 }
 
-                // 마지막 아이템일 경우 추가적인 설정
                 if (isLast) {
-                    textGchatMessagePalette.setTextColor(ContextCompat.getColor(binding.root.context, R.color.white))
-                    textGchatMessagePalette.background = lastBorderDrawable // 테두리 설정
-                    root.requestLayout() // 레이아웃 갱신
+                    textGchatMessagePalette.setTextColor(ContextCompat.getColor(root.context, R.color.white))
+                    textGchatMessagePalette.background = lastBorderDrawable
+                    root.requestLayout()
                 } else {
-                    textGchatMessagePalette.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
-                    textGchatMessagePalette.background = borderDrawable // 테두리 설정
+                    textGchatMessagePalette.setTextColor(ContextCompat.getColor(root.context, R.color.black))
+                    textGchatMessagePalette.background = borderDrawable
                     root.requestLayout()
                 }
             }
@@ -191,15 +240,12 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
-
             val resolver = context.contentResolver
             val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
             uri?.let {
                 resolver.openOutputStream(it).use { outputStream ->
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream!!)
                 }
-
                 contentValues.clear()
                 contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
                 resolver.update(uri, contentValues, null, null)
@@ -207,165 +253,35 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         }
 
         private fun showDownloadDialog(context: Context, imageUrl: String) {
-            val dialogBuilder = AlertDialog.Builder(context)
+            val builder = AlertDialog.Builder(context)
+            val view = LayoutInflater.from(context).inflate(R.layout.dialog_download_image, null)
+            builder.setView(view)
 
-            val dialogView =
-                LayoutInflater.from(context).inflate(R.layout.dialog_download_image, null)
-            dialogBuilder.setView(dialogView)
-
-            val dialog = dialogBuilder.create()
-
-            val noButton: TextView = dialogView.findViewById(R.id.noTextView)
-            val yesButton: TextView = dialogView.findViewById(R.id.yesTextView)
-
-            noButton.setOnClickListener {
-                dialog.dismiss()
-            }
-
+            val dialog = builder.create()
+            val noButton: TextView = view.findViewById(R.id.noTextView)
+            val yesButton: TextView = view.findViewById(R.id.yesTextView)
+            noButton.setOnClickListener { dialog.dismiss() }
             yesButton.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
                     val bitmap = downloadBitmap(imageUrl)
-                    bitmap?.let {
-                        saveImageToGallery(context, it)
-                    }
+                    bitmap?.let { saveImageToGallery(context, it) }
                     Toast.makeText(context, "다운로드되었습니다.", Toast.LENGTH_SHORT).show()
                 }
                 dialog.dismiss()
             }
-
             dialog.show()
-
-            dialog.window?.setLayout(
-                (context.resources.displayMetrics.widthPixels * 0.9).toInt(),
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            dialog.window?.setLayout((context.resources.displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         }
-    }
-
-    private fun showCopyPaletteDialog(context: Context, binding: ItemChattingPaletteBoxBinding) {
-        val dialogBuilder = AlertDialog.Builder(context)
-
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_copy, null)
-        dialogBuilder.setView(dialogView)
-
-        val dialog = dialogBuilder.create()
-
-        val copyTextView = dialogView.findViewById<TextView>(R.id.tv_copy)
-
-        copyTextView.setOnClickListener {
-            val clipboardManager =
-                binding.cardGchatMessagePalette.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-            val clipData =
-                ClipData.newPlainText("Palette", binding.textGchatMessagePalette.text)
-            clipboardManager?.setPrimaryClip(clipData)
-
-            Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
-
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
-
-
-    private fun showCopyMeDialog(context: Context, binding: ItemChattingMeBoxBinding) {
-        val dialogBuilder = AlertDialog.Builder(context)
-
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_copy, null)
-        dialogBuilder.setView(dialogView)
-
-        val dialog = dialogBuilder.create()
-
-        val copyTextView = dialogView.findViewById<TextView>(R.id.tv_copy)
-
-        copyTextView.setOnClickListener {
-            val clipboardManager =
-                binding.cardGchatMessageMe.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-            val clipData =
-                ClipData.newPlainText("Palette", binding.textGchatMessageMe.text)
-            clipboardManager?.setPrimaryClip(clipData)
-
-            Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
-
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
-
-
-    private fun showZoomedImageDialog(context: Context, imageUrl: String) {
-        currentDialog?.dismiss()
-
-        val dialog = Dialog(context)
-        currentDialog = dialog
-
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
-        val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
-        val closeButton = dialogView.findViewById<ImageView>(R.id.btn_close)
-
-        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-
-        closeButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        var dialogBitmap: Bitmap? = null
-
-        Glide.with(context)
-            .asBitmap()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .skipMemoryCache(false)
-            .load(imageUrl)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    dialogBitmap = resource.copy(resource.config, true)
-                    imageView.setImage(ImageSource.bitmap(dialogBitmap))
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    dialogBitmap?.let {
-                        if (!it.isRecycled) {
-                            it.recycle()
-                        }
-                    }
-                    imageView.recycle()
-                }
-            })
-
-        dialog.setOnDismissListener {
-            dialogBitmap?.let {
-                if (!it.isRecycled) {
-                    it.recycle()
-                }
-            }
-            imageView.recycle()
-            currentDialog = null
-        }
-
-        dialog.setContentView(dialogView)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val screenHeight = context.resources.displayMetrics.heightPixels
-        val dialogHeight = (screenHeight * 0.9).toInt()
-
-        dialog.window?.setLayout(
-            context.resources.displayMetrics.widthPixels,
-            dialogHeight
-        )
-
-        dialog.show()
     }
 
     inner class RightViewHolder(private val binding: ItemChattingMeBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(chat: MessageResponse) {
             binding.apply {
-                textGchatMessageMe.text = chat.message // 텍스트 설정
-                textGchatTimeMe.text = formatChatTime(chat.datetime) // 텍스트 초기화
-
+                textGchatMessageMe.text = chat.message
+                textGchatTimeMe.text = formatChatTime(chat.datetime)
                 layoutGchatContainerMe.setOnLongClickListener {
-                    showCopyMeDialog(itemView.context, binding)
+                    showCopyDialog(itemView.context, textGchatMessageMe.text, binding.cardGchatMessageMe)
                     true
                 }
             }
@@ -374,12 +290,10 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     fun formatChatTime(datetime: Instant): String {
         val timeZone = TimeZone.currentSystemDefault()
-
         val localDateTime = datetime.toLocalDateTime(timeZone)
         val period = if (localDateTime.hour < 12) "오전" else "오후"
         val hour12 = if (localDateTime.hour % 12 == 0) 12 else localDateTime.hour % 12
         val formattedMinute = localDateTime.minute.toString().padStart(2, '0')
-
         return "$period $hour12:$formattedMinute"
     }
 }

@@ -58,6 +58,7 @@ class LoginFragment : Fragment() {
                     etLoginPassword.background = ContextCompat.getDrawable(etLoginPassword.context, R.drawable.bac_card_background)
                     return@setOnClickListener
                 }
+
                 if (etLoginPassword.text?.isEmpty() == true) {
                     handleLoginFailure(etLoginPassword)
                     binding.passwordFailedText.visibility = View.VISIBLE
@@ -65,10 +66,12 @@ class LoginFragment : Fragment() {
                     etLoginEmail.background = ContextCompat.getDrawable(etLoginEmail.context, R.drawable.bac_card_background)
                     return@setOnClickListener
                 }
+
                 loginRequest()
             }
+
             tvRegister.setOnClickListener {
-                disableOnBackPressedCallback() // 뒤로가기 콜백 비활성화
+                disableOnBackPressedCallback()
                 findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
             }
         }
@@ -101,10 +104,10 @@ class LoginFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = AuthRequestManager.loginRequest(loginRequest)
-                Log.d(TAG, "LoginFragment response : $response")
                 val token = response.headers()[HeaderUtil.X_AUTH_TOKEN]
-                Log.d(TAG, "token is $token")
+
                 PaletteApplication.prefs.token = token ?: ""
+
                 val intent = Intent(activity, ServiceActivity::class.java)
                 requireActivity().startActivity(intent)
                 requireActivity().finish()
@@ -115,7 +118,6 @@ class LoginFragment : Fragment() {
             } catch (e: SocketTimeoutException) {
                 shortToast("네트워크 연결이 불안정합니다. 다시 시도해주세요.")
             } catch (e: Exception) {
-                // HTTP 오류가 아닌 다른 예외가 발생한 경우에 대한 처리
                 Log.e("LoginFragment", "loginRequest error", e)
                 shortToast("알 수 없는 에러")
             }
@@ -139,7 +141,7 @@ class LoginFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        callback.remove() // 뷰가 파괴될 때 콜백 해제
+        callback.remove()
     }
 
     private fun disableOnBackPressedCallback() {

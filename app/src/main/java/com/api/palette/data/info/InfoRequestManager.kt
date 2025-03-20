@@ -13,6 +13,7 @@ object InfoRequestManager {
     suspend fun profileInfoRequest(token: String): DataResponse<ProfileData>? {
         val response = infoService.profileInfo(token, "*/*")
         Log.d(Constant.TAG, "response is $response")
+
         return response.body()
     }
 

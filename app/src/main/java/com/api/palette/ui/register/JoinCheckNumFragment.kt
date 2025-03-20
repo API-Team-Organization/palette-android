@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class JoinCheckNumFragment : Fragment() {
+
     private lateinit var binding: FragmentJoinCheckNumBinding
 
     override fun onCreateView(
@@ -70,7 +71,6 @@ class JoinCheckNumFragment : Fragment() {
                     }
                     null
                 } ?: return@launch
-
                 findNavController().navigate(R.id.action_joinCheckNumFragment_to_joinCompleteFragment)
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다")
@@ -88,19 +88,13 @@ class JoinCheckNumFragment : Fragment() {
                 Log.d("JoinCheckNumFragment", "Token: $token")
 
                 val response = AuthRequestManager.resendRequest(token)
-                Log.d(
-                    "JoinCheckNumFragment",
-                    "Response code: ${response.code()}, Response body: ${response.body()}"
-                )
+                Log.d("JoinCheckNumFragment", "Response code: ${response.code()}, Response body: ${response.body()}")
 
                 if (response.isSuccessful) {
                     shortToast("인증번호가 재전송되었습니다")
                 } else {
                     shortToast("인증번호 재전송에 실패했습니다.")
-                    Log.d(
-                        "JoinCheckNumFragment",
-                        "Response code: ${response.code()}, Response message: ${response.message()}"
-                    )
+                    Log.d("JoinCheckNumFragment", "Response code: ${response.code()}, Response message: ${response.message()}")
                 }
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다")

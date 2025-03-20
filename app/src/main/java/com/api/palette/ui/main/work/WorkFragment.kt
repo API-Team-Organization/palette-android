@@ -20,8 +20,6 @@ class WorkFragment : Fragment() {
     ): View {
         binding = FragmentWorkBinding.inflate(inflater, container, false)
 
-
-        // ViewPager2와 Adapter 설정
         val viewPager2: ViewPager2 = binding.viewPager
         val adapter = WorkPagerAdapter(requireActivity())
         viewPager2.adapter = adapter
@@ -29,7 +27,6 @@ class WorkFragment : Fragment() {
         TabLayoutMediator(binding.workTabLayout, binding.viewPager) { tab, pos ->
             tab.text = tabTextList[pos]
         }.attach()
-
 
         return binding.root
     }

@@ -40,22 +40,12 @@ class CreateMediaFragment : Fragment() {
     private var isDeleting = false
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCreateMediaBinding.inflate(inflater, container, false)
-
         loadProfileInfo()
-
         showSampleData(isLoading = true)
-
         loadData()
-
-        binding.llStartNewWork.setOnClickListener {
-            createRoom()
-        }
-
+        binding.llStartNewWork.setOnClickListener { createRoom() }
         return binding.root
     }
 
@@ -63,18 +53,15 @@ class CreateMediaFragment : Fragment() {
         with(binding) {
             workAdapter = CreateMediaAdapter(itemList)
             workRecyclerView.adapter = workAdapter
-            workRecyclerView.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            workRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                if (isDeleting) return // item 삭제 중 삭호작용 막음 -> block index error
+                if (isDeleting) return
                 startChatting(itemList[position].id, itemList[position].title.toString())
             }
-
             override fun onItemLongClick(position: Int) {
-                if (isDeleting) return // item 삭제 중 삭호작용 막음 -> block index error
+                if (isDeleting) return
                 deleteChatDialog(requireActivity(), position)
             }
         }
@@ -92,12 +79,9 @@ class CreateMediaFragment : Fragment() {
                         val list = roomList.data.reversed()
                         itemList.clear()
                         itemList.addAll(list)
-
                         initWorkAdapter()
-
                         workAdapter.notifyDataSetChanged()
                     }
-
                     showSampleData(isLoading = false)
                 } else {
                     log("roomList.code <= 400 else{}에서 서버 오류가 발생했습니다: ${roomList.message}")
@@ -107,11 +91,7 @@ class CreateMediaFragment : Fragment() {
                     shortToast("인증 오류: 다시 로그인해주세요.")
                     (requireActivity() as? BaseControllable)?.sessionDialog(requireActivity())
                 } else {
-                    log(
-                        "HttpException & !401 에서 서버 오류가 발생했습니다: ${e.message()} \n서버응답: ${
-                            e.response()?.errorBody()?.string()
-                        }"
-                    )
+                    log("HttpException & !401 에서 서버 오류가 발생했습니다: ${e.message()} \n서버응답: ${e.response()?.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 log("CreateMediaFragment loadData 알 수 없는 오류가 발생했습니다: ${e.message}")
@@ -128,32 +108,20 @@ class CreateMediaFragment : Fragment() {
         val builder = AlertDialog.Builder(context)
         builder.setView(dialogView)
         val dialog = builder.create()
-
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
-
         val titleTextView = dialogView.findViewById<TextView>(R.id.confirmTextView)
         val noButton = dialogView.findViewById<TextView>(R.id.noTextView)
         val yesButton = dialogView.findViewById<TextView>(R.id.yesTextView)
-
         titleTextView.text = "정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?"
-
-        noButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
+        noButton.setOnClickListener { dialog.dismiss() }
         yesButton.setOnClickListener {
             isDeleting = true
             deleteRoom(position)
             dialog.dismiss()
         }
-
         dialog.show()
-
-        dialog.window?.setLayout(
-            (context.resources.displayMetrics.widthPixels * 0.9).toInt(),
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        dialog.window?.setLayout((context.resources.displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private fun showSampleData(isLoading: Boolean) {
@@ -172,16 +140,10 @@ class CreateMediaFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val roomResponse = RoomRequestManager.roomRequest(PaletteApplication.prefs.token)
-
                 roomResponse.body()?.let {
-                    startChatting(
-                        it.data.id,
-                        title = it.data.title.toString(),
-                        isFirst = true,
-                    )
+                    startChatting(it.data.id, title = it.data.title.toString(), isFirst = true)
                     log("생성된 roomId == ${it.data.id}")
                 } ?: shortToast("룸 생성 오류")
-
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "ChattingFragment createRoom error : ", e)
             }
@@ -191,10 +153,7 @@ class CreateMediaFragment : Fragment() {
     private fun deleteRoom(position: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = RoomRequestManager.deleteRoom(
-                    PaletteApplication.prefs.token,
-                    itemList[position].id
-                )
+                val response = RoomRequestManager.deleteRoom(PaletteApplication.prefs.token, itemList[position].id)
                 if (response.isSuccessful) {
                     itemList.removeAt(position)
                     workAdapter.notifyItemRemoved(position)
@@ -206,12 +165,7 @@ class CreateMediaFragment : Fragment() {
                     shortToast("삭제 실패: ${response.message()}")
                 }
             } catch (e: HttpException) {
-                Log.e(
-                    Constant.TAG,
-                    "CreateMediaFragment deleteRoom Http error: ${
-                        e.response()?.errorBody()?.string()
-                    }"
-                )
+                Log.e(Constant.TAG, "CreateMediaFragment deleteRoom Http error: ${e.response()?.errorBody()?.string()}")
                 shortToast("Failed to delete item: ${e.message()}")
             } catch (e: Exception) {
                 Log.e(Constant.TAG, "CreateMediaFragment deleteRoom Exception error: ${e.message}")

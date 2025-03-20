@@ -11,14 +11,15 @@ import com.api.palette.application.PaletteApplication
 import com.api.palette.databinding.FragmentStartBinding
 
 class StartFragment : Fragment() {
+
     private lateinit var binding : FragmentStartBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-
         binding = FragmentStartBinding.inflate(inflater, container, false)
+
         initView()
 
         return binding.root
@@ -33,6 +34,7 @@ class StartFragment : Fragment() {
         if (!isFirst) {
             findNavController().navigate(R.id.action_startFragment_to_loginFragment)
         }
+
         binding.signInText.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_loginFragment)
         }

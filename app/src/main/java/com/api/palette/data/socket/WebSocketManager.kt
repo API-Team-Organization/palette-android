@@ -14,7 +14,7 @@ class WebSocketManager(token: String, roomId: Int) {
 
     private val request: Request = Request.Builder()
         .url("wss://api.paletteapp.xyz/ws/${roomId}")
-        .addHeader("X-AUTH-TOKEN", token) // 토큰 추가
+        .addHeader("X-AUTH-TOKEN", token)
         .build()
 
     private val listener = object : WebSocketListener() {
@@ -27,8 +27,7 @@ class WebSocketManager(token: String, roomId: Int) {
             log("WebSocket 수신된 메시지: $text")
 
             try {
-                val baseMessage: BaseResponseMessage = json.decodeFromString(text)
-                when (baseMessage) {
+                when (val baseMessage: BaseResponseMessage = json.decodeFromString(text)) {
                     is BaseResponseMessage.ErrorMessage -> {
                         handleErrorMessage(baseMessage)
                     }
@@ -39,7 +38,6 @@ class WebSocketManager(token: String, roomId: Int) {
                     is BaseResponseMessage.GenerateStatusMessage -> {
                         onMessageReceived?.invoke(baseMessage)
                     }
-
                     is BaseResponseMessage.ImageProgressMessage -> {
                         onMessageReceived?.invoke(baseMessage)
                     }
@@ -66,6 +64,7 @@ class WebSocketManager(token: String, roomId: Int) {
         log(" WebSocketManager setOnMessageReceivedListener listener $listener")
         this.onMessageReceived = listener
     }
+
     fun setOnConnect(listener: () -> Unit) {
         log(" WebSocketManager setOnConnect listener $listener")
         this.onConnect = listener
@@ -78,7 +77,7 @@ class WebSocketManager(token: String, roomId: Int) {
 
     fun send(message: String) {
         if (::webSocket.isInitialized) {
-            webSocket.send(message) // 메시지를 웹소켓을 통해 전송
+            webSocket.send(message)
             log("WebSocket 메시지 전송: $message")
         } else {
             logE("WebSocket이 초기화되지 않았습니다.")

@@ -80,12 +80,10 @@ class SettingFragment : Fragment() {
 
     private fun showLogoutDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_logout, null)
-
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
             .setCancelable(false)
             .create()
-
         val noLogoutTextView: TextView = dialogView.findViewById(R.id.noLogoutTextView)
         val logoutTextView: TextView = dialogView.findViewById(R.id.logoutTextView)
 
@@ -137,12 +135,10 @@ class SettingFragment : Fragment() {
 
     private fun resignDialog(context: Context) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_resign, null)
-
         val dialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .setCancelable(false)
             .create()
-
         val noTextView: TextView = dialogView.findViewById(R.id.noTextView)
         val yesTextView: TextView = dialogView.findViewById(R.id.yesTextView)
 
@@ -168,11 +164,9 @@ class SettingFragment : Fragment() {
             try {
                 val response = AuthRequestManager.resignRequest(PaletteApplication.prefs.token)
                 if (response.isSuccessful) {
-                    // 회원 탈퇴 성공
                     shortToast("회원 탈퇴 성공")
                     Log.d(TAG, "Resign success")
                 } else {
-                    // 회원 탈퇴 실패
                     Log.e(TAG, "Resign failed: ${response.code()} - ${response.message()}")
                 }
             } catch (e: HttpException) {

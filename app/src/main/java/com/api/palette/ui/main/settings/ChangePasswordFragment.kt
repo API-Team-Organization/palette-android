@@ -26,6 +26,7 @@ class ChangePasswordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
+
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
         initView()
 
@@ -81,17 +82,13 @@ class ChangePasswordFragment : Fragment() {
                     beforePassword,
                     afterPassword
                 )
-
                 if (response.isSuccessful) {
                     shortToast("비밀번호가 성공적으로 변경되었습니다.")
                     Log.d("ChangePasswordFragment", "Password changed successfully.")
                     requireActivity().supportFragmentManager.popBackStack()
                 } else {
                     shortToast("비밀번호 변경에 실패했습니다.")
-                    Log.e(
-                        "ChangePasswordFragment",
-                        "Failed to change password: ${response.code()} - ${response.message()}"
-                    )
+                    Log.e("ChangePasswordFragment", "Failed to change password: ${response.code()} - ${response.message()}")
                 }
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다.")

@@ -15,6 +15,7 @@ import com.api.palette.databinding.FragmentJoinPasswordBinding
 import java.util.regex.Pattern
 
 class JoinPasswordFragment : Fragment() {
+
     private lateinit var binding : FragmentJoinPasswordBinding
     private val registerViewModel: RegisterViewModel by activityViewModels()
 
@@ -83,9 +84,7 @@ class JoinPasswordFragment : Fragment() {
 
                 if (isPasswordValid) {
                     registerViewModel.password.observe(viewLifecycleOwner) {
-                        binding.etCheckPassword.setText(
-                            it
-                        )
+                        binding.etCheckPassword.setText(it)
                     }
                     registerViewModel.setPassword(binding.etCheckPassword.text.toString())
 

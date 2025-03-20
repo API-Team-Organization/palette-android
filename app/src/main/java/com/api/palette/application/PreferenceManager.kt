@@ -4,8 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class PreferenceManager(context: Context) {
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences(PALETTE_APP, Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences = context.getSharedPreferences(PALETTE_APP, Context.MODE_PRIVATE)
 
     var token: String by PreferenceDelegate("TOKEN", "")
     var isFirst: Boolean by PreferenceDelegate("IS_FIRST", true)

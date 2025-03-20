@@ -10,7 +10,3 @@ fun log(message: String) {
 fun logE(message: String) {
     Log.e(Constant.TAG, message)
 }
-
-fun logI(message: String) {
-    Log.i(Constant.TAG, message)
-}

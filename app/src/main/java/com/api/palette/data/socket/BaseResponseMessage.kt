@@ -9,7 +9,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-// WebSocket으로 들어오는 데이터 타입들
 @Serializable(with = BaseResponseMessageSerializer::class)
 sealed class BaseResponseMessage {
     @Serializable
