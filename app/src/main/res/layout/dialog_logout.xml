@@ -56,5 +56,7 @@
             android:fontFamily="@font/pretendard_medium"
             android:clickable="true"
             android:focusable="true"/>
+
     </LinearLayout>
+
 </LinearLayout>

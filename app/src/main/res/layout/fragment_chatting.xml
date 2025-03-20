@@ -103,6 +103,7 @@
                     android:text="2"
                     android:textColor="@color/primaryColor"
                     android:textSize="16sp" />
+
             </LinearLayout>
 
             <Button
@@ -172,7 +173,9 @@
                     android:padding="13dp"
                     android:rotation="-30"
                     android:src="@drawable/ic_action_send" />
+
             </LinearLayout>
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

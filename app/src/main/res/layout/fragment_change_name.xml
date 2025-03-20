@@ -65,6 +65,7 @@
                     android:textCursorDrawable="@drawable/cursor_drawable"/>
 
             </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton

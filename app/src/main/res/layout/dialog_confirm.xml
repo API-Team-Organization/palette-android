@@ -49,5 +49,7 @@
             android:fontFamily="@font/pretendard_semibold"
             android:clickable="true"
             android:focusable="true"/>
+
     </LinearLayout>
+
 </LinearLayout>

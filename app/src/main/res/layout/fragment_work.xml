@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:text="포스터"
                 android:layout_margin="4dp"/>
+
             <com.google.android.material.tabs.TabItem
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -49,4 +50,5 @@
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
 </LinearLayout>

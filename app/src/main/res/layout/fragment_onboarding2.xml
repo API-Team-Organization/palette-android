@@ -13,14 +13,12 @@
         android:orientation="vertical"
         android:weightSum="10">
 
-
         <app.rive.runtime.kotlin.RiveAnimationView
             android:id="@+id/onBoarding2Animation"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="8"
             app:riveAnimation="@raw/document_icon_new"/>
-
 
         <LinearLayout
             android:id="@+id/onBoarding2TextBox"
@@ -30,6 +28,7 @@
             android:gravity="center"
             android:layout_weight="2"
             android:layout_marginBottom="120dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,6 +44,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,9 +52,8 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
+
         </LinearLayout>
-
-
 
     </LinearLayout>
 

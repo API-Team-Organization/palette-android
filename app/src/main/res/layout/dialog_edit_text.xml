@@ -6,6 +6,7 @@
     android:minWidth="300dp"
     android:orientation="vertical"
     android:padding="20dp">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,6 +14,7 @@
         android:textSize="16sp"
         android:textColor="@color/black"
         android:fontFamily="@font/pretendard_semibold"/>
+
     <EditText
         android:id="@+id/etChangeTitle"
         android:layout_width="match_parent"
@@ -25,6 +27,7 @@
         android:inputType="textEmailAddress"
         android:textColorHighlight="@color/lightBlue"
         android:textCursorDrawable="@drawable/cursor_drawable"/>
+
     <TextView
         android:id="@+id/tv_apply"
         android:layout_width="wrap_content"
@@ -38,4 +41,5 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_gravity="end"/>
+
 </LinearLayout>

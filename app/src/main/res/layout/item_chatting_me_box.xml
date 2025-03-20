@@ -27,11 +27,13 @@
         app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <LinearLayout
             android:id="@+id/layout_gchat_container_me"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/text_gchat_message_me"
                 android:layout_width="wrap_content"
@@ -47,6 +49,9 @@
                 android:fontFamily="@font/pretendard_medium"
                 android:layout_gravity="end"
                 android:gravity="start"/>
+
         </LinearLayout>
+
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

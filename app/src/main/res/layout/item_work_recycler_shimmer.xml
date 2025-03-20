@@ -16,11 +16,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="32dp">
+
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="170dp"
@@ -45,5 +47,7 @@
             app:layout_constraintStart_toStartOf="@id/tv_name"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
     </LinearLayout>
+
 </LinearLayout>

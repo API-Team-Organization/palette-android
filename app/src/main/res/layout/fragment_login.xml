@@ -19,11 +19,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
+
             <ImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:src="@drawable/logo"
                 android:layout_marginTop="70dp"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -32,6 +34,7 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/pretendard_bold"
                 android:layout_marginTop="3dp"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -105,6 +108,7 @@
                 android:layout_marginStart="4dp"
                 android:visibility="gone"
                 android:fontFamily="@font/pretendard_medium"/>
+
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -132,6 +136,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_login"
             app:layout_constraintBottom_toBottomOf="parent">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -139,6 +144,7 @@
                 android:textSize="14sp"
                 android:textColor="@color/black"
                 android:fontFamily="@font/pretendard_medium" />
+
             <TextView
                 android:id="@+id/tv_register"
                 android:layout_width="wrap_content"
@@ -147,6 +153,7 @@
                 android:textSize="14sp"
                 android:textColor="@color/primaryColor"
                 android:fontFamily="@font/pretendard_semibold"/>
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
