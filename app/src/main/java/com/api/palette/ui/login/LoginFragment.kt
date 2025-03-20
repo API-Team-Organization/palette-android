@@ -55,14 +55,14 @@ class LoginFragment : Fragment() {
                     handleLoginFailure(etLoginEmail)
                     binding.emailFailedText.visibility = View.VISIBLE
                     passwordFailedText.visibility = View.GONE
-                    etLoginPassword.background = ContextCompat.getDrawable(etLoginPassword.context, R.drawable.bac_object)
+                    etLoginPassword.background = ContextCompat.getDrawable(etLoginPassword.context, R.drawable.bac_card_background)
                     return@setOnClickListener
                 }
                 if (etLoginPassword.text?.isEmpty() == true) {
                     handleLoginFailure(etLoginPassword)
                     binding.passwordFailedText.visibility = View.VISIBLE
                     emailFailedText.visibility = View.GONE
-                    etLoginEmail.background = ContextCompat.getDrawable(etLoginEmail.context, R.drawable.bac_object)
+                    etLoginEmail.background = ContextCompat.getDrawable(etLoginEmail.context, R.drawable.bac_card_background)
                     return@setOnClickListener
                 }
                 loginRequest()
