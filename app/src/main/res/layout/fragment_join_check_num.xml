@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.register.JoinCheckNumFragment">
+    tools:context=".presentation.register.JoinCheckNumFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -13,9 +14,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginTop="100dp"
@@ -68,7 +69,6 @@
                     android:inputType="number"
                     android:textColorHighlight="@color/lightBlue"
                     android:textCursorDrawable="@drawable/cursor_drawable"/>
-
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -79,7 +79,6 @@
                 android:textColor="@color/primaryColor"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="5dp"/>
-
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -98,7 +97,5 @@
             android:textColor="@color/white"
             style="?android:attr/borderlessButtonStyle"
             android:background="@drawable/bac_button_solid"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </FrameLayout>

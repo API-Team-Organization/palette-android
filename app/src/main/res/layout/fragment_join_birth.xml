@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.register.JoinBirthFragment">
+    tools:context=".presentation.register.JoinBirthFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -13,9 +14,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginTop="100dp"
@@ -38,19 +39,18 @@
                 android:textColor="@color/gray"
                 android:layout_marginTop="3dp"
                 android:layout_marginStart="3dp"/>
-
         </LinearLayout>
 
         <DatePicker
             android:id="@+id/dpSpinner"
-            android:datePickerMode="spinner"
-            android:calendarViewShown="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
+            android:datePickerMode="spinner"
+            android:calendarViewShown="false"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnContinue"
@@ -68,7 +68,5 @@
             android:textColor="@color/white"
             style="?android:attr/borderlessButtonStyle"
             android:background="@drawable/bac_button_solid"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </FrameLayout>

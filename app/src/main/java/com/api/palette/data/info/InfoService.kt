@@ -1,12 +1,10 @@
 package com.api.palette.data.info
 
-import com.api.palette.data.base.DataResponse
-import com.api.palette.data.base.VoidResponse
+import com.api.palette.domain.model.DataResponse
+import com.api.palette.domain.model.ProfileData
+import com.api.palette.domain.model.VoidResponse
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.PATCH
+import retrofit2.http.*
 
 interface InfoService {
     @GET("info/me")

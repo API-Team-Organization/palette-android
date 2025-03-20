@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.onboarding.Onboarding3Fragment">
+    tools:context=".presentation.onboarding.Onboarding3Fragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,9 +25,9 @@
             android:id="@+id/onBoarding3TextBox"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="2"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_weight="2"
             android:layout_marginBottom="120dp">
 
             <TextView
@@ -52,24 +53,21 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretendard_medium"/>
-
         </LinearLayout>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/onBoarding3Button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="24dp"
+            android:text="시작하기"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bac_button_solid"
+            android:layout_gravity="bottom|center"
+            android:layout_marginVertical="40dp"
+            style="?android:attr/borderlessButtonStyle"/>
     </LinearLayout>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/onBoarding3Button"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="24dp"
-        android:text="시작하기"
-        android:textSize="16sp"
-        android:textColor="@color/white"
-        android:background="@drawable/bac_button_solid"
-        android:layout_gravity="bottom|center"
-        android:layout_marginVertical="40dp"
-        style="?android:attr/borderlessButtonStyle"/>
-
 </FrameLayout>

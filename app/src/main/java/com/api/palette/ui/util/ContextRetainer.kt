@@ -9,7 +9,5 @@ object ContextRetainer {
         applicationContext = context.applicationContext
     }
 
-    fun getContext(): Context {
-        return applicationContext
-    }
+    fun getContext(): Context = applicationContext
 }

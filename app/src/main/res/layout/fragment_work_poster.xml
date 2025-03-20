@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.work.WorkPosterFragment"
+    tools:context=".presentation.work.WorkPosterFragment"
     android:background="@color/default_gray">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -22,7 +23,5 @@
             android:layout_height="wrap_content"
             android:text="생성한 포스터가 없습니다"
             android:visibility="gone"/>
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 </FrameLayout>

@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.work.WorkVideoFragment"
+    tools:context=".presentation.work.WorkVideoFragment"
     android:background="@color/default_gray">
 
     <TextView
+        android:id="@+id/tvComingSoon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="추가 예정입니다"

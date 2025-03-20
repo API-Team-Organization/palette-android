@@ -1,30 +1,24 @@
 package com.api.palette.data.room
 
-import com.api.palette.data.base.DataResponse
-import com.api.palette.data.base.VoidResponse
-import com.api.palette.data.room.data.RoomData
-import com.api.palette.data.room.data.TitleData
+import com.api.palette.domain.model.DataResponse
+import com.api.palette.domain.model.VoidResponse
+import com.api.palette.domain.model.RoomData
+import com.api.palette.domain.model.TitleData
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface RoomService {
     @POST("room")
     suspend fun createRoom(
         @Header("X-AUTH-Token") token: String,
-        @Header("Accept") accept: String = "*/*",
+        @Header("Accept") accept: String = "*/*"
     ): Response<DataResponse<RoomData>>
 
     @GET("room/list")
     suspend fun getRoomList(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*"
-    ): DataResponse<List<RoomData>>
+    ): Response<DataResponse<List<RoomData>>>
 
     @DELETE("room/{roomId}")
     suspend fun deleteRoom(
@@ -45,6 +39,6 @@ interface RoomService {
     suspend fun regenRoom(
         @Header("X-AUTH-Token") token: String,
         @Header("Accept") accept: String = "*/*",
-        @Path("roomId")  roomId: Int
+        @Path("roomId") roomId: Int
     ): Response<VoidResponse>
 }

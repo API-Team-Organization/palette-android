@@ -8,9 +8,11 @@ import com.api.palette.application.PaletteApplication
 import com.api.palette.application.PreferenceManager
 import com.api.palette.common.Constant
 import com.api.palette.databinding.ActivityMainBinding
-import com.api.palette.ui.main.ServiceActivity
+import com.api.palette.presentation.main.ServiceActivity
 import com.api.palette.ui.util.log
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }

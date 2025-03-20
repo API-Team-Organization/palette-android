@@ -1,13 +1,11 @@
 package com.api.palette.data.auth
 
-import com.api.palette.data.base.VoidResponse
+import com.api.palette.domain.model.VoidResponse
+import com.api.palette.domain.model.RegisterRequest
+import com.api.palette.domain.model.LoginRequest
+import com.api.palette.domain.model.VerifyRequest
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.PATCH
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface AuthService {
     @POST("auth/login")
@@ -52,6 +50,6 @@ interface AuthService {
     @PATCH("auth/password")
     suspend fun changePassword(
         @Header("X-AUTH-Token") token: String,
-        @Body request: ChangePasswordRequest
+        @Body request: com.api.palette.domain.model.ChangePasswordRequest
     ): Response<VoidResponse>
 }
