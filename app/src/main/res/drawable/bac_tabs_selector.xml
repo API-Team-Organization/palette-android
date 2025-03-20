@@ -10,6 +10,5 @@
             <solid android:color="@color/tossBlue" />
             <corners android:radius="6dp" />
         </shape>
-
     </item>
 </layer-list>
