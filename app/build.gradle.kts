@@ -14,7 +14,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "BASE_URL", "\"https://api.paletteapp.xyz/\"")
@@ -29,10 +28,12 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -44,63 +45,53 @@ android {
 }
 
 dependencies {
-    // "kotlin serialization"
+    // KotlinX Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
 
-    // OkHttp
+    // Networking (OkHttp & Retrofit)
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
-
-    // 이미지 확대
-    implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.0.0")
-
-    // glide 이미지 로딩
-    implementation ("com.github.bumptech.glide:glide:4.15.1")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
-
-    // shimmer 로딩뷰
-    implementation("com.facebook.shimmer:shimmer:0.5.0")
-
-    // viewPager2
-    implementation("androidx.viewpager2:viewpager2:1.1.0")
-
-    //coroutine 코루틴
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-
-    // Retrofit 라이브러리
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")
-//    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    // dotsIndicator onBoarding dot
-    implementation("com.tbuonomo:dotsindicator:5.0")
+    // 이미지 로딩 및 확대
+    implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.0.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
-    // navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.8.3")
-    implementation("androidx.navigation:navigation-ui-ktx:2.8.3")
+    // UI Components
+    implementation("com.facebook.shimmer:shimmer:0.5.0") // 로딩 애니메이션
+    implementation("com.tbuonomo:dotsindicator:5.0") // ViewPager2 Indicator
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
-    // Rive
-    // During initialization, you may need to add a dependency
-    // for Jetpack Startup
+    // 코루틴
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+
+    // Jetpack Navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.9")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.9")
+
+    // ViewModel & LiveData
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+
+    // Rive (애니메이션)
     implementation("app.rive:rive-android:9.5.5")
     implementation("androidx.startup:startup-runtime:1.2.0")
 
-    // viewModel dependencies
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
-
-    implementation("androidx.core:core-ktx:1.13.1")
+    // 기본 Android 라이브러리
+    implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+
+    // 환경변수 로딩 (Dotenv)
+    implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
+
+    // 테스트 라이브러리
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
-
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-    implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
 }
