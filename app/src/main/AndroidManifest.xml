@@ -50,7 +50,7 @@
         </activity>
 
         <activity
-            android:name=".ui.main.ServiceActivity"
+            android:name=".presentation.main.ServiceActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
 
