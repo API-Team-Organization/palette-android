@@ -13,18 +13,14 @@ class PremiumFragment : Fragment() {
 
     private lateinit var binding: FragmentPremiumBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentPremiumBinding.inflate(inflater, container, false)
-        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
-
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar)?.visibility = View.GONE
         return binding.root
     }
 
     override fun onPause() {
         super.onPause()
-        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.VISIBLE
+        (activity as ServiceActivity).findViewById<View>(R.id.bottomBar)?.visibility = View.VISIBLE
     }
 }

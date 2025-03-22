@@ -60,6 +60,5 @@ sealed interface PromptData {
                 PromptType.USER_INPUT -> UserInput.serializer()
             }
         }
-
     }
 }

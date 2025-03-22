@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.api.palette"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.api.palette"

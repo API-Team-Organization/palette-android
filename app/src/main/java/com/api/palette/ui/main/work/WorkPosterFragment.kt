@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
-import com.api.palette.data.error.CustomException
 import com.api.palette.databinding.FragmentWorkPosterBinding
-import com.api.palette.ui.util.ContextRetainer
 import com.api.palette.ui.util.logE
-import com.api.palette.ui.util.shortToast
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+@Suppress("DEPRECATION")
 class WorkPosterFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkPosterBinding
@@ -29,55 +29,38 @@ class WorkPosterFragment : Fragment() {
     private var isLayoutSorting = false
     private var currentPage = 0
     private val pageSize = 10
-
     private val totalImageList = mutableListOf<String>()
     private var hasMoreImages = true
-
     private var layoutManagerState: Parcelable? = null
     private var lastVisibleItemPosition = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentWorkPosterBinding.inflate(inflater, container, false)
-
-        ContextRetainer.init(requireActivity())
-
         setupRecyclerView()
         setupSwipeRefresh()
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val restoredList = savedInstanceState?.getStringArrayList("totalImageList")
-
         if (restoredList != null) {
             totalImageList.clear()
             totalImageList.addAll(restoredList)
             imageAdapter.setImages(totalImageList)
         }
-
         if (savedInstanceState != null) {
             layoutManagerState = savedInstanceState.getParcelable("layoutManagerState")
             currentPage = savedInstanceState.getInt("currentPage", 0)
             totalImageList.addAll(savedInstanceState.getStringArrayList("totalImageList") ?: listOf())
             hasMoreImages = savedInstanceState.getBoolean("hasMoreImages", true)
-
-            layoutManagerState?.let {
-                binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
-            }
+            layoutManagerState?.let { binding.rvImageList.layoutManager?.onRestoreInstanceState(it) }
         }
-
         if (totalImageList.isEmpty()) {
-            loadImageList(isRefresh = true)
+            loadImageList(true)
         } else {
             restoreImages()
-            layoutManagerState?.let {
-                binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
-            }
+            layoutManagerState?.let { binding.rvImageList.layoutManager?.onRestoreInstanceState(it) }
         }
     }
 
@@ -86,93 +69,63 @@ class WorkPosterFragment : Fragment() {
             gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
         }
         binding.rvImageList.layoutManager = staggeredGridLayoutManager
-
-        imageAdapter = ImageAdapter(mutableListOf()) {
-            loadImageList(isRefresh = true)
-        }
+        imageAdapter = ImageAdapter(mutableListOf()) { loadImageList(true) }
         binding.rvImageList.adapter = imageAdapter
-
         binding.rvImageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (hasMoreImages && !isLayoutSorting && !isLoading && !recyclerView.canScrollVertically(1)) {
-                        loadImageList()
-                    }
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && hasMoreImages && !isLayoutSorting && !isLoading && !recyclerView.canScrollVertically(1)) {
+                    loadImageList(false)
                 }
             }
-
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val lastPositions = staggeredGridLayoutManager.findLastVisibleItemPositions(null)
                 lastVisibleItemPosition = lastPositions.maxOrNull() ?: 0
             }
         })
-
     }
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             if (!isLoading && !isLayoutSorting) {
-                loadImageList(isRefresh = true)
+                loadImageList(true)
             }
         }
     }
 
-    private fun loadImageList(isRefresh: Boolean = false) {
+    private fun loadImageList(isRefresh: Boolean) {
         if (isLoading || isLayoutSorting) return
-
         if (!isRefresh && !hasMoreImages) {
             binding.swipeRefreshLayout.isRefreshing = false
             return
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             if (isRefresh) {
                 currentPage = 0
                 totalImageList.clear()
                 imageAdapter.clearImages()
                 hasMoreImages = true
             }
-
             isLoading = true
             isLayoutSorting = true
             binding.swipeRefreshLayout.isRefreshing = true
-
             try {
                 val token = PaletteApplication.prefs.token
                 val response = withContext(Dispatchers.IO) {
-                    try {
-                        ChatRequestManager.getImageList(token, currentPage, pageSize)
-                    } catch (e: CustomException) {
-                        withContext(Dispatchers.Main) {
-                            shortToast(e.errorResponse.message)
-                        }
-                        null
-                    }
-                } ?: return@launch
-
-                val imageList = response.data
-
-                if (imageList.images.isEmpty()) {
+                    ChatRequestManager.getImageList(token, currentPage, pageSize)
+                }
+                val imageList = response?.data?.images ?: listOf()
+                if (imageList.isEmpty()) {
                     hasMoreImages = false
                     binding.swipeRefreshLayout.isRefreshing = false
                     isLoading = false
                     isLayoutSorting = false
                     return@launch
                 }
-
-                totalImageList.addAll(imageList.images)
-
-                updateUI(imageList.images, isRefresh)
+                totalImageList.addAll(imageList)
+                updateUI(imageList, isRefresh)
                 currentPage++
-
-                binding.rvImageList.viewTreeObserver.addOnGlobalLayoutListener {
-                    if (layoutManagerState == null) {
-                        staggeredGridLayoutManager.invalidateSpanAssignments()
-                    }
-                }
             } catch (e: Exception) {
                 logE("Error: ${e.message}")
             } finally {
@@ -185,13 +138,10 @@ class WorkPosterFragment : Fragment() {
 
     private fun restoreImages() {
         updateUI(totalImageList, true)
-
-        layoutManagerState?.let { state ->
-            binding.rvImageList.layoutManager?.onRestoreInstanceState(state)
+        layoutManagerState?.let {
+            binding.rvImageList.layoutManager?.onRestoreInstanceState(it)
         } ?: run {
-            binding.rvImageList.post {
-                staggeredGridLayoutManager.scrollToPositionWithOffset(lastVisibleItemPosition, 0)
-            }
+            binding.rvImageList.post { staggeredGridLayoutManager.scrollToPositionWithOffset(lastVisibleItemPosition, 0) }
         }
     }
 
@@ -202,14 +152,12 @@ class WorkPosterFragment : Fragment() {
         } else {
             binding.tvNoImages.visibility = View.GONE
             binding.rvImageList.visibility = View.VISIBLE
-
             if (isRefresh) {
                 imageAdapter.updateImages(images)
             } else {
                 imageAdapter.addImages(images)
             }
         }
-
         binding.rvImageList.post {
             staggeredGridLayoutManager.invalidateSpanAssignments()
             binding.rvImageList.requestLayout()
@@ -218,21 +166,15 @@ class WorkPosterFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
-        val layoutManagerState = binding.rvImageList.layoutManager?.onSaveInstanceState()
-        outState.putParcelable("layoutManagerState", layoutManagerState)
-
+        val state = binding.rvImageList.layoutManager?.onSaveInstanceState()
+        outState.putParcelable("layoutManagerState", state)
         outState.putInt("currentPage", currentPage)
         outState.putStringArrayList("totalImageList", ArrayList(totalImageList))
         outState.putBoolean("hasMoreImages", hasMoreImages)
-
-        val lastPositions = staggeredGridLayoutManager.findLastVisibleItemPositions(null)
-        outState.putIntArray("lastVisiblePositions", lastPositions)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-
         if (savedInstanceState != null) {
             layoutManagerState = savedInstanceState.getParcelable("layoutManagerState")
             currentPage = savedInstanceState.getInt("currentPage", 0)
@@ -248,8 +190,6 @@ class WorkPosterFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            Glide.get(requireContext()).clearDiskCache()
-        }
+        lifecycleScope.launch(Dispatchers.IO) { Glide.get(requireContext()).clearDiskCache() }
     }
 }

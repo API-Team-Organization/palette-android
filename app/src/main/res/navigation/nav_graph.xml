@@ -167,6 +167,10 @@
         <action
             android:id="@+id/action_settingFragment_to_premiumFragment"
             app:destination="@id/premiumFragment" />
+
+        <action
+            android:id="@+id/action_settingFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 
     <fragment

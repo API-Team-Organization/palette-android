@@ -16,17 +16,10 @@ class AppInfoFragment : Fragment() {
 
     private lateinit var binding: FragmentAppInfoBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentAppInfoBinding.inflate(inflater, container, false)
         (activity as ServiceActivity).findViewById<View>(R.id.bottomBar).visibility = View.GONE
-
-        binding.appInfo.setOnClickListener {
-            goToDevAppInfoPage()
-        }
-
+        binding.appInfo.setOnClickListener { goToDevAppInfoPage() }
         return binding.root
     }
 

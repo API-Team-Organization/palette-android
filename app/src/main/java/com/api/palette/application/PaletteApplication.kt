@@ -1,23 +1,27 @@
 package com.api.palette.application
 
 import android.app.Application
-import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.api.palette.data.ApiClient
+import com.api.palette.data.repository.AppRepository
+import com.api.palette.data.repository.RepositoryProvider
 
 class PaletteApplication : Application() {
 
     companion object {
         lateinit var prefs: PreferenceManager
-
-        private lateinit var instance: PaletteApplication
-
-        fun getContext(): Context {
-            return instance
-        }
+        lateinit var appRepository: AppRepository
+        lateinit var instance: PaletteApplication
+        @Suppress("unused")
+        fun getContext() = instance
     }
+
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         instance = this
+        prefs = PreferenceManager(applicationContext)
+        val retrofit = ApiClient.retrofit
+        appRepository = RepositoryProvider.provideAppRepository(retrofit)
     }
 }

@@ -1,7 +1,6 @@
 package com.api.palette.ui.register
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,55 +12,38 @@ import androidx.navigation.fragment.findNavController
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
 import com.api.palette.databinding.FragmentJoinEmailBinding
+import com.api.palette.viewmodel.RegisterViewModel
 import java.util.regex.Pattern
 
 class JoinEmailFragment : Fragment() {
-    private lateinit var binding : FragmentJoinEmailBinding
+    private lateinit var binding: FragmentJoinEmailBinding
     private val registerViewModel: RegisterViewModel by activityViewModels()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentJoinEmailBinding.inflate(inflater, container, false)
-
-        binding.btnCheckNum.setOnClickListener {
-            checkEmail()
-        }
-
+        binding.btnCheckNum.setOnClickListener { checkEmail() }
         binding.etJoinEmail.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.etJoinEmail.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.blue)
-            } else {
-                binding.etJoinEmail.backgroundTintList =
-                    ContextCompat.getColorStateList(requireContext(), R.color.black)
-            }
+            binding.etJoinEmail.backgroundTintList = ContextCompat.getColorStateList(requireContext(), if (hasFocus) R.color.blue else R.color.black)
         }
-
         return binding.root
     }
 
     private fun checkEmail() {
         val email = binding.etJoinEmail.text.toString().trim()
-
-        with(binding) {
-            if (email.isEmpty()) {
-                checkEmailFailed(etJoinEmail)
-                failedEmailEmpty.visibility = View.VISIBLE
-                failedEmailFormat.visibility = View.GONE
+        if (email.isEmpty()) {
+            checkEmailFailed(binding.etJoinEmail)
+            binding.failedEmailEmpty.visibility = View.VISIBLE
+            binding.failedEmailFormat.visibility = View.GONE
+        } else {
+            val isEmailValid = emailRegularExpression(email)
+            if (isEmailValid) {
+                registerViewModel.setEmail(email)
+                PaletteApplication.prefs.userId = email
+                findNavController().navigate(R.id.action_joinEmailFragment_to_joinPasswordFragment)
             } else {
-                val isEmailValid = emailRegularExpression(email)
-                Log.d("isEmailValid", "${emailRegularExpression(email)}")
-
-                if (isEmailValid) {
-                    registerViewModel.setEmail(email)
-                    PaletteApplication.prefs.userId = email
-                    findNavController().navigate(R.id.action_joinEmailFragment_to_joinPasswordFragment)
-                } else {
-                    checkEmailFailed(etJoinEmail)
-                    failedEmailFormat.visibility = View.VISIBLE
-                    failedEmailEmpty.visibility = View.GONE
-                }
+                checkEmailFailed(binding.etJoinEmail)
+                binding.failedEmailFormat.visibility = View.VISIBLE
+                binding.failedEmailEmpty.visibility = View.GONE
             }
         }
     }
@@ -73,7 +55,7 @@ class JoinEmailFragment : Fragment() {
     }
 
     private fun emailRegularExpression(email: String): Boolean {
-        val emailPattern = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}\$"
+        val emailPattern = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\\.[a-zA-Z]{2,3}\$"
         val pattern = Pattern.compile(emailPattern)
         val matcher = pattern.matcher(email)
         return matcher.find()

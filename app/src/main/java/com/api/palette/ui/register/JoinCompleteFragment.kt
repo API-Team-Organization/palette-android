@@ -13,20 +13,12 @@ import com.api.palette.R
 import com.api.palette.databinding.FragmentJoinCompleteBinding
 
 class JoinCompleteFragment : Fragment() {
-    private lateinit var binding : FragmentJoinCompleteBinding
+    private lateinit var binding: FragmentJoinCompleteBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentJoinCompleteBinding.inflate(inflater, container, false)
-
         goodGradation()
-
-        binding.btnStart.setOnClickListener {
-            findNavController().navigate(R.id.action_joinCompleteFragment_to_loginFragment)
-        }
-
+        binding.btnStart.setOnClickListener { findNavController().navigate(R.id.action_joinCompleteFragment_to_loginFragment) }
         return binding.root
     }
 
@@ -34,9 +26,7 @@ class JoinCompleteFragment : Fragment() {
         val good = binding.good
         val textShader = LinearGradient(0f, 0f, 100f, 100f,
             intArrayOf(Color.parseColor("#6389E9"), Color.parseColor("#555FE8")),
-            floatArrayOf(0f, 1f), Shader.TileMode.CLAMP
-        )
-
+            floatArrayOf(0f, 1f), Shader.TileMode.CLAMP)
         good.paint.shader = textShader
     }
 }

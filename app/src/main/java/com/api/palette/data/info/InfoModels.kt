@@ -9,3 +9,6 @@ data class ProfileData(
     val email: String,
     val birthDate: String
 )
+
+@Serializable
+data class ChangeInfoRequest(val username: String?, val birthDate: String?)

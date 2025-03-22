@@ -31,7 +31,6 @@ interface ChatService {
         @Query("size") size: Int
     ): Response<DataResponse<MutableList<MessageResponse>>>
 
-    // 아무튼 Chat 임. ^^7
     @GET("room/{roomId}/qna")
     suspend fun getQnAForRoom(
         @Header("X-AUTH-Token") token: String,

@@ -41,7 +41,6 @@ interface RoomService {
         @Body title: TitleData
     ): Response<VoidResponse>
 
-    // regen poster
     @POST("room/{roomId}/regen")
     suspend fun regenRoom(
         @Header("X-AUTH-Token") token: String,
