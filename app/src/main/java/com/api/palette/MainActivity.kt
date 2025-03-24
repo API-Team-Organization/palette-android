@@ -13,6 +13,7 @@ import com.api.palette.ui.util.log
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         handleAuth()
         initView()
     }
+
     private fun initView() {
         val prefs = PaletteApplication.prefs
         if (prefs.isFirst) {
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
             log("최초실행이 아닙니다.")
         }
     }
+
     private fun handleAuth() {
         if (PaletteApplication.prefs.token.isNotEmpty()) {
             Log.d(Constant.TAG,"token is not Empty")
