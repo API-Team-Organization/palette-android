@@ -17,8 +17,11 @@ class JoinCompleteFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentJoinCompleteBinding.inflate(inflater, container, false)
+
         goodGradation()
+
         binding.btnStart.setOnClickListener { findNavController().navigate(R.id.action_joinCompleteFragment_to_loginFragment) }
+
         return binding.root
     }
 

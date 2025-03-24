@@ -25,11 +25,13 @@ class JoinEmailFragment : Fragment() {
         binding.etJoinEmail.setOnFocusChangeListener { _, hasFocus ->
             binding.etJoinEmail.backgroundTintList = ContextCompat.getColorStateList(requireContext(), if (hasFocus) R.color.blue else R.color.black)
         }
+
         return binding.root
     }
 
     private fun checkEmail() {
         val email = binding.etJoinEmail.text.toString().trim()
+
         if (email.isEmpty()) {
             checkEmailFailed(binding.etJoinEmail)
             binding.failedEmailEmpty.visibility = View.VISIBLE

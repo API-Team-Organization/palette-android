@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.api.palette.application.PaletteApplication
-import com.api.palette.data.room.data.RoomData
-import com.api.palette.data.room.data.TitleData
+import com.api.palette.data.room.RoomData
+import com.api.palette.data.room.TitleData
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 

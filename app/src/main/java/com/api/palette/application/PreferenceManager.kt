@@ -31,7 +31,6 @@ class PreferenceManager(context: Context) {
         private val key: String,
         private val defaultValue: T
     ) {
-        @Suppress("UNCHECKED_CAST")
         operator fun getValue(thisRef: Any?, property: Any?): T {
             return when (defaultValue) {
                 is String -> prefs.getString(key, defaultValue) as T

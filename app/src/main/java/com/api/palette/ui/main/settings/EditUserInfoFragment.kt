@@ -19,6 +19,7 @@ class EditUserInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditUserInfoBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 

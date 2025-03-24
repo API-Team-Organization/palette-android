@@ -46,7 +46,7 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         if (!chat.isAi) {
             (holder as RightViewHolder).bind(chat)
         } else {
-            (holder as LeftViewHolder).bind(chat, isLast)
+            (holder as LeftViewHolder).bind(chat)
         }
     }
 
@@ -64,9 +64,8 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(chat: MessageResponse, isLast: Boolean) {
+        fun bind(chat: MessageResponse) {
             binding.textGchatMessagePalette.text = chat.message
-            // 필요에 따라 isLast에 따른 추가 UI 업데이트 구현
         }
     }
 

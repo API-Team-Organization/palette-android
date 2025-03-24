@@ -60,6 +60,7 @@ class LoginFragment : Fragment() {
                 binding.etLoginPassword.background = ContextCompat.getDrawable(binding.etLoginPassword.context, R.drawable.bac_card_background)
                 return@setOnClickListener
             }
+
             if (binding.etLoginPassword.text.isNullOrEmpty()) {
                 handleLoginFailure(binding.etLoginPassword)
                 binding.passwordFailedText.visibility = View.VISIBLE
@@ -67,10 +68,12 @@ class LoginFragment : Fragment() {
                 binding.etLoginEmail.background = ContextCompat.getDrawable(binding.etLoginEmail.context, R.drawable.bac_card_background)
                 return@setOnClickListener
             }
+
             val email = binding.etLoginEmail.text.toString()
             val pw = binding.etLoginPassword.text.toString()
             loginViewModel.login(email, pw)
         }
+
         binding.tvRegister.setOnClickListener {
             disableOnBackPressedCallback()
             findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)

@@ -21,12 +21,15 @@ class StartFragment : Fragment() {
 
     private fun initView() {
         PaletteApplication.prefs.isFirst = false
+
         if (!PaletteApplication.prefs.isFirst) {
             findNavController().navigate(R.id.action_startFragment_to_loginFragment)
         }
+
         binding.signInText.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_loginFragment)
         }
+
         binding.startButton.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_joinEmailFragment)
         }

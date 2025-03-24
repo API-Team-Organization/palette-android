@@ -12,15 +12,17 @@ class PaletteApplication : Application() {
         lateinit var prefs: PreferenceManager
         lateinit var appRepository: AppRepository
         lateinit var instance: PaletteApplication
-        @Suppress("unused")
+
         fun getContext() = instance
     }
 
     override fun onCreate() {
         super.onCreate()
+
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         instance = this
         prefs = PreferenceManager(applicationContext)
+
         val retrofit = ApiClient.retrofit
         appRepository = RepositoryProvider.provideAppRepository(retrofit)
     }

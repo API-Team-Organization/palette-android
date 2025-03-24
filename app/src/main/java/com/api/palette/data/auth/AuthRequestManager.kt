@@ -6,7 +6,6 @@ import com.api.palette.application.PaletteApplication
 import retrofit2.HttpException
 import retrofit2.Response
 
-@Suppress("unused")
 object AuthRequestManager {
     private val authRepository = PaletteApplication.appRepository.authRepository
 

@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.api.palette.R
-import com.api.palette.data.room.data.RoomData
+import com.api.palette.data.room.RoomData
 import com.api.palette.databinding.ItemWorkRecyclerBinding
 
 class CreateMediaAdapter(
@@ -44,6 +44,7 @@ class CreateMediaAdapter(
             } else {
                 SpannableString(textView.text)
             }
+
             val touchHandled = textView.movementMethod.onTouchEvent(textView, spannableText, event)
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {

@@ -15,12 +15,16 @@ class WorkFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentWorkBinding.inflate(inflater, container, false)
+
         val viewPager2: ViewPager2 = binding.viewPager
         val adapter = WorkPagerAdapter(requireActivity())
+
         viewPager2.adapter = adapter
+
         TabLayoutMediator(binding.workTabLayout, binding.viewPager) { tab, pos ->
             tab.text = tabTextList[pos]
         }.attach()
+
         return binding.root
     }
 }

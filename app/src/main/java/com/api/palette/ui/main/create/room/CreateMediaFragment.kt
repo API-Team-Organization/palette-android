@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.api.palette.data.room.data.RoomData
+import com.api.palette.data.room.RoomData
 import com.api.palette.databinding.FragmentCreateMediaBinding
 import com.api.palette.ui.main.create.room.adapter.CreateMediaAdapter
 import com.api.palette.ui.main.create.chat.ChattingFragment
@@ -24,6 +24,7 @@ class CreateMediaFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCreateMediaBinding.inflate(inflater, container, false)
+
         loadProfileInfo()
         showSampleData(true)
         roomViewModel.getRoomList()
@@ -31,6 +32,7 @@ class CreateMediaFragment : Fragment() {
         binding.llStartNewWork.setOnClickListener {
             roomViewModel.createRoom()
         }
+
         return binding.root
     }
 
@@ -44,11 +46,13 @@ class CreateMediaFragment : Fragment() {
                 initWorkAdapter()
             }
         }
+
         roomViewModel.createRoomResponse.observe(viewLifecycleOwner) { roomData ->
             roomData?.let {
                 changeFragment(ChattingFragment(roomId = it.id, title = it.title ?: "New Chat", isFirst = true))
             } ?: shortToast("룸 생성 오류")
         }
+
         roomViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (!error.isNullOrEmpty()) {
                 shortToast(error)
@@ -65,7 +69,7 @@ class CreateMediaFragment : Fragment() {
                 startChatting(itemList[position].id, itemList[position].title ?: "Chat")
             }
             override fun onItemLongClick(position: Int) {
-                // 삭제 로직 구현 (필요 시)
+                // 삭제 로직
             }
         }
     }
@@ -87,6 +91,6 @@ class CreateMediaFragment : Fragment() {
     }
 
     private fun loadProfileInfo() {
-        // 프로필 정보 로드 (필요 시 InfoViewModel 사용)
+        // 프로필 정보 로드
     }
 }

@@ -1,4 +1,4 @@
-package com.api.palette.ui.main.work
+package com.api.palette.ui.main.work.adapter
 
 import android.app.Dialog
 import android.content.Context
@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +46,7 @@ class ImageAdapter(
             imageView.recycle()
             currentBitmap?.recycle()
             currentBitmap = null
+
             Glide.with(itemView.context)
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -64,6 +66,7 @@ class ImageAdapter(
                         imageView.recycle()
                     }
                 })
+
             imageView.setOnClickListener { showZoomedImageDialog(itemView.context, imageUrl) }
             imageView.setOnLongClickListener {
                 showDownloadOrShareDialog(itemView.context, imageUrl)
@@ -82,44 +85,57 @@ class ImageAdapter(
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)
         return ImageViewHolder(view)
     }
+
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.bind(images[position])
     }
+
     override fun getItemCount(): Int = images.size
+
     override fun onViewRecycled(holder: ImageViewHolder) {
         super.onViewRecycled(holder)
         holder.recycle()
     }
+
     fun setImages(newImages: List<String>) {
         images.clear()
         images.addAll(newImages)
         notifyDataSetChanged()
     }
+
     fun updateImages(newImages: List<String>) {
         images.clear()
         images.addAll(newImages)
         notifyDataSetChanged()
     }
+
     fun addImages(newImages: List<String>) {
         val startPosition = images.size
         images.addAll(newImages)
         notifyItemRangeInserted(startPosition, newImages.size)
     }
+
     fun clearImages() {
         val size = images.size
         images.clear()
         notifyItemRangeRemoved(0, size)
     }
+
     private fun showZoomedImageDialog(context: Context, imageUrl: String) {
         currentDialog?.dismiss()
+
         val dialog = Dialog(context)
         currentDialog = dialog
+
         val dialogView = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
         val imageView = dialogView.findViewById<SubsamplingScaleImageView>(R.id.imageView)
         val closeButton = dialogView.findViewById<ImageView>(R.id.btn_close)
+
         imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
         closeButton.setOnClickListener { dialog.dismiss() }
+
         var dialogBitmap: Bitmap? = null
+
         Glide.with(context)
             .asBitmap()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -136,29 +152,36 @@ class ImageAdapter(
                     imageView.recycle()
                 }
             })
+
         dialog.setOnDismissListener {
             dialogBitmap?.let { if (!it.isRecycled) it.recycle() }
             imageView.recycle()
             currentDialog = null
         }
+
         dialog.setContentView(dialogView)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         val screenHeight = context.resources.displayMetrics.heightPixels
         val dialogHeight = (screenHeight * 0.9).toInt()
         dialog.window?.setLayout(context.resources.displayMetrics.widthPixels, dialogHeight)
         dialog.show()
     }
+
     private fun showDownloadOrShareDialog(context: Context, imageUrl: String) {
         val dialogBuilder = AlertDialog.Builder(context)
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_download_image, null)
         dialogBuilder.setView(dialogView)
+
         val dialog = dialogBuilder.create()
         val shareButton: TextView = dialogView.findViewById(R.id.noTextView)
         val downloadButton: TextView = dialogView.findViewById(R.id.yesTextView)
+
         shareButton.setOnClickListener {
             coroutineScope.launch { shareImage(context, imageUrl) }
             dialog.dismiss()
         }
+
         downloadButton.setOnClickListener {
             coroutineScope.launch {
                 val bitmap = downloadBitmap(imageUrl)
@@ -173,6 +196,7 @@ class ImageAdapter(
         dialog.show()
         dialog.window?.setLayout((context.resources.displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
     }
+
     private suspend fun shareImage(context: Context, imageUrl: String) {
         withContext(Dispatchers.IO) {
             try {
@@ -193,6 +217,7 @@ class ImageAdapter(
             }
         }
     }
+
     private suspend fun downloadBitmap(urlString: String): Bitmap? = withContext(Dispatchers.IO) {
         try {
             Glide.with(ContextRetainer.getContext())
@@ -206,24 +231,27 @@ class ImageAdapter(
             null
         }
     }
+
     private fun saveImageToGallery(context: Context, bitmap: Bitmap): Uri? {
         if (bitmap.isRecycled) return null
         val contentValues = android.content.ContentValues().apply {
-            put(android.provider.MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image_${System.currentTimeMillis()}.jpg")
-            put(android.provider.MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(android.provider.MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-            put(android.provider.MediaStore.Images.Media.IS_PENDING, 1)
+            put(MediaStore.Images.Media.DISPLAY_NAME, "downloaded_image_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Audio.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+            put(MediaStore.Images.Media.IS_PENDING, 1)
         }
         val resolver = context.contentResolver
-        val uri = resolver.insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        val uri = resolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues)
+
         uri?.let {
             resolver.openOutputStream(it)?.use { outputStream ->
                 bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, outputStream)
             }
             contentValues.clear()
-            contentValues.put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
         }
+
         return uri
     }
 }

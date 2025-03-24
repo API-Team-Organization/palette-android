@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.databinding.FragmentWorkPosterBinding
+import com.api.palette.ui.main.work.adapter.ImageAdapter
 import com.api.palette.ui.util.logE
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
@@ -36,19 +37,23 @@ class WorkPosterFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentWorkPosterBinding.inflate(inflater, container, false)
+
         setupRecyclerView()
         setupSwipeRefresh()
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val restoredList = savedInstanceState?.getStringArrayList("totalImageList")
         if (restoredList != null) {
             totalImageList.clear()
             totalImageList.addAll(restoredList)
             imageAdapter.setImages(totalImageList)
         }
+
         if (savedInstanceState != null) {
             layoutManagerState = savedInstanceState.getParcelable("layoutManagerState")
             currentPage = savedInstanceState.getInt("currentPage", 0)
@@ -56,6 +61,7 @@ class WorkPosterFragment : Fragment() {
             hasMoreImages = savedInstanceState.getBoolean("hasMoreImages", true)
             layoutManagerState?.let { binding.rvImageList.layoutManager?.onRestoreInstanceState(it) }
         }
+
         if (totalImageList.isEmpty()) {
             loadImageList(true)
         } else {
@@ -68,6 +74,7 @@ class WorkPosterFragment : Fragment() {
         staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
             gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
         }
+
         binding.rvImageList.layoutManager = staggeredGridLayoutManager
         imageAdapter = ImageAdapter(mutableListOf()) { loadImageList(true) }
         binding.rvImageList.adapter = imageAdapter
@@ -78,6 +85,7 @@ class WorkPosterFragment : Fragment() {
                     loadImageList(false)
                 }
             }
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val lastPositions = staggeredGridLayoutManager.findLastVisibleItemPositions(null)
@@ -96,10 +104,12 @@ class WorkPosterFragment : Fragment() {
 
     private fun loadImageList(isRefresh: Boolean) {
         if (isLoading || isLayoutSorting) return
+
         if (!isRefresh && !hasMoreImages) {
             binding.swipeRefreshLayout.isRefreshing = false
             return
         }
+
         lifecycleScope.launch {
             if (isRefresh) {
                 currentPage = 0
@@ -110,6 +120,7 @@ class WorkPosterFragment : Fragment() {
             isLoading = true
             isLayoutSorting = true
             binding.swipeRefreshLayout.isRefreshing = true
+
             try {
                 val token = PaletteApplication.prefs.token
                 val response = withContext(Dispatchers.IO) {
@@ -158,6 +169,7 @@ class WorkPosterFragment : Fragment() {
                 imageAdapter.addImages(images)
             }
         }
+
         binding.rvImageList.post {
             staggeredGridLayoutManager.invalidateSpanAssignments()
             binding.rvImageList.requestLayout()

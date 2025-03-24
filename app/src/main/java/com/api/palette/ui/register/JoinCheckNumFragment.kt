@@ -21,12 +21,16 @@ class JoinCheckNumFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentJoinCheckNumBinding.inflate(inflater, container, false)
+
         showEmail()
+
         binding.btnCheckNum.setOnClickListener {
             val verificationCode = binding.etJoinCheckNum.text.toString()
             verifyCode(verificationCode)
         }
+
         binding.tvResend.setOnClickListener { resendCode() }
+
         binding.etJoinCheckNum.setOnFocusChangeListener { _, hasFocus ->
             binding.etJoinCheckNum.backgroundTintList = ContextCompat.getColorStateList(requireContext(), if (hasFocus) R.color.blue else R.color.black)
         }

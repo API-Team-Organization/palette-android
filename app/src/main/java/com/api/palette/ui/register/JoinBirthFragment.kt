@@ -20,12 +20,15 @@ class JoinBirthFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentJoinBirthBinding.inflate(inflater, container, false)
+
         datePickerDefaultSettings()
+
         binding.btnContinue.setOnClickListener {
             val dateOfBirth = getSelectedDate()
             registerViewModel.setBirthdate(dateOfBirth)
             findNavController().navigate(R.id.action_joinBirthFragment_to_joinNameFragment)
         }
+
         return binding.root
     }
 

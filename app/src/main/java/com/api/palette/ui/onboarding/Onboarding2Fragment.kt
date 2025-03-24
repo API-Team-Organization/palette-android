@@ -14,8 +14,10 @@ class Onboarding2Fragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentOnboarding2Binding.inflate(inflater, container, false)
+
         val riveAnimationView: RiveAnimationView = binding.onBoarding2Animation
         riveAnimationView.setRiveResource(R.raw.document_icon_new)
+
         return binding.root
     }
 }

@@ -15,6 +15,7 @@ class Onboarding3Fragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentOnboarding3Binding.inflate(inflater, container, false)
+
         val riveAnimationView: RiveAnimationView = binding.onBoarding3Animation
         riveAnimationView.setRiveResource(R.raw.swipe)
 

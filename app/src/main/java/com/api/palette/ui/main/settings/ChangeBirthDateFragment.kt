@@ -21,7 +21,9 @@ class ChangeBirthDateFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentChangeBirthDateBinding.inflate(inflater, container, false)
+
         datePickerDefaultSettings()
+
         binding.ivArrowBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         binding.changeBirthDateBtn.setOnClickListener {
             val birthDate = getSelectedDate()
@@ -32,15 +34,17 @@ class ChangeBirthDateFragment : Fragment() {
             infoViewModel.changeBirthDate(birthDate)
             requireActivity().supportFragmentManager.popBackStack()
         }
+
         return binding.root
     }
 
-    @SuppressLint("ServiceCast")
     private fun datePickerDefaultSettings() {
         val datePicker = binding.changeBirthDateSpinner
         datePicker.maxDate = System.currentTimeMillis() - 1000
+
         val calendar = Calendar.getInstance()
         calendar.set(2000, Calendar.JANUARY, 1)
+
         datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)) { _, _, _, _ -> }
     }
 
@@ -51,6 +55,7 @@ class ChangeBirthDateFragment : Fragment() {
         val year = datePicker.year
         val calendar = Calendar.getInstance().apply { set(year, month, day) }
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
         return format.format(calendar.time)
     }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.api.palette.R
+import com.api.palette.application.PaletteApplication
 import com.api.palette.databinding.FragmentSettingBinding
 import com.api.palette.ui.util.changeFragment
 
@@ -15,12 +16,15 @@ class SettingFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+
         loadUserNameInfo()
+
         binding.llLogout.setOnClickListener { showLogoutDialog() }
         binding.llResign.setOnClickListener { resignDialog(requireContext()) }
         binding.llPrivacyPolicy.setOnClickListener { goToPrivacyPolicyPage() }
         binding.llAppInfo.setOnClickListener { goToAppInfoPage() }
         binding.llMy.setOnClickListener { changeFragment(MyInfoFragment()) }
+
         return binding.root
     }
 
@@ -37,19 +41,24 @@ class SettingFragment : Fragment() {
             .create()
         val noLogoutTextView = dialogView.findViewById<android.widget.TextView>(R.id.noLogoutTextView)
         val logoutTextView = dialogView.findViewById<android.widget.TextView>(R.id.logoutTextView)
+
         noLogoutTextView.setOnClickListener { dialog.dismiss() }
+
         logoutTextView.setOnClickListener {
             logout()
             dialog.dismiss()
         }
+
         dialog.show()
     }
 
     private fun logout() {
-        com.api.palette.application.PaletteApplication.prefs.clearToken()
-        com.api.palette.application.PaletteApplication.prefs.clearUser()
+        PaletteApplication.prefs.clearToken()
+        PaletteApplication.prefs.clearUser()
+
         val intent = android.content.Intent(activity, com.api.palette.MainActivity::class.java)
         requireActivity().startActivity(intent)
+
         activity?.finish()
     }
 
@@ -79,18 +88,22 @@ class SettingFragment : Fragment() {
             .create()
         val noTextView = dialogView.findViewById<android.widget.TextView>(R.id.noTextView)
         val yesTextView = dialogView.findViewById<android.widget.TextView>(R.id.yesTextView)
+
         noTextView.setOnClickListener { dialog.dismiss() }
+
         yesTextView.setOnClickListener {
             resign()
+
             val intent = android.content.Intent(context, com.api.palette.MainActivity::class.java)
             context.startActivity(intent)
+
             (context as? android.app.Activity)?.finish()
+
             dialog.dismiss()
         }
+
         dialog.show()
     }
 
-    private fun resign() {
-
-    }
+    private fun resign() {}
 }

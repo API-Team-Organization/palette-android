@@ -1,8 +1,8 @@
 package com.api.palette.data.repository
 
 import com.api.palette.data.room.RoomService
-import com.api.palette.data.room.data.RoomData
-import com.api.palette.data.room.data.TitleData
+import com.api.palette.data.room.RoomData
+import com.api.palette.data.room.TitleData
 import com.api.palette.data.base.DataResponse
 import com.api.palette.data.base.VoidResponse
 import retrofit2.Response

@@ -19,8 +19,11 @@ class ChangePasswordFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
+
         (activity as? com.api.palette.ui.main.ServiceActivity)?.findViewById<View>(R.id.bottomBar)?.visibility = View.GONE
+
         initView()
+
         binding.ivArrowBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 
         authViewModel.passwordChangeResponse.observe(viewLifecycleOwner) { success ->
@@ -29,6 +32,7 @@ class ChangePasswordFragment : Fragment() {
                 requireActivity().supportFragmentManager.popBackStack()
             }
         }
+
         authViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (!error.isNullOrEmpty()) {
                 shortToast(error)

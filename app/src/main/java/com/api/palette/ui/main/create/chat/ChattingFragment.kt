@@ -29,12 +29,16 @@ class ChattingFragment(
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentChattingBinding.inflate(inflater, container, false)
         binding.chattingToolbar.title = title
+
         setupRecyclerView()
         setupListeners()
+
         chatViewModel.currentRoomId = roomId
         chatViewModel.loadChatList()
         chatViewModel.loadQnAList(roomId)
+
         observeViewModel()
+
         return binding.root
     }
 
@@ -53,6 +57,7 @@ class ChattingFragment(
             chatViewModel.sendChatMessage(roomId, chat)
             binding.chattingEditText.text.clear()
         }
+
         binding.chattingRecycler.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: androidx.recyclerview.widget.RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -72,9 +77,11 @@ class ChattingFragment(
             recyclerAdapter.setData(chats)
             binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount)
         })
+
         chatViewModel.qnaList.observe(viewLifecycleOwner, Observer { qna ->
             recyclerAdapter.setQnAList(qna)
         })
+
         chatViewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
             if (!error.isNullOrEmpty()) {
                 shortToast(error)

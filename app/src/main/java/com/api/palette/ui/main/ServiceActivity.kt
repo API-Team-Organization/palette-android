@@ -99,8 +99,10 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         changeFragment(createMediaFragment, supportFragmentManager)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         log(PaletteApplication.prefs.token)
+
         riveAnimationView.addEventListener(eventListener)
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
         setContentView(binding.root)
     }
 
@@ -143,12 +145,14 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         val dialog = AlertDialog.Builder(context).setView(dialogView).setCancelable(false).create()
         val tvSession: TextView = dialogView.findViewById(R.id.tv_session)
         PaletteApplication.prefs.clearToken()
+
         tvSession.setOnClickListener {
             val intent = Intent(context, MainActivity::class.java)
             context.startActivity(intent)
             (context as? Activity)?.finish()
             dialog.dismiss()
         }
+
         dialog.show()
     }
 
@@ -156,10 +160,12 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_network_error, null)
         val dialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(false).create()
         val tvExit: TextView = dialogView.findViewById(R.id.tv_session)
+
         tvExit.setOnClickListener {
             finishAffinity()
             dialog.dismiss()
         }
+
         dialog.show()
     }
 

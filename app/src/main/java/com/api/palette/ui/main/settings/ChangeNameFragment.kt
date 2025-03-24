@@ -19,10 +19,13 @@ class ChangeNameFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentChangeNameBinding.inflate(inflater, container, false)
+
         (requireActivity() as? com.api.palette.ui.base.BaseControllable)?.bottomVisible(false)
+
         binding.etChangeName.setOnFocusChangeListener { _, hasFocus ->
             binding.etChangeName.backgroundTintList = ContextCompat.getColorStateList(requireContext(), if (hasFocus) R.color.blue else R.color.black)
         }
+
         binding.ivArrowBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         binding.changeNameBtn.setOnClickListener {
             val username = binding.etChangeName.text.toString().trim()
@@ -33,6 +36,7 @@ class ChangeNameFragment : Fragment() {
             infoViewModel.changeName(username)
             requireActivity().supportFragmentManager.popBackStack()
         }
+
         return binding.root
     }
 }

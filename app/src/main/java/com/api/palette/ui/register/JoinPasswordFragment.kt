@@ -21,12 +21,15 @@ class JoinPasswordFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentJoinPasswordBinding.inflate(inflater, container, false)
         binding.btnNext.setOnClickListener { checkPassword() }
+
         binding.etPassword.setOnFocusChangeListener { _, hasFocus ->
             binding.etPassword.backgroundTintList = ContextCompat.getColorStateList(requireContext(), if (hasFocus) R.color.blue else R.color.black)
         }
+
         binding.etCheckPassword.setOnFocusChangeListener { _, hasFocus ->
             binding.etCheckPassword.backgroundTintList = ContextCompat.getColorStateList(requireContext(), if (hasFocus) R.color.blue else R.color.black)
         }
+
         return binding.root
     }
 
