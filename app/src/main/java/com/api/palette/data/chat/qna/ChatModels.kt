@@ -25,7 +25,6 @@ sealed class ChatAnswer {
     ) : ChatAnswer()
 }
 
-@Suppress("unused")
 @Serializable
 sealed class ChatQuestion(val type: PromptType) {
     @Serializable

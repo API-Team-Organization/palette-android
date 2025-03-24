@@ -174,6 +174,52 @@
     </fragment>
 
     <fragment
+        android:id="@+id/createMediaFragment"
+        android:name="com.api.palette.ui.main.create.room.CreateMediaFragment"
+        android:label="CreateMediaFragment"
+        tools:layout="@layout/fragment_create_media">
+        <action
+            android:id="@+id/action_createMediaFragment_to_chattingFragment"
+            app:destination="@id/chattingFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right">
+            <argument
+                android:name="roomId"
+                app:argType="string" />
+
+            <argument
+                android:name="title"
+                app:argType="string" />
+
+            <argument
+                android:name="isFirst"
+                app:argType="boolean"
+                android:defaultValue="false" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/chattingFragment"
+        android:name="com.api.palette.ui.main.create.chat.ChattingFragment"
+        android:label="ChattingFragment"
+        tools:layout="@layout/fragment_chatting">
+        <argument
+            android:name="roomId"
+            app:argType="string" />
+
+        <argument
+            android:name="title"
+            app:argType="string" />
+
+        <argument
+            android:name="isFirst"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <fragment
         android:id="@+id/changeUserInfoFragment"
         android:name="com.api.palette.ui.main.settings.ChangeNameFragment"
         android:label="fragment_change_user_info"
