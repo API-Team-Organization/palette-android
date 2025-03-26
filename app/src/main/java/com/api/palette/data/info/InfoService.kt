@@ -2,6 +2,8 @@ package com.api.palette.data.info
 
 import com.api.palette.data.base.DataResponse
 import com.api.palette.data.base.VoidResponse
+import com.api.palette.data.info.data.ChangeInfoRequest
+import com.api.palette.data.info.data.ProfileData
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -9,6 +11,7 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 
 interface InfoService {
+
     @GET("info/me")
     suspend fun profileInfo(
         @Header("X-AUTH-Token") token: String,

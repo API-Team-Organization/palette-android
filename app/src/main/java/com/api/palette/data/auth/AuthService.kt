@@ -1,15 +1,15 @@
 package com.api.palette.data.auth
 
+import com.api.palette.data.auth.request.ChangePasswordRequest
+import com.api.palette.data.auth.request.LoginRequest
+import com.api.palette.data.auth.request.RegisterRequest
+import com.api.palette.data.auth.request.VerifyRequest
 import com.api.palette.data.base.VoidResponse
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.PATCH
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface AuthService {
+
     @POST("auth/login")
     suspend fun login(
         @Body loginRequest: LoginRequest

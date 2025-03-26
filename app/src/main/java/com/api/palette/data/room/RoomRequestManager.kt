@@ -11,6 +11,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 
 object RoomRequestManager {
+
     private val roomService: RoomService = ApiClient.retrofit.create(RoomService::class.java)
 
     suspend fun roomRequest(token: String): Response<DataResponse<RoomData>> {
@@ -21,16 +22,16 @@ object RoomRequestManager {
         return roomService.getRoomList(token)
     }
 
-    suspend fun deleteRoom(token: String, id: Int): Response<VoidResponse> {
+    suspend fun deleteRoom(token: String, id: String): Response<VoidResponse> {
         val response = roomService.deleteRoom(token = token, roomId = id)
         if (!response.isSuccessful) {
-            Log.d(Constant.TAG,"RoomRequestManager deleteRoom response is ${response}")
+            Log.d(Constant.TAG, "RoomRequestManager deleteRoom response is $response")
             throw HttpException(response)
         }
         return response
     }
 
-    suspend fun setRoomTitle(token: String, title: TitleData, roomId: Int): Response<VoidResponse> {
+    suspend fun setRoomTitle(token: String, title: TitleData, roomId: String): Response<VoidResponse> {
         val response = roomService.setRoomTitle(token = token, title = title, roomId = roomId)
         if (!response.isSuccessful) {
             Log.d(Constant.TAG, "RoomRequestManager setRoomTitle 실패했습니다. $response")
@@ -38,7 +39,7 @@ object RoomRequestManager {
         return response
     }
 
-    suspend fun regenRoom(token: String, roomId: Int): Response<VoidResponse> {
+    suspend fun regenRoom(token: String, roomId: String): Response<VoidResponse> {
         val response = roomService.regenRoom(token = token, roomId = roomId)
         if (!response.isSuccessful) {
             Log.d(Constant.TAG, "RoomRequestManager regenRoom 실패했습니다. $response")

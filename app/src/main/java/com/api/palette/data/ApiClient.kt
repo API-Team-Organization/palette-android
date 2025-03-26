@@ -9,9 +9,8 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private val BASE_URL: String by lazy {
-        BuildConfig.BASE_URL
-    }
+
+    private val BASE_URL: String by lazy { BuildConfig.BASE_URL }
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
@@ -25,7 +24,9 @@ object ApiClient {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory("application/json; charset=UTF8".toMediaType()))
+            .addConverterFactory(
+                json.asConverterFactory("application/json; charset=UTF8".toMediaType())
+            )
             .build()
     }
 }
