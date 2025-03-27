@@ -16,6 +16,7 @@ import com.api.palette.application.PaletteApplication
 import com.api.palette.common.Constant
 import com.api.palette.data.error.CustomException
 import com.api.palette.databinding.FragmentLoginBinding
+import com.api.palette.presentation.login.viewmodel.LoginViewModel
 import com.api.palette.presentation.main.ServiceActivity
 import com.api.palette.presentation.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint

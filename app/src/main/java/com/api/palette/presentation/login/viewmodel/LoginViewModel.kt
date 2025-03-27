@@ -1,4 +1,4 @@
-package com.api.palette.presentation.login
+package com.api.palette.presentation.login.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
