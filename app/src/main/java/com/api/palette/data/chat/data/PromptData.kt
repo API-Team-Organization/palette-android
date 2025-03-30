@@ -25,12 +25,8 @@ sealed interface PromptData {
         override val answer: ChatAnswer.SelectableAnswer? = null
     ) : PromptData {
         override val type: PromptType = PromptType.SELECTABLE
-
         @Serializable
-        data class Choice(
-            val id: String,
-            val displayName: String
-        )
+        data class Choice(val id: String, val displayName: String)
     }
 
     @Serializable
@@ -58,7 +54,6 @@ sealed interface PromptData {
             val m = element.jsonObject["type"]?.jsonPrimitive?.content?.let {
                 PromptType.valueOf(it)
             } ?: throw SerializationException("$element")
-
             return when (m) {
                 PromptType.SELECTABLE -> Selectable.serializer()
                 PromptType.GRID -> Grid.serializer()

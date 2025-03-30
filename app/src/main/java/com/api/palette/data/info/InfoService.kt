@@ -11,7 +11,6 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 
 interface InfoService {
-
     @GET("info/me")
     suspend fun profileInfo(
         @Header("X-AUTH-Token") token: String,

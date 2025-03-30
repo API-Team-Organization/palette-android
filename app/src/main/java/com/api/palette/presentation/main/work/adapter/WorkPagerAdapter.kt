@@ -6,9 +6,7 @@ import com.api.palette.presentation.main.work.WorkPosterFragment
 import com.api.palette.presentation.main.work.WorkVideoFragment
 
 class WorkPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
-
     override fun getItemCount(): Int = 2
-
     override fun createFragment(position: Int) = when (position) {
         0 -> WorkPosterFragment()
         else -> WorkVideoFragment()

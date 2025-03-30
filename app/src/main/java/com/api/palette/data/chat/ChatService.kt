@@ -7,10 +7,14 @@ import com.api.palette.data.chat.data.PromptData
 import com.api.palette.data.chat.data.QnABody
 import com.api.palette.data.socket.data.MessageResponse
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ChatService {
-
     @POST("chat")
     suspend fun chat(
         @Header("X-AUTH-Token") token: String,

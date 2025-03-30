@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable(with = BaseResponseMessageSerializer::class)
 sealed class BaseResponseMessage {
-
     @Serializable
     data class ChatMessage(
         val id: String,

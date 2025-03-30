@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class ChatQuestion(val type: PromptType) {
-
     @Serializable
     data class SelectableQuestion(
         val choices: List<PromptData.Selectable.Choice>

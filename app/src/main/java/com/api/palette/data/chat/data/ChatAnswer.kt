@@ -11,7 +11,6 @@ import kotlinx.serialization.json.jsonPrimitive
 
 @Serializable(with = ChatAnswer.ChatAnswerSerializer::class)
 sealed class ChatAnswer {
-
     @Serializable
     data class SelectableAnswer(
         val choiceId: String,
@@ -32,12 +31,9 @@ sealed class ChatAnswer {
 
     object ChatAnswerSerializer : JsonContentPolymorphicSerializer<ChatAnswer>(ChatAnswer::class) {
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<ChatAnswer> {
-            val type = element.jsonObject["type"]
-                ?.jsonPrimitive
-                ?.content
+            val type = element.jsonObject["type"]?.jsonPrimitive?.content
                 ?.let { PromptType.valueOf(it) }
                 ?: throw SerializationException("Invalid or missing 'type': $element")
-
             return when (type) {
                 PromptType.SELECTABLE -> SelectableAnswer.serializer()
                 PromptType.GRID -> GridAnswer.serializer()

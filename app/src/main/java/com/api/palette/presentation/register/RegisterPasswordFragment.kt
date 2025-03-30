@@ -1,9 +1,7 @@
 package com.api.palette.presentation.register
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -15,32 +13,20 @@ import com.api.palette.presentation.register.viewmodel.RegisterViewModel
 import java.util.regex.Pattern
 
 class RegisterPasswordFragment : Fragment() {
-
     private var _binding: FragmentJoinPasswordBinding? = null
     private val binding get() = _binding!!
-
     private val registerViewModel: RegisterViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentJoinPasswordBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initListeners()
-    }
-
-    private fun initListeners() {
         binding.btnNext.setOnClickListener { validatePassword() }
-
         binding.etPassword.setOnFocusChangeListener { _, hasFocus ->
             setEditTextFocusColor(binding.etPassword, hasFocus)
         }
-
         binding.etCheckPassword.setOnFocusChangeListener { _, hasFocus ->
             setEditTextFocusColor(binding.etCheckPassword, hasFocus)
         }
@@ -49,24 +35,19 @@ class RegisterPasswordFragment : Fragment() {
     private fun validatePassword() {
         val password = binding.etPassword.text.toString()
         val confirmPassword = binding.etCheckPassword.text.toString()
-
         when {
             password.isEmpty() -> {
                 showError(binding.etPassword, showEmpty = true)
             }
-
             confirmPassword.isEmpty() -> {
                 showError(binding.etCheckPassword, checkEmpty = true)
             }
-
             password != confirmPassword -> {
                 showError(binding.etCheckPassword, mismatch = true)
             }
-
             !isValidPassword(password) -> {
                 showError(binding.etPassword, invalidFormat = true)
             }
-
             else -> {
                 registerViewModel.setPassword(password)
                 findNavController().navigate(R.id.action_joinPasswordFragment_to_joinBirthFragment)
@@ -85,12 +66,10 @@ class RegisterPasswordFragment : Fragment() {
         target.requestFocus()
         target.selectAll()
 
-        with(binding) {
-            failedPasswordEmpty.visibility = if (showEmpty) View.VISIBLE else View.GONE
-            failedCheckPasswordEmpty.visibility = if (checkEmpty) View.VISIBLE else View.GONE
-            failedCheckPasswordDiff.visibility = if (mismatch) View.VISIBLE else View.GONE
-            failedPasswordFormat.visibility = if (invalidFormat) View.VISIBLE else View.GONE
-        }
+        binding.failedPasswordEmpty.visibility = if (showEmpty) View.VISIBLE else View.GONE
+        binding.failedCheckPasswordEmpty.visibility = if (checkEmpty) View.VISIBLE else View.GONE
+        binding.failedCheckPasswordDiff.visibility = if (mismatch) View.VISIBLE else View.GONE
+        binding.failedPasswordFormat.visibility = if (invalidFormat) View.VISIBLE else View.GONE
     }
 
     private fun setEditTextFocusColor(editText: EditText, hasFocus: Boolean) {

@@ -13,19 +13,16 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     @Inject lateinit var prefs: PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (isLoggedIn()) {
             navigateToService()
             return
         }
-
         setContentView(binding.root)
         logFirstLaunchInfo()
     }

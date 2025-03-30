@@ -11,12 +11,8 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.*
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.api.palette.R
@@ -62,7 +58,6 @@ class ImageAdapter(
                         currentBitmap = resource.copy(resource.config ?: Bitmap.Config.ARGB_8888, true)
                         imageView.setImage(ImageSource.bitmap(currentBitmap))
                     }
-
                     override fun onLoadCleared(placeholder: Drawable?) {
                         recycle()
                     }
@@ -80,13 +75,10 @@ class ImageAdapter(
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)
         return ImageViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.bind(images[position])
     }
-
     override fun getItemCount(): Int = images.size
-
     override fun onViewRecycled(holder: ImageViewHolder) {
         super.onViewRecycled(holder)
         holder.recycle()
@@ -97,13 +89,11 @@ class ImageAdapter(
         images.addAll(newImages)
         notifyDataSetChanged()
     }
-
     fun addImages(newImages: List<String>) {
         val start = images.size
         images.addAll(newImages)
         notifyItemRangeInserted(start, newImages.size)
     }
-
     fun clearImages() {
         val size = images.size
         images.clear()
@@ -114,7 +104,6 @@ class ImageAdapter(
         currentDialog?.dismiss()
         val dialog = Dialog(context)
         currentDialog = dialog
-
         val view = LayoutInflater.from(context).inflate(R.layout.item_zoomed_image_dialog, null)
         val imageView = view.findViewById<SubsamplingScaleImageView>(R.id.imageView)
         val close = view.findViewById<ImageView>(R.id.btn_close)
@@ -123,7 +112,6 @@ class ImageAdapter(
         close.setOnClickListener { dialog.dismiss() }
 
         var bitmap: Bitmap? = null
-
         Glide.with(context)
             .asBitmap()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -134,7 +122,6 @@ class ImageAdapter(
                     bitmap = resource.copy(resource.config ?: Bitmap.Config.ARGB_8888, true)
                     imageView.setImage(ImageSource.bitmap(bitmap))
                 }
-
                 override fun onLoadCleared(placeholder: Drawable?) {
                     imageView.recycle()
                     bitmap?.takeIf { !it.isRecycled }?.recycle()
@@ -162,7 +149,6 @@ class ImageAdapter(
             coroutineScope.launch { shareImage(context, imageUrl) }
             dialog.dismiss()
         }
-
         dialogView.findViewById<TextView>(R.id.yesTextView).setOnClickListener {
             coroutineScope.launch {
                 downloadBitmap(imageUrl)?.let {
@@ -232,7 +218,6 @@ class ImageAdapter(
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
         }
-
         return uri
     }
 }

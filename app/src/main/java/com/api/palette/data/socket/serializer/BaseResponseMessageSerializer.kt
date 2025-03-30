@@ -10,7 +10,6 @@ import kotlinx.serialization.json.jsonPrimitive
 
 class BaseResponseMessageSerializer :
     JsonContentPolymorphicSerializer<BaseResponseMessage>(BaseResponseMessage::class) {
-
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out BaseResponseMessage> {
         return when (element.jsonObject["type"]?.jsonPrimitive?.content) {
             "NEW_CHAT" -> BaseResponseMessage.ChatMessage.serializer()

@@ -17,7 +17,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     private const val TIMEOUT = 60L
 
     @Provides
@@ -29,7 +28,6 @@ object NetworkModule {
             else
                 HttpLoggingInterceptor.Level.NONE
         }
-
         return OkHttpClient.Builder()
             .addInterceptor(logging)
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -42,7 +40,6 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         val mediaType = "application/json; charset=UTF8".toMediaType()
-
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)

@@ -1,9 +1,7 @@
 package com.api.palette.presentation.register
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -15,39 +13,25 @@ import java.util.Calendar
 import java.util.Locale
 
 class RegisterBirthFragment : Fragment() {
-
     private var _binding: FragmentJoinBirthBinding? = null
     private val binding get() = _binding!!
     private val registerViewModel: RegisterViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentJoinBirthBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         setupDatePicker()
         setupContinueButton()
     }
 
     private fun setupDatePicker() {
-        val calendar = Calendar.getInstance().apply {
-            set(2000, Calendar.JANUARY, 1)
-        }
-
+        val calendar = Calendar.getInstance().apply { set(2000, Calendar.JANUARY, 1) }
         binding.dpSpinner.apply {
             maxDate = System.currentTimeMillis() - 1000
-            init(
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ) { _, _, _, _ ->
-                registerViewModel.setBirthdate(getSelectedDate())
-            }
+            init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)) { _, _, _, _ -> }
         }
     }
 

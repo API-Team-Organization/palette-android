@@ -3,7 +3,9 @@ package com.api.palette.presentation.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -24,16 +26,15 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
-
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val viewModel: LoginViewModel by viewModels()
+
     private lateinit var callback: OnBackPressedCallback
     private var backPressedTime: Long = 0L
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
@@ -53,22 +54,17 @@ class LoginFragment : Fragment() {
                     binding.passwordFailedText.visibility = View.GONE
                     binding.etLoginPassword.background =
                         ContextCompat.getDrawable(requireContext(), R.drawable.bac_card_background)
-                    return@setOnClickListener
                 }
-
                 binding.etLoginPassword.text.isNullOrEmpty() -> {
                     handleLoginFailure(binding.etLoginPassword)
                     binding.passwordFailedText.visibility = View.VISIBLE
                     binding.emailFailedText.visibility = View.GONE
                     binding.etLoginEmail.background =
                         ContextCompat.getDrawable(requireContext(), R.drawable.bac_card_background)
-                    return@setOnClickListener
                 }
-
                 else -> loginRequest()
             }
         }
-
         binding.tvRegister.setOnClickListener {
             disableOnBackPressedCallback()
             findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)

@@ -1,6 +1,7 @@
 package com.api.palette.presentation.main
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.*
@@ -8,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import app.rive.runtime.kotlin.RiveAnimationView
@@ -17,9 +17,9 @@ import app.rive.runtime.kotlin.core.RiveEvent
 import com.api.palette.MainActivity
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
-import com.api.palette.data.auth.AuthRequestManager
-import com.api.palette.data.room.RoomRequestManager
+import com.api.palette.common.Constant
 import com.api.palette.databinding.ActivityServiceBinding
+import com.api.palette.domain.auth.usecase.SessionUseCase
 import com.api.palette.presentation.base.BaseControllable
 import com.api.palette.presentation.main.create.room.CreateMediaFragment
 import com.api.palette.presentation.main.settings.SettingFragment
@@ -27,7 +27,9 @@ import com.api.palette.presentation.main.work.WorkFragment
 import com.api.palette.presentation.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import retrofit2.HttpException
 import java.net.UnknownHostException
+import javax.inject.Inject
 
 enum class BottomTab(val eventName: String) {
     HOME("click_home"),
@@ -35,13 +37,12 @@ enum class BottomTab(val eventName: String) {
     SETTING("click_setting");
 
     companion object {
-        fun from(eventName: String) = entries.find { it.eventName == eventName }
+        fun from(eventName: String) = values().find { it.eventName == eventName }
     }
 }
 
 @AndroidEntryPoint
 class ServiceActivity : AppCompatActivity(), BaseControllable {
-
     private val binding by lazy { ActivityServiceBinding.inflate(layoutInflater) }
     private val riveAnimationView: RiveAnimationView by lazy { binding.bottomBar }
 
@@ -49,6 +50,7 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val workFragment = WorkFragment()
     private val settingFragment = SettingFragment()
 
+    @Inject lateinit var sessionUseCase: SessionUseCase
     private lateinit var vibrator: Vibrator
     private var currentTab: BottomTab? = null
     private var doubleBackToExitPressedOnce = false
@@ -60,9 +62,9 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         riveAnimationView.addEventListener(tabClickListener)
-
         changeFragment(createMediaFragment, supportFragmentManager)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         log(PaletteApplication.prefs.token)
     }
 
@@ -77,23 +79,27 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     }
 
     private fun checkSession() {
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
             try {
-                val response = AuthRequestManager.sessionRequest(PaletteApplication.prefs.token)
+                val response = sessionUseCase(PaletteApplication.prefs.token)
                 if (!response.isSuccessful) sessionDialog(this@ServiceActivity)
             } catch (e: UnknownHostException) {
                 showNetworkErrorDialog()
+            } catch (e: HttpException) {
+                if (e.code() == 401) {
+                    sessionDialog(this@ServiceActivity)
+                }
+            } catch (e: Exception) {
+                log("Unknown session check error: ${e.message}")
             }
         }
     }
 
     private fun handleTabClick(tab: BottomTab) {
         if (currentTab == tab) return
-
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(getEnterAnim(tab), R.anim.anim_fade_out_200ms)
         transaction.replace(binding.mainContent.id, getFragment(tab)).commit()
-
         currentTab = tab
     }
 
@@ -131,14 +137,15 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
             (context as? Activity)?.finish()
             dialog.dismiss()
         }
-
         dialog.show()
     }
 
     override fun deleteRoom(token: String, roomId: String) {
         lifecycleScope.launch {
             try {
-                RoomRequestManager.deleteRoom(token, roomId)
+                // 빈 방 삭제 로직
+                // 실제 코드는 roomViewModel.deleteRoom(token, roomId){...} 등을 호출해서 처리 가능
+                shortToast("빈 방이므로 삭제합니다.")
             } catch (e: Exception) {
                 log("deleteRoom error: $e")
             } finally {

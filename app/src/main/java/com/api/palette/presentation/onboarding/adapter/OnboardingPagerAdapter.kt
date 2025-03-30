@@ -7,8 +7,8 @@ import com.api.palette.presentation.onboarding.Onboarding1Fragment
 import com.api.palette.presentation.onboarding.Onboarding2Fragment
 import com.api.palette.presentation.onboarding.Onboarding3Fragment
 
-class OnboardingPagerAdapter(fm: FragmentManager) :
-    FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class OnboardingPagerAdapter(fm: FragmentManager)
+    : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private val onboardingFragments = listOf(
         Onboarding1Fragment(),
@@ -17,6 +17,5 @@ class OnboardingPagerAdapter(fm: FragmentManager) :
     )
 
     override fun getItem(position: Int): Fragment = onboardingFragments[position]
-
     override fun getCount(): Int = onboardingFragments.size
 }

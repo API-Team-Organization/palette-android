@@ -5,44 +5,32 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.GridLayout
-import android.widget.LinearLayout
-import android.widget.NumberPicker
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
-import com.api.palette.data.chat.ChatRequestManager
 import com.api.palette.data.chat.data.ChatAnswer
 import com.api.palette.data.chat.data.ChatQuestion
 import com.api.palette.data.chat.data.PromptData
-import com.api.palette.data.error.CustomException
-import com.api.palette.data.room.RoomRequestManager
-import com.api.palette.data.room.data.TitleData
+import com.api.palette.data.socket.WebSocketManager
 import com.api.palette.data.socket.data.BaseResponseMessage
 import com.api.palette.data.socket.data.MessageResponse
-import com.api.palette.data.socket.WebSocketManager
 import com.api.palette.databinding.FragmentChattingBinding
+import com.api.palette.domain.room.usecase.RegenRoomUseCase
 import com.api.palette.presentation.base.BaseControllable
 import com.api.palette.presentation.main.create.chat.adapter.ChattingRecyclerAdapter
-import com.api.palette.presentation.util.log
-import com.api.palette.presentation.util.logE
-import com.api.palette.presentation.util.animateTo
-import com.api.palette.presentation.util.setBigMax
-import com.api.palette.presentation.util.shortToast
+import com.api.palette.presentation.main.create.chat.viewmodel.ChatViewModel
+import com.api.palette.presentation.main.create.room.viewmodel.RoomViewModel
+import com.api.palette.presentation.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -65,16 +53,17 @@ class ChattingFragment(
     private var chatList = mutableListOf<MessageResponse>()
     private var qnaList = mutableListOf<PromptData>()
     private var isLoading = false
+
     private lateinit var webSocketManager: WebSocketManager
     private lateinit var sendType: String
     private val pingTimer = Timer()
 
-    @Inject lateinit var chatRequestManager: ChatRequestManager
+    private val chatViewModel: ChatViewModel by viewModels()
+    private val roomViewModel: RoomViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    @Inject lateinit var regenRoomUseCase: RegenRoomUseCase
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChattingBinding.inflate(inflater, container, false)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
@@ -107,7 +96,6 @@ class ChattingFragment(
                 }
             }
             webSocketManager.setOnMessageReceivedListener { chatMessage ->
-                log("ChattingFragment onCreateView: handleChatMessage 호출됨")
                 viewLifecycleOwner.lifecycleScope.launch {
                     when (chatMessage) {
                         is BaseResponseMessage.ChatMessage -> {
@@ -142,6 +130,7 @@ class ChattingFragment(
         } catch (e: Exception) {
             logE("WebSocketManager 생성 중 오류 발생: ${e.localizedMessage}")
         }
+
         initView()
         initEditText()
         return binding.root
@@ -151,7 +140,6 @@ class ChattingFragment(
 
     private fun initView() {
         binding.chattingToolbar.title = title
-
         loadQnaData()
 
         binding.chattingToolbar.setNavigationOnClickListener {
@@ -160,13 +148,17 @@ class ChattingFragment(
             }
         }
         binding.chattingToolbar.setOnClickListener { showChangeTitleDialog() }
+
         binding.chattingSubmitButton.setOnClickListener { sendData() }
         binding.regenButton.setOnClickListener {
             handleRegenButtonVisible(false)
             viewLifecycleOwner.lifecycleScope.launch {
-                val response = RoomRequestManager.regenRoom(PaletteApplication.prefs.token, roomId)
-                if (!response.isSuccessful) {
-                    shortToast("재생성 실패: wi-fi를 확인해주세요")
+                runCatching {
+                    regenRoomUseCase(PaletteApplication.prefs.token, roomId)
+                }.onSuccess {
+                    shortToast("재생성 완료.")
+                }.onFailure {
+                    shortToast("재생성 실패: ${it.message}")
                 }
             }
         }
@@ -181,6 +173,7 @@ class ChattingFragment(
                 loadMoreChats(firstMessageTime)
             }
         })
+
         binding.chattingRecycler.apply {
             adapter = recyclerAdapter
             layoutManager = LinearLayoutManager(context)
@@ -191,6 +184,7 @@ class ChattingFragment(
     private fun sendData() {
         if (binding.chattingEditText.text.isEmpty()) return
         val input = binding.chattingEditText.text.toString()
+
         val chat: ChatAnswer = when (sendType) {
             "SELECTABLE" -> ChatAnswer.SelectableAnswer(choiceId = input, type = sendType)
             "GRID" -> ChatAnswer.GridAnswer(choice = input.split(",").map { it.toInt() }, type = sendType)
@@ -200,47 +194,60 @@ class ChattingFragment(
             }
             else -> return
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            chatRequestManager.createChat(PaletteApplication.prefs.token, chat, roomId)
-            binding.chattingEditText.text.clear()
+
+        chatViewModel.sendChat(
+            token = PaletteApplication.prefs.token,
+            roomId = roomId,
+            chat = chat
+        ) {
+            if (it.isSuccess) {
+                binding.chattingEditText.text.clear()
+            } else {
+                shortToast("채팅 전송 실패: ${it.exceptionOrNull()?.message}")
+            }
         }
     }
 
     private suspend fun loadChatData() {
-        try {
-            val responseData = chatRequestManager.getChatList(
-                token = PaletteApplication.prefs.token,
-                roomId = roomId,
-                before = null
-            ).body()?.data ?: emptyList<MessageResponse>()
-            chatList.addAll(responseData.reversed())
-        } catch (e: CustomException) {
-            shortToast(e.errorResponse.message)
+        chatViewModel.loadChatList(
+            token = PaletteApplication.prefs.token,
+            roomId = roomId,
+            before = null,
+            size = 10
+        ) {
+            shortToast("채팅 목록 로딩 오류: ${it.message}")
         }
+        delay(300L)
+        chatList.clear()
+        chatViewModel.chatList.value?.let { chatList.addAll(it.reversed()) }
     }
 
     private fun loadQnaData() {
         viewLifecycleOwner.lifecycleScope.launch {
             val qnaLoader = async {
-                val qnaResponse = try {
-                    chatRequestManager.getQnAList(PaletteApplication.prefs.token, roomId)
-                } catch (e: CustomException) {
-                    shortToast(e.errorResponse.message)
-                    null
+                chatViewModel.loadQnAList(
+                    token = PaletteApplication.prefs.token,
+                    roomId = roomId
+                ) {
+                    shortToast("QnA 로딩 오류: ${it.message}")
                 }
-                qnaResponse?.body()?.data?.let { qnaList.addAll(it) }
             }
             val chatLoader = async { loadChatData() }
             listOf(qnaLoader, chatLoader).awaitAll()
+
+            qnaList.clear()
+            qnaList.addAll(chatViewModel.qnaList.value.orEmpty())
+
             recyclerAdapter.setQnAList(qnaList)
             recyclerAdapter.setData(chatList)
             binding.chattingRecycler.scrollToPosition(chatList.size)
+
             val qna = if (chatList.isEmpty()) {
-                qnaList.first()
+                qnaList.firstOrNull()
             } else {
-                qnaList.find { it.id == chatList.last().promptId } ?: qnaList.first()
+                qnaList.find { it.id == chatList.last().promptId } ?: qnaList.firstOrNull()
             }
-            managementInputTool(qna)
+            qna?.let { managementInputTool(it) }
         }
     }
 
@@ -267,15 +274,24 @@ class ChattingFragment(
     }
 
     private fun loadMoreChats(before: String) {
+        chatViewModel.loadChatList(
+            token = PaletteApplication.prefs.token,
+            roomId = roomId,
+            before = before,
+            size = 10
+        ) {
+            shortToast("추가 채팅 로딩 오류: ${it.message}")
+        }
         viewLifecycleOwner.lifecycleScope.launch {
-            val newChats = chatRequestManager.getChatList(
-                token = PaletteApplication.prefs.token,
-                roomId = roomId,
-                before = before
-            ).body()?.data
-            if (newChats.isNullOrEmpty()) return@launch
-            newChats.reverse()
-            chatList.addAll(0, newChats)
+            delay(300L)
+            val newChats = chatViewModel.chatList.value?.reversed()?.toMutableList() ?: mutableListOf()
+            if (newChats.isEmpty()) {
+                isLoading = false
+                return@launch
+            }
+            val firstExistingTime = chatList.first().datetime
+            val toAdd = newChats.filter { it.datetime < firstExistingTime }
+            chatList.addAll(0, toAdd)
             recyclerAdapter.setData(chatList)
             isLoading = false
         }
@@ -300,10 +316,11 @@ class ChattingFragment(
     private fun handleChatMessage() {
         if (chatList.isEmpty()) return
         val lastMessage = chatList.last()
+
         if (lastMessage.promptId != null) {
-            val qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList.first()
+            val qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList.firstOrNull()
             handleCurrentPositionVisible(false)
-            managementInputTool(qna)
+            qna?.let { managementInputTool(it) }
         } else if (lastMessage.regenScope) {
             handleCurrentPositionVisible(false, "")
             handleRegenButtonVisible(true)
@@ -353,8 +370,8 @@ class ChattingFragment(
     private fun updateSelectableUI(qna: PromptData.Selectable) {
         val selectableQuestion = qna.question as? ChatQuestion.SelectableQuestion
         var selectedChoice = selectableQuestion?.choices?.get(0)?.id ?: "DISPLAY"
-        log("초기 선택값: $selectedChoice")
         binding.chattingSelectLayout.removeAllViews()
+
         val cardView = CardView(requireContext()).apply {
             radius = 64f
             cardElevation = 12f
@@ -362,11 +379,8 @@ class ChattingFragment(
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(32, 0, 32, 16)
-            }
+            ).apply { setMargins(32, 0, 32, 16) }
         }
-
         val cardInnerLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -400,25 +414,14 @@ class ChattingFragment(
                 maxValue = choices.size - 1
                 displayedValues = choices.map { it.displayName }.toTypedArray()
             }
-            val newCardView = when (selectedChoice) {
-                "DISPLAY" -> createCardView(context, 16f, 9f, "16:9 DISPLAY")
-                "PAPER" -> createCardView(context, 1f, 1.41f, "1:1.41 PAPER")
-                "SQUARE" -> createCardView(context, 1f, 1f, "1:1 SQUARE")
-                "TABLET" -> createCardView(context, 4f, 3f, "4:3 TABLET")
-                else -> null
-            }
+            val newCardView = createCardForChoice(selectedChoice)
             newCardView?.let { preViewLayout.addView(it) }
+
             setOnValueChangedListener { _, _, newVal ->
                 selectableQuestion?.choices?.let { choices ->
                     selectedChoice = choices[newVal].id
                     preViewLayout.removeAllViews()
-                    val updatedCard = when (selectedChoice) {
-                        "DISPLAY" -> createCardView(context, 16f, 9f, "16:9 DISPLAY")
-                        "PAPER" -> createCardView(context, 1f, 1.41f, "1:1.41 PAPER")
-                        "SQUARE" -> createCardView(context, 1f, 1f, "1:1 SQUARE")
-                        "TABLET" -> createCardView(context, 4f, 3f, "4:3 TABLET")
-                        else -> null
-                    }
+                    val updatedCard = createCardForChoice(selectedChoice)
                     updatedCard?.let { preViewLayout.addView(it) }
                 }
             }
@@ -454,6 +457,7 @@ class ChattingFragment(
             setPadding(100, 20, 100, 20)
             stateListAnimator = null
             elevation = 0f
+
             setOnClickListener {
                 binding.chattingEditText.setText(selectedChoice)
                 binding.chattingSelectLayout.visibility = View.GONE
@@ -467,6 +471,16 @@ class ChattingFragment(
         }
         cardView.addView(cardInnerLayout)
         binding.chattingSelectLayout.addView(cardView)
+    }
+
+    private fun createCardForChoice(selectedChoice: String): CardView? {
+        return when (selectedChoice) {
+            "DISPLAY" -> createCardView(requireContext(), 16f, 9f, "16:9 DISPLAY")
+            "PAPER"   -> createCardView(requireContext(), 1f, 1.41f, "1:1.41 PAPER")
+            "SQUARE"  -> createCardView(requireContext(), 1f, 1f, "1:1 SQUARE")
+            "TABLET"  -> createCardView(requireContext(), 4f, 3f, "4:3 TABLET")
+            else -> null
+        }
     }
 
     private fun createCardView(context: Context, widthRatio: Float, heightRatio: Float, textValue: String): CardView {
@@ -494,168 +508,126 @@ class ChattingFragment(
         val gridQuestion = qna.question
         val maxCount: Int = gridQuestion.maxCount
         hideKeyboard()
-        with(binding) {
-            chattingSelectLayout.removeAllViews()
+        binding.chattingSelectLayout.removeAllViews()
 
-            val cardView = CardView(requireContext()).apply {
-                radius = 64f
-                cardElevation = 12f
-                setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    setMargins(32, 16, 16, 32)
-                }
+        val cardView = CardView(requireContext()).apply {
+            radius = 64f
+            cardElevation = 12f
+            setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(32, 16, 16, 32)
             }
-
-            val cardInnerLayout = LinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
+        }
+        val cardInnerLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            setPadding(64, 64, 64, 64)
+        }
+        val instructionText = TextView(context).apply {
+            text = "원하는 제목의 위치를 선택해주세요"
+            textSize = 18f
+            gravity = Gravity.START
+            setTextColor(ContextCompat.getColor(context, R.color.black))
+            typeface = ResourcesCompat.getFont(context, R.font.pretendard_bold)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+        val maxCountText = TextView(context).apply {
+            text = "최대 선택 개수: $maxCount"
+            textSize = 14f
+            gravity = Gravity.START
+            setTextColor(ContextCompat.getColor(context, R.color.black))
+            typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 16, 0, 0) }
+        }
+        val gridLayout = GridLayout(context).apply {
+            rowCount = gridQuestion.ySize
+            columnCount = gridQuestion.xSize
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(0, 32, 0, 32)
                 gravity = Gravity.CENTER
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                setPadding(64, 64, 64, 64)
             }
+        }
+        val selectedPositions = mutableListOf<Int>()
+        val buttonSize = resources.getDimensionPixelSize(R.dimen.grid_button_size)
 
-            val instructionText = TextView(context).apply {
-                text = "원하는 제목의 위치를 선택해주세요"
-                textSize = 18f
-                gravity = Gravity.START
-                setTextColor(ContextCompat.getColor(context, R.color.black))
-                typeface = ResourcesCompat.getFont(context, R.font.pretendard_bold)
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-            }
-
-            val gridLayout = GridLayout(context).apply {
-                rowCount = gridQuestion.ySize
-                columnCount = gridQuestion.xSize
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    setMargins(0, 32, 0, 32)
-                    gravity = Gravity.CENTER
-                }
-            }
-
-            val maxCountText = TextView(context).apply {
-                text = "최대 선택 개수: $maxCount"
-                textSize = 14f
-                gravity = Gravity.START
-                setTextColor(ContextCompat.getColor(context, R.color.black))
-                typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    setMargins(0, 16, 0, 0)
-                }
-            }
-
-            val selectedPositions = mutableListOf<Int>()
-
-            gridQuestion.let {
-                val buttonSize = resources.getDimensionPixelSize(R.dimen.grid_button_size)
-
-                for (i in 0 until it.ySize) {
-                    for (j in 0 until it.xSize) {
-                        val position = i * it.xSize + j
-
-                        val button = Button(context).apply {
-                            background =
-                                ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.bac_grid_item_unselected
-                                )
-                            layoutParams = GridLayout.LayoutParams().apply {
-                                rowSpec = GridLayout.spec(i)
-                                columnSpec = GridLayout.spec(j)
-                                width = buttonSize
-                                height = buttonSize
-                                setMargins(10, 10, 10, 10)
-                            }
-
-                            setOnClickListener { _ ->
-                                if (position in selectedPositions) {
-                                    selectedPositions.remove(position)
-                                    background = ContextCompat.getDrawable(
-                                        context,
-                                        R.drawable.bac_grid_item_unselected
-                                    )
-                                } else {
-                                    if (selectedPositions.size < maxCount) {
-                                        maxCountText.setTextColor(
-                                            ContextCompat.getColor(
-                                                context,
-                                                R.color.red
-                                            )
-                                        )
-                                        selectedPositions.add(position)
-                                        background = ContextCompat.getDrawable(
-                                            context,
-                                            R.drawable.bac_grid_item_selected
-                                        )
-                                    }
-                                }
-
-                                if (selectedPositions.size != maxCount) {
-                                    maxCountText.setTextColor(
-                                        ContextCompat.getColor(
-                                            context,
-                                            R.color.black
-                                        )
-                                    )
-                                }
+        for (i in 0 until gridQuestion.ySize) {
+            for (j in 0 until gridQuestion.xSize) {
+                val position = i * gridQuestion.xSize + j
+                val button = Button(context).apply {
+                    background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_unselected)
+                    layoutParams = GridLayout.LayoutParams().apply {
+                        rowSpec = GridLayout.spec(i)
+                        columnSpec = GridLayout.spec(j)
+                        width = buttonSize
+                        height = buttonSize
+                        setMargins(10, 10, 10, 10)
+                    }
+                    setOnClickListener {
+                        if (position in selectedPositions) {
+                            selectedPositions.remove(position)
+                            background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_unselected)
+                        } else {
+                            if (selectedPositions.size < maxCount) {
+                                selectedPositions.add(position)
+                                background = ContextCompat.getDrawable(context, R.drawable.bac_grid_item_selected)
                             }
                         }
-                        gridLayout.addView(button)
                     }
                 }
+                gridLayout.addView(button)
             }
-
-            val submitButton = Button(context).apply {
-                text = "선택하기"
-                textSize = 16f
-                setTextColor(ContextCompat.getColor(context, R.color.white))
-                typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
-                background = ContextCompat.getDrawable(context, R.drawable.bac_button_solid)
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    setMargins(16, 32, 16, 0)
-                    gravity = Gravity.CENTER
-                }
-                setPadding(100, 20, 100, 20)
-
-                stateListAnimator = null
-                elevation = 0f
-
-                setOnClickListener {
-                    if (selectedPositions.isEmpty()) {
-                        shortToast("최소 1개는 선택해야 합니다")
-                    } else {
-                        updateChattingEditText(selectedPositions)
-                        binding.chattingSelectLayout.visibility = View.GONE
-                        sendData()
-                    }
-                }
-            }
-
-            cardInnerLayout.addView(instructionText)
-            cardInnerLayout.addView(maxCountText)
-            cardInnerLayout.addView(gridLayout)
-            cardInnerLayout.addView(submitButton)
-
-            cardView.addView(cardInnerLayout)
-
-            chattingSelectLayout.addView(cardView)
         }
+        val submitButton = Button(context).apply {
+            text = "선택하기"
+            textSize = 16f
+            setTextColor(ContextCompat.getColor(context, R.color.white))
+            typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
+            background = ContextCompat.getDrawable(context, R.drawable.bac_button_solid)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(16, 32, 16, 0)
+                gravity = Gravity.CENTER
+            }
+            setPadding(100, 20, 100, 20)
+            stateListAnimator = null
+            elevation = 0f
+
+            setOnClickListener {
+                if (selectedPositions.isEmpty()) {
+                    shortToast("최소 1개는 선택해야 합니다")
+                } else {
+                    updateChattingEditText(selectedPositions)
+                    binding.chattingSelectLayout.visibility = View.GONE
+                    sendData()
+                }
+            }
+        }
+
+        cardInnerLayout.addView(instructionText)
+        cardInnerLayout.addView(maxCountText)
+        cardInnerLayout.addView(gridLayout)
+        cardInnerLayout.addView(submitButton)
+
+        cardView.addView(cardInnerLayout)
+        binding.chattingSelectLayout.addView(cardView)
     }
 
     private fun updateChattingEditText(selectedPositions: List<Int>) {
@@ -668,27 +640,40 @@ class ChattingFragment(
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_text, null)
         val input = dialogView.findViewById<EditText>(R.id.etChangeTitle)
         val applyButton = dialogView.findViewById<TextView>(R.id.tv_apply)
+
         input.setText(binding.chattingToolbar.title)
         input.setOnFocusChangeListener { _, hasFocus ->
-            input.backgroundTintList = if (hasFocus)
+            input.backgroundTintList = if (hasFocus) {
                 ContextCompat.getColorStateList(requireContext(), R.color.blue)
-            else
+            } else {
                 ContextCompat.getColorStateList(requireContext(), R.color.black)
+            }
         }
+
         builder.setView(dialogView)
         val dialog = builder.create()
+
         applyButton.setOnClickListener {
             val newTitle = input.text.toString()
             if (newTitle.isBlank()) {
                 shortToast("제목을 입력해주세요")
             } else {
-                lifecycleScope.launch {
-                    RoomRequestManager.setRoomTitle(PaletteApplication.prefs.token, TitleData(newTitle), roomId)
-                    binding.chattingToolbar.title = newTitle
+                roomViewModel.setRoomTitle(
+                    token = PaletteApplication.prefs.token,
+                    title = com.api.palette.data.room.data.TitleData(newTitle),
+                    roomId = roomId
+                ) { result ->
+                    if (result.isSuccess) {
+                        binding.chattingToolbar.title = newTitle
+                        shortToast("방 제목이 변경되었습니다.")
+                    } else {
+                        shortToast("방 제목 변경 실패: ${result.exceptionOrNull()?.message}")
+                    }
                 }
-                dialog.dismiss()
             }
+            dialog.dismiss()
         }
+
         dialog.setCancelable(true)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.show()

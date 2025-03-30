@@ -1,3 +1,4 @@
+// data/ApiClient.kt
 package com.api.palette.data
 
 import com.api.palette.BuildConfig
@@ -9,7 +10,6 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-
     private val BASE_URL: String by lazy { BuildConfig.BASE_URL }
 
     private val okHttpClient: OkHttpClient by lazy {
@@ -24,9 +24,7 @@ object ApiClient {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(
-                json.asConverterFactory("application/json; charset=UTF8".toMediaType())
-            )
+            .addConverterFactory(json.asConverterFactory("application/json; charset=UTF8".toMediaType()))
             .build()
     }
 }

@@ -1,3 +1,4 @@
+// presentation/main/create/room/adapter/CreateMediaAdapter.kt
 package com.api.palette.presentation.main.create.room.adapter
 
 import android.annotation.SuppressLint
@@ -41,7 +42,6 @@ class CreateMediaAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: WorkViewHolder, position: Int) {
         val item = itemList[position]
-
         holder.ivLogo.setImageResource(R.drawable.logo)
         holder.tvTitle.text = item.title
         holder.tvDesc.text = item.message
@@ -60,21 +60,18 @@ class CreateMediaAdapter(
                             itemClickListener.onItemLongClick(holder.bindingAdapterPosition)
                         }, 600)
                     }
-
                     MotionEvent.ACTION_UP -> {
                         handler.removeCallbacksAndMessages(null)
                         if (!touchHandled && !isLongClick) {
                             itemClickListener.onItemClick(holder.bindingAdapterPosition)
                         }
                     }
-
                     MotionEvent.ACTION_CANCEL -> {
                         handler.removeCallbacksAndMessages(null)
                     }
                 }
                 touchHandled
             }
-
             movementMethod = LinkMovementMethod.getInstance()
             ellipsize = TextUtils.TruncateAt.MARQUEE
             isSelected = true

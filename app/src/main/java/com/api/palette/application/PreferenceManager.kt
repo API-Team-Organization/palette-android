@@ -28,7 +28,6 @@ class PreferenceManager @Inject constructor(
         userId = ""
         userBirthDate = ""
     }
-
     companion object {
         private const val PALETTE_APP = "PALETTE_APP"
     }
@@ -45,7 +44,6 @@ class PreferenceManager @Inject constructor(
                 else -> throw IllegalArgumentException("Unsupported preference type")
             }
         }
-
         operator fun setValue(thisRef: Any?, property: Any?, value: T) {
             when (value) {
                 is String -> prefs.edit().putString(key, value).apply()

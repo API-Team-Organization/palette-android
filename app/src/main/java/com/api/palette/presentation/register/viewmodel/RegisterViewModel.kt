@@ -4,19 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.api.palette.data.auth.AuthRepository
 import com.api.palette.data.auth.request.RegisterRequest
+import com.api.palette.domain.auth.usecase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
-
-    private val _registerResult = MutableLiveData<Result<String>>()
-    val registerResult: LiveData<Result<String>> get() = _registerResult
 
     private val _email = MutableLiveData<String>()
     val email: LiveData<String> get() = _email
@@ -35,9 +32,6 @@ class RegisterViewModel @Inject constructor(
     fun setBirthdate(value: String) { _birthdate.value = value }
     fun setUsername(value: String) { _username.value = value }
 
-    /**
-     * RegisterRequest 데이터 객체 생성
-     */
     fun toRegisterRequest(): RegisterRequest? {
         val email = _email.value
         val password = _password.value
@@ -49,15 +43,11 @@ class RegisterViewModel @Inject constructor(
         } else null
     }
 
-    /**
-     * 회원가입 요청
-     */
     fun register(onResult: (Result<String>) -> Unit) {
         val request = toRegisterRequest() ?: return
-
         viewModelScope.launch {
             runCatching {
-                authRepository.register(request)
+                registerUseCase(request)
             }.onSuccess { response ->
                 if (response.isSuccessful) {
                     val token = response.headers()["X-AUTH-Token"] ?: ""

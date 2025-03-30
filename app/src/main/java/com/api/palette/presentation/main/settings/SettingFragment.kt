@@ -7,19 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.api.palette.MainActivity
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
-import com.api.palette.data.auth.AuthRequestManager
-import com.api.palette.data.info.InfoRequestManager
 import com.api.palette.databinding.FragmentSettingBinding
 import com.api.palette.presentation.main.settings.info.MyInfoFragment
+import com.api.palette.presentation.main.settings.viewmodel.SettingViewModel
 import com.api.palette.presentation.util.changeFragment
 import com.api.palette.presentation.util.log
 import com.api.palette.presentation.util.shortToast
@@ -29,13 +27,10 @@ import retrofit2.HttpException
 
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
-
     private lateinit var binding: FragmentSettingBinding
+    private val settingViewModel: SettingViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
         setupListeners()
         loadUserNameInfo()
@@ -54,15 +49,12 @@ class SettingFragment : Fragment() {
         val prefs = PaletteApplication.prefs
         binding.tvUserName.text = prefs.username
 
-        lifecycleScope.launch {
-            try {
-                val profileInfo = InfoRequestManager.profileInfoRequest(prefs.token)
-                profileInfo?.data?.let { data ->
-                    binding.tvUserName.text = data.name
-                    prefs.username = data.name
+        viewLifecycleOwner.lifecycleScope.launch {
+            settingViewModel.getProfile(prefs.token) { data ->
+                data?.let { profile ->
+                    binding.tvUserName.text = profile.name
+                    prefs.username = profile.name
                 }
-            } catch (e: Exception) {
-                log("loadUserNameInfo error: ${e.message}")
             }
         }
     }
@@ -71,49 +63,44 @@ class SettingFragment : Fragment() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_logout, null)
         val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).setCancelable(false).create()
 
-        dialogView.findViewById<TextView>(R.id.noLogoutTextView).setOnClickListener { dialog.dismiss() }
-        dialogView.findViewById<TextView>(R.id.logoutTextView).setOnClickListener {
-            logout()
+        dialogView.findViewById<TextView>(R.id.noLogoutTextView).setOnClickListener {
             dialog.dismiss()
         }
+        dialogView.findViewById<TextView>(R.id.logoutTextView).setOnClickListener {
+            lifecycleScope.launch {
+                settingViewModel.logout(PaletteApplication.prefs.token)
+            }
+            PaletteApplication.prefs.clearToken()
+            PaletteApplication.prefs.clearUser()
 
-        dialog.show()
-    }
-
-    private fun logout() {
-        lifecycleScope.launch {
-            AuthRequestManager.logoutRequest(PaletteApplication.prefs.token)
+            startActivity(Intent(requireActivity(), MainActivity::class.java))
+            requireActivity().finish()
+            dialog.dismiss()
         }
-
-        PaletteApplication.prefs.clearToken()
-        PaletteApplication.prefs.clearUser()
-
-        startActivity(Intent(requireActivity(), MainActivity::class.java))
-        requireActivity().finish()
+        dialog.show()
     }
 
     private fun showResignDialog(context: Context) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_resign, null)
         val dialog = AlertDialog.Builder(context).setView(dialogView).setCancelable(false).create()
 
-        dialogView.findViewById<TextView>(R.id.noTextView).setOnClickListener { dialog.dismiss() }
+        dialogView.findViewById<TextView>(R.id.noTextView).setOnClickListener {
+            dialog.dismiss()
+        }
         dialogView.findViewById<TextView>(R.id.yesTextView).setOnClickListener {
             resign()
             context.startActivity(Intent(context, MainActivity::class.java))
             (context as? Activity)?.finish()
             dialog.dismiss()
         }
-
         dialog.show()
     }
 
     private fun resign() {
         lifecycleScope.launch {
             try {
-                val response = AuthRequestManager.resignRequest(PaletteApplication.prefs.token)
-                if (response.isSuccessful) {
-                    shortToast("회원 탈퇴 성공")
-                } else {
+                val response = settingViewModel.resign(PaletteApplication.prefs.token)
+                if (!response.isSuccessful) {
                     log("Resign failed: ${response.code()} - ${response.message()}")
                 }
             } catch (e: HttpException) {

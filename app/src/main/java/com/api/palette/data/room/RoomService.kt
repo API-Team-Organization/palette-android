@@ -14,7 +14,6 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface RoomService {
-
     @POST("room")
     suspend fun createRoom(
         @Header("X-AUTH-Token") token: String,

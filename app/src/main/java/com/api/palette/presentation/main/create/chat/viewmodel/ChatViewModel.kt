@@ -1,10 +1,15 @@
 package com.api.palette.presentation.main.create.chat.viewmodel
 
-import androidx.lifecycle.*
-import com.api.palette.data.chat.ChatRepository
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.api.palette.data.chat.data.ChatAnswer
 import com.api.palette.data.chat.data.PromptData
 import com.api.palette.data.socket.data.MessageResponse
+import com.api.palette.domain.chat.usecase.CreateChatUseCase
+import com.api.palette.domain.chat.usecase.GetChatListUseCase
+import com.api.palette.domain.chat.usecase.GetQnAListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -12,7 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val chatRepository: ChatRepository
+    private val getChatListUseCase: GetChatListUseCase,
+    private val getQnAListUseCase: GetQnAListUseCase,
+    private val createChatUseCase: CreateChatUseCase
 ) : ViewModel() {
 
     private val _chatList = MutableLiveData<List<MessageResponse>>()
@@ -21,9 +28,6 @@ class ChatViewModel @Inject constructor(
     private val _qnaList = MutableLiveData<List<PromptData>>()
     val qnaList: LiveData<List<PromptData>> get() = _qnaList
 
-    /**
-     * 채팅 리스트 불러오기
-     */
     fun loadChatList(
         token: String,
         roomId: String,
@@ -33,7 +37,7 @@ class ChatViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                val response = chatRepository.getChatList(token, roomId, before, size)
+                val response = getChatListUseCase(token, roomId, before, size)
                 if (response.isSuccessful) {
                     _chatList.value = response.body()?.data.orEmpty()
                 } else {
@@ -45,9 +49,6 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    /**
-     * QnA 리스트 불러오기
-     */
     fun loadQnAList(
         token: String,
         roomId: String,
@@ -55,7 +56,7 @@ class ChatViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                val response = chatRepository.getQnAList(token, roomId)
+                val response = getQnAListUseCase(token, roomId)
                 if (response.isSuccessful) {
                     _qnaList.value = response.body()?.data.orEmpty()
                 } else {
@@ -67,9 +68,6 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    /**
-     * 채팅 전송
-     */
     fun sendChat(
         token: String,
         roomId: String,
@@ -78,7 +76,7 @@ class ChatViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                val response = chatRepository.createChat(token, chat, roomId)
+                val response = createChatUseCase(token, chat, roomId)
                 if (response.isSuccessful) {
                     onResult(Result.success(Unit))
                 } else {
