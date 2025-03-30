@@ -50,21 +50,21 @@ class RegisterCheckNumFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.verifyResult.observe(viewLifecycleOwner, Observer { result ->
+        viewModel.verifyResult.observe(viewLifecycleOwner) { result ->
             result.onSuccess {
                 changeFragment(RegisterCompleteFragment())
             }.onFailure {
                 shortToast(it.message ?: "인증 실패")
             }
-        })
+        }
 
-        viewModel.resendResult.observe(viewLifecycleOwner, Observer { result ->
+        viewModel.resendResult.observe(viewLifecycleOwner) { result ->
             result.onSuccess {
                 shortToast("인증번호가 재전송되었습니다.")
             }.onFailure {
                 shortToast(it.message ?: "재전송 실패")
             }
-        })
+        }
     }
 
     override fun onDestroyView() {

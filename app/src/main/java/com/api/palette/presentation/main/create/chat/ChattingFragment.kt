@@ -25,7 +25,6 @@ import com.api.palette.data.socket.WebSocketManager
 import com.api.palette.data.socket.data.BaseResponseMessage
 import com.api.palette.data.socket.data.MessageResponse
 import com.api.palette.databinding.FragmentChattingBinding
-import com.api.palette.domain.room.usecase.RegenRoomUseCase
 import com.api.palette.presentation.base.BaseControllable
 import com.api.palette.presentation.main.create.chat.adapter.ChattingRecyclerAdapter
 import com.api.palette.presentation.main.create.chat.viewmodel.ChatViewModel
@@ -37,7 +36,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Timer
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChattingFragment(

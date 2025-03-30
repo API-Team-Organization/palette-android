@@ -1,6 +1,5 @@
 package com.api.palette.presentation.main
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -18,7 +17,6 @@ import app.rive.runtime.kotlin.core.RiveEvent
 import com.api.palette.MainActivity
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
-import com.api.palette.common.Constant
 import com.api.palette.databinding.ActivityServiceBinding
 import com.api.palette.domain.auth.usecase.SessionUseCase
 import com.api.palette.presentation.base.BaseControllable
@@ -40,7 +38,7 @@ enum class BottomTab(val eventName: String) {
     SETTING("click_setting");
 
     companion object {
-        fun from(eventName: String) = values().find { it.eventName == eventName }
+        fun from(eventName: String) = entries.find { it.eventName == eventName }
     }
 }
 
