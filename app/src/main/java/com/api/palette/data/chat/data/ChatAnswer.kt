@@ -1,16 +1,11 @@
 package com.api.palette.data.chat.data
 
-import com.api.palette.data.socket.data.PromptType
-import kotlinx.serialization.DeserializationStrategy
+import com.api.palette.data.chat.serializer.ChatAnswerSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.JsonContentPolymorphicSerializer
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
-@Serializable(with = ChatAnswer.ChatAnswerSerializer::class)
+@Serializable(with = ChatAnswerSerializer::class)
 sealed class ChatAnswer {
+
     @Serializable
     data class SelectableAnswer(
         val choiceId: String,
@@ -28,17 +23,4 @@ sealed class ChatAnswer {
         val input: String,
         val type: String
     ) : ChatAnswer()
-
-    object ChatAnswerSerializer : JsonContentPolymorphicSerializer<ChatAnswer>(ChatAnswer::class) {
-        override fun selectDeserializer(element: JsonElement): DeserializationStrategy<ChatAnswer> {
-            val type = element.jsonObject["type"]?.jsonPrimitive?.content
-                ?.let { PromptType.valueOf(it) }
-                ?: throw SerializationException("Invalid or missing 'type': $element")
-            return when (type) {
-                PromptType.SELECTABLE -> SelectableAnswer.serializer()
-                PromptType.GRID -> GridAnswer.serializer()
-                PromptType.USER_INPUT -> UserInputAnswer.serializer()
-            }
-        }
-    }
 }

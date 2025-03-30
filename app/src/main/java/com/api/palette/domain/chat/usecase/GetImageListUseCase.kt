@@ -10,5 +10,5 @@ class GetImageListUseCase @Inject constructor(
         token: String,
         page: Int,
         size: Int
-    ) = chatRepository.getImageList(token, page, size)
+    ) = chatRepository.getImageList(token, page = page, size = size)
 }

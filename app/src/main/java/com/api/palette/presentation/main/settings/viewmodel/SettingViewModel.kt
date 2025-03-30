@@ -6,7 +6,6 @@ import com.api.palette.data.base.VoidResponse
 import com.api.palette.data.info.data.ProfileData
 import com.api.palette.domain.auth.usecase.LogoutUseCase
 import com.api.palette.domain.auth.usecase.ResignUseCase
-import com.api.palette.domain.auth.usecase.SessionUseCase
 import com.api.palette.domain.info.usecase.GetProfileInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val resignUseCase: ResignUseCase,
-    private val sessionUseCase: SessionUseCase,
     private val getProfileInfoUseCase: GetProfileInfoUseCase
 ) : ViewModel() {
 
@@ -40,9 +38,5 @@ class SettingViewModel @Inject constructor(
                 callback(null)
             }
         }
-    }
-
-    suspend fun checkSession(token: String): Response<VoidResponse> {
-        return sessionUseCase(token)
     }
 }

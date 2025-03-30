@@ -13,18 +13,20 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     @Inject lateinit var prefs: PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (isLoggedIn()) {
             navigateToService()
-            return
+        } else {
+            setContentView(binding.root)
+            logFirstLaunchInfo()
         }
-        setContentView(binding.root)
-        logFirstLaunchInfo()
     }
 
     private fun isLoggedIn(): Boolean = prefs.token.isNotEmpty()
@@ -36,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logFirstLaunchInfo() {
-        val isFirstLaunch = prefs.isFirst
-        log(if (isFirstLaunch) "최초 실행입니다." else "최초 실행이 아닙니다.")
+        log(if (prefs.isFirst) "최초 실행입니다." else "최초 실행이 아닙니다.")
     }
 }

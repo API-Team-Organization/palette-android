@@ -13,8 +13,10 @@ import java.util.Calendar
 import java.util.Locale
 
 class RegisterBirthFragment : Fragment() {
+
     private var _binding: FragmentJoinBirthBinding? = null
     private val binding get() = _binding!!
+
     private val registerViewModel: RegisterViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -24,7 +26,10 @@ class RegisterBirthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupDatePicker()
-        setupContinueButton()
+        binding.btnContinue.setOnClickListener {
+            registerViewModel.setBirthdate(getSelectedDate())
+            findNavController().navigate(R.id.action_joinBirthFragment_to_joinNameFragment)
+        }
     }
 
     private fun setupDatePicker() {
@@ -35,18 +40,10 @@ class RegisterBirthFragment : Fragment() {
         }
     }
 
-    private fun setupContinueButton() {
-        binding.btnContinue.setOnClickListener {
-            registerViewModel.setBirthdate(getSelectedDate())
-            findNavController().navigate(R.id.action_joinBirthFragment_to_joinNameFragment)
-        }
-    }
-
     private fun getSelectedDate(): String {
-        val year = binding.dpSpinner.year
-        val month = binding.dpSpinner.month
-        val day = binding.dpSpinner.dayOfMonth
-        val calendar = Calendar.getInstance().apply { set(year, month, day) }
+        val calendar = Calendar.getInstance().apply {
+            set(binding.dpSpinner.year, binding.dpSpinner.month, binding.dpSpinner.dayOfMonth)
+        }
         return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
     }
 

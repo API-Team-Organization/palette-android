@@ -6,5 +6,6 @@ import javax.inject.Inject
 class RegenRoomUseCase @Inject constructor(
     private val roomRepository: RoomRepository
 ) {
-    suspend operator fun invoke(token: String, roomId: String) = roomRepository.regenRoom(token, roomId)
+    suspend operator fun invoke(token: String, roomId: String) =
+        roomRepository.regenRoom(token, roomId = roomId)
 }

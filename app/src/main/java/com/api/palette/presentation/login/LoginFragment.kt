@@ -3,9 +3,7 @@ package com.api.palette.presentation.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -26,57 +24,64 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
+
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val viewModel: LoginViewModel by viewModels()
 
     private lateinit var callback: OnBackPressedCallback
-    private var backPressedTime: Long = 0L
+    private var backPressedTime = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        initView()
-        handleOnBackPressed()
-        changeEditTextFocusColor(binding.etLoginEmail)
-        changeEditTextFocusColor(binding.etLoginPassword)
+        setupUI()
         return binding.root
     }
 
-    private fun initView() {
-        binding.btnLogin.setOnClickListener {
-            when {
-                binding.etLoginEmail.text.isNullOrEmpty() -> {
-                    handleLoginFailure(binding.etLoginEmail)
-                    binding.emailFailedText.visibility = View.VISIBLE
-                    binding.passwordFailedText.visibility = View.GONE
-                    binding.etLoginPassword.background =
-                        ContextCompat.getDrawable(requireContext(), R.drawable.bac_card_background)
-                }
-                binding.etLoginPassword.text.isNullOrEmpty() -> {
-                    handleLoginFailure(binding.etLoginPassword)
-                    binding.passwordFailedText.visibility = View.VISIBLE
-                    binding.emailFailedText.visibility = View.GONE
-                    binding.etLoginEmail.background =
-                        ContextCompat.getDrawable(requireContext(), R.drawable.bac_card_background)
-                }
-                else -> loginRequest()
-            }
-        }
+    private fun setupUI() {
+        initClickListeners()
+        handleOnBackPressed()
+        setEditTextFocusColor(binding.etLoginEmail)
+        setEditTextFocusColor(binding.etLoginPassword)
+    }
+
+    private fun initClickListeners() {
+        binding.btnLogin.setOnClickListener { validateInputs() }
+
         binding.tvRegister.setOnClickListener {
             disableOnBackPressedCallback()
             findNavController().navigate(R.id.action_loginFragment_to_joinEmailFragment)
         }
     }
 
-    private fun changeEditTextFocusColor(editText: EditText) {
+    private fun validateInputs() {
+        val email = binding.etLoginEmail
+        val password = binding.etLoginPassword
+
+        when {
+            email.text.isNullOrEmpty() -> {
+                handleLoginFailure(email)
+                binding.emailFailedText.visibility = View.VISIBLE
+                binding.passwordFailedText.visibility = View.GONE
+                resetEditTextBackground(password)
+            }
+            password.text.isNullOrEmpty() -> {
+                handleLoginFailure(password)
+                binding.passwordFailedText.visibility = View.VISIBLE
+                binding.emailFailedText.visibility = View.GONE
+                resetEditTextBackground(email)
+            }
+            else -> loginRequest()
+        }
+    }
+
+    private fun setEditTextFocusColor(editText: EditText) {
         editText.setOnFocusChangeListener { _, hasFocus ->
-            editText.backgroundTintList = ContextCompat.getColorStateList(
-                requireContext(),
-                if (hasFocus) R.color.blue else R.color.black
-            )
+            val colorRes = if (hasFocus) R.color.blue else R.color.black
+            editText.backgroundTintList = ContextCompat.getColorStateList(requireContext(), colorRes)
         }
     }
 
@@ -86,6 +91,10 @@ class LoginFragment : Fragment() {
             requestFocus()
             selectAll()
         }
+    }
+
+    private fun resetEditTextBackground(editText: EditText) {
+        editText.background = ContextCompat.getDrawable(requireContext(), R.drawable.bac_card_background)
     }
 
     private fun loginRequest() {

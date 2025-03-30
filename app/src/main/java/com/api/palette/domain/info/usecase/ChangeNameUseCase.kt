@@ -8,5 +8,5 @@ class ChangeNameUseCase @Inject constructor(
     private val infoRepository: InfoRepository
 ) {
     suspend operator fun invoke(token: String, request: ChangeInfoRequest) =
-        infoRepository.changeName(token, request)
+        infoRepository.changeName(token, request = request)
 }

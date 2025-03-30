@@ -27,10 +27,15 @@ import retrofit2.HttpException
 
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
+
     private lateinit var binding: FragmentSettingBinding
     private val settingViewModel: SettingViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
         setupListeners()
         loadUserNameInfo()
@@ -60,48 +65,52 @@ class SettingFragment : Fragment() {
     }
 
     private fun showLogoutDialog() {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_logout, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_logout, null)
         val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).setCancelable(false).create()
 
         dialogView.findViewById<TextView>(R.id.noLogoutTextView).setOnClickListener {
             dialog.dismiss()
         }
         dialogView.findViewById<TextView>(R.id.logoutTextView).setOnClickListener {
-            lifecycleScope.launch {
-                settingViewModel.logout(PaletteApplication.prefs.token)
-            }
-            PaletteApplication.prefs.clearToken()
-            PaletteApplication.prefs.clearUser()
-
-            startActivity(Intent(requireActivity(), MainActivity::class.java))
-            requireActivity().finish()
+            handleLogout()
             dialog.dismiss()
         }
+
         dialog.show()
     }
 
+    private fun handleLogout() {
+        lifecycleScope.launch {
+            settingViewModel.logout(PaletteApplication.prefs.token)
+        }
+        PaletteApplication.prefs.clearToken()
+        PaletteApplication.prefs.clearUser()
+
+        startActivity(Intent(requireActivity(), MainActivity::class.java))
+        requireActivity().finish()
+    }
+
     private fun showResignDialog(context: Context) {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_resign, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_resign, null)
         val dialog = AlertDialog.Builder(context).setView(dialogView).setCancelable(false).create()
 
         dialogView.findViewById<TextView>(R.id.noTextView).setOnClickListener {
             dialog.dismiss()
         }
         dialogView.findViewById<TextView>(R.id.yesTextView).setOnClickListener {
-            resign()
-            context.startActivity(Intent(context, MainActivity::class.java))
-            (context as? Activity)?.finish()
+            handleResign(context)
             dialog.dismiss()
         }
+
         dialog.show()
     }
 
-    private fun resign() {
+    private fun handleResign(context: Context) {
         lifecycleScope.launch {
             try {
                 val response = settingViewModel.resign(PaletteApplication.prefs.token)
                 if (!response.isSuccessful) {
-                    log("Resign failed: ${response.code()} - ${response.message()}")
+                    log("Resign failed: \${response.code()} - \${response.message()}")
                 }
             } catch (e: HttpException) {
                 shortToast("서버 오류가 발생했습니다.")
@@ -109,6 +118,9 @@ class SettingFragment : Fragment() {
             } catch (e: Exception) {
                 shortToast("네트워크 오류가 발생했습니다.")
                 log(e.stackTraceToString())
+            } finally {
+                context.startActivity(Intent(context, MainActivity::class.java))
+                (context as? Activity)?.finish()
             }
         }
     }

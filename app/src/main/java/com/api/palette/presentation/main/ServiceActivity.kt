@@ -1,5 +1,6 @@
 package com.api.palette.presentation.main
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -24,12 +25,14 @@ import com.api.palette.presentation.base.BaseControllable
 import com.api.palette.presentation.main.create.room.CreateMediaFragment
 import com.api.palette.presentation.main.settings.SettingFragment
 import com.api.palette.presentation.main.work.WorkFragment
+import com.api.palette.presentation.main.create.room.viewmodel.RoomViewModel
 import com.api.palette.presentation.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.net.UnknownHostException
 import javax.inject.Inject
+import androidx.activity.viewModels
 
 enum class BottomTab(val eventName: String) {
     HOME("click_home"),
@@ -49,6 +52,8 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
     private val createMediaFragment = CreateMediaFragment()
     private val workFragment = WorkFragment()
     private val settingFragment = SettingFragment()
+
+    private val roomViewModel: RoomViewModel by viewModels()
 
     @Inject lateinit var sessionUseCase: SessionUseCase
     private lateinit var vibrator: Vibrator
@@ -142,14 +147,13 @@ class ServiceActivity : AppCompatActivity(), BaseControllable {
 
     override fun deleteRoom(token: String, roomId: String) {
         lifecycleScope.launch {
-            try {
-                // 빈 방 삭제 로직
-                // 실제 코드는 roomViewModel.deleteRoom(token, roomId){...} 등을 호출해서 처리 가능
-                shortToast("빈 방이므로 삭제합니다.")
-            } catch (e: Exception) {
-                log("deleteRoom error: $e")
-            } finally {
-                recreateActivity()
+            roomViewModel.deleteRoom(token, roomId) { result ->
+                result.onSuccess {
+                    shortToast("빈 방이므로 삭제되었습니다.")
+                    recreateActivity()
+                }.onFailure {
+                    shortToast("빈 방 삭제 실패: ${it.message}")
+                }
             }
         }
     }

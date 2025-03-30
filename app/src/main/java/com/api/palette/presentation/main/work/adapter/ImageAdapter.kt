@@ -75,10 +75,13 @@ class ImageAdapter(
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)
         return ImageViewHolder(view)
     }
+
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.bind(images[position])
     }
+
     override fun getItemCount(): Int = images.size
+
     override fun onViewRecycled(holder: ImageViewHolder) {
         super.onViewRecycled(holder)
         holder.recycle()
@@ -89,11 +92,13 @@ class ImageAdapter(
         images.addAll(newImages)
         notifyDataSetChanged()
     }
+
     fun addImages(newImages: List<String>) {
         val start = images.size
         images.addAll(newImages)
         notifyItemRangeInserted(start, newImages.size)
     }
+
     fun clearImages() {
         val size = images.size
         images.clear()

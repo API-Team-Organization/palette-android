@@ -30,8 +30,10 @@ class MyInfoFragment : Fragment() {
         binding.ivArrowBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+
         initView()
         loadProfileInfo()
+
         return binding.root
     }
 
@@ -39,9 +41,11 @@ class MyInfoFragment : Fragment() {
         binding.llUsername.setOnClickListener {
             changeFragment(ChangeNameFragment())
         }
+
         binding.llBirthdate.setOnClickListener {
             changeFragment(ChangeBirthDateFragment())
         }
+
         binding.llPassword.setOnClickListener {
             changeFragment(ChangePasswordFragment())
         }

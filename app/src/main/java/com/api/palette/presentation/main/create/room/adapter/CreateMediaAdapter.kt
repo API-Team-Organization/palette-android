@@ -1,4 +1,3 @@
-// presentation/main/create/room/adapter/CreateMediaAdapter.kt
 package com.api.palette.presentation.main.create.room.adapter
 
 import android.annotation.SuppressLint
@@ -7,10 +6,7 @@ import android.text.Spannable
 import android.text.TextUtils
 import android.text.method.LinkMovementMethod
 import android.text.method.MovementMethod
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -42,15 +38,21 @@ class CreateMediaAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: WorkViewHolder, position: Int) {
         val item = itemList[position]
+
         holder.ivLogo.setImageResource(R.drawable.logo)
         holder.tvTitle.text = item.title
         holder.tvDesc.text = item.message
 
+        setupDescriptionTextView(holder)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupDescriptionTextView(holder: WorkViewHolder) {
         holder.tvDesc.apply {
             setOnTouchListener { v, event ->
                 val textView = v as TextView
                 val movementMethod: MovementMethod = textView.movementMethod
-                val touchHandled = movementMethod.onTouchEvent(textView, textView.text as Spannable, event)
+                val handled = movementMethod.onTouchEvent(textView, textView.text as Spannable, event)
 
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -62,7 +64,7 @@ class CreateMediaAdapter(
                     }
                     MotionEvent.ACTION_UP -> {
                         handler.removeCallbacksAndMessages(null)
-                        if (!touchHandled && !isLongClick) {
+                        if (!handled && !isLongClick) {
                             itemClickListener.onItemClick(holder.bindingAdapterPosition)
                         }
                     }
@@ -70,12 +72,14 @@ class CreateMediaAdapter(
                         handler.removeCallbacksAndMessages(null)
                     }
                 }
-                touchHandled
+
+                handled
             }
+
             movementMethod = LinkMovementMethod.getInstance()
             ellipsize = TextUtils.TruncateAt.MARQUEE
             isSelected = true
-            setSingleLine(true)
+            isSingleLine = true
         }
     }
 

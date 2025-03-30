@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetRoomListUseCase @Inject constructor(
     private val roomRepository: RoomRepository
 ) {
-    suspend operator fun invoke(token: String) = roomRepository.getRoomList(token = token)
+    suspend operator fun invoke(token: String) = roomRepository.getRoomList(token)
 }

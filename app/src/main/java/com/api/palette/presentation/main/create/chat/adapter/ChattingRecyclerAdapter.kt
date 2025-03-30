@@ -9,6 +9,7 @@ import com.api.palette.databinding.ItemChattingMeBoxBinding
 import com.api.palette.databinding.ItemChattingPaletteBoxBinding
 
 class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
     private val chatList = mutableListOf<MessageResponse>()
     private val qnaList = mutableListOf<PromptData>()
 
@@ -38,18 +39,12 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val message = chatList[position]
         when (holder) {
-            is LeftViewHolder -> holder.bind(message)
+            is LeftViewHolder  -> holder.bind(message)
             is RightViewHolder -> holder.bind(message)
         }
     }
 
     override fun getItemCount(): Int = chatList.size
-
-    fun setQnAList(list: List<PromptData>) {
-        qnaList.clear()
-        qnaList.addAll(list)
-        notifyDataSetChanged()
-    }
 
     fun setData(data: List<MessageResponse>) {
         chatList.clear()
@@ -57,15 +52,23 @@ class ChattingRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         notifyDataSetChanged()
     }
 
-    inner class LeftViewHolder(private val binding: ItemChattingPaletteBoxBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    fun setQnAList(list: List<PromptData>) {
+        qnaList.clear()
+        qnaList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    inner class LeftViewHolder(
+        private val binding: ItemChattingPaletteBoxBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: MessageResponse) {
             binding.textGchatMessagePalette.text = message.message
         }
     }
 
-    inner class RightViewHolder(private val binding: ItemChattingMeBoxBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class RightViewHolder(
+        private val binding: ItemChattingMeBoxBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: MessageResponse) {
             binding.textGchatMessageMe.text = message.message
         }

@@ -6,5 +6,6 @@ import javax.inject.Inject
 class DeleteRoomUseCase @Inject constructor(
     private val roomRepository: RoomRepository
 ) {
-    suspend operator fun invoke(token: String, roomId: String) = roomRepository.deleteRoom(token, roomId)
+    suspend operator fun invoke(token: String, roomId: String) =
+        roomRepository.deleteRoom(token, roomId = roomId)
 }

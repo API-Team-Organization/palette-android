@@ -1,15 +1,10 @@
 package com.api.palette.data.chat.data
 
+import com.api.palette.data.chat.serializer.PromptDataSerializer
 import com.api.palette.data.socket.data.PromptType
-import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.JsonContentPolymorphicSerializer
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
-@Serializable(with = PromptData.PromptDataSerializer::class)
+@Serializable(with = PromptDataSerializer::class)
 sealed interface PromptData {
     val type: PromptType
     val question: ChatQuestion
@@ -25,6 +20,7 @@ sealed interface PromptData {
         override val answer: ChatAnswer.SelectableAnswer? = null
     ) : PromptData {
         override val type: PromptType = PromptType.SELECTABLE
+
         @Serializable
         data class Choice(val id: String, val displayName: String)
     }
@@ -47,18 +43,5 @@ sealed interface PromptData {
     ) : PromptData {
         override val question = ChatQuestion.UserInputQuestion
         override val type: PromptType = PromptType.USER_INPUT
-    }
-
-    object PromptDataSerializer : JsonContentPolymorphicSerializer<PromptData>(PromptData::class) {
-        override fun selectDeserializer(element: JsonElement): DeserializationStrategy<PromptData> {
-            val m = element.jsonObject["type"]?.jsonPrimitive?.content?.let {
-                PromptType.valueOf(it)
-            } ?: throw SerializationException("$element")
-            return when (m) {
-                PromptType.SELECTABLE -> Selectable.serializer()
-                PromptType.GRID -> Grid.serializer()
-                PromptType.USER_INPUT -> UserInput.serializer()
-            }
-        }
     }
 }

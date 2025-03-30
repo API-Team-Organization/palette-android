@@ -8,6 +8,7 @@ import kotlinx.serialization.SerializationException
 import okhttp3.*
 
 class WebSocketManager(token: String, roomId: String) {
+
     private val client = OkHttpClient()
     private lateinit var webSocket: WebSocket
     private var onMessageReceived: ((BaseResponseMessage) -> Unit)? = null
@@ -23,6 +24,7 @@ class WebSocketManager(token: String, roomId: String) {
             log("WebSocket 연결 성공")
             onConnect?.invoke()
         }
+
         override fun onMessage(webSocket: WebSocket, text: String) {
             log("WebSocket 수신된 메시지: $text")
             try {
@@ -36,6 +38,7 @@ class WebSocketManager(token: String, roomId: String) {
                 logE("WebSocket 메시지 파싱 오류: ${e.message}")
             }
         }
+
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             logE("WebSocket 오류 발생: ${t.localizedMessage}")
         }
@@ -44,18 +47,13 @@ class WebSocketManager(token: String, roomId: String) {
     fun start() {
         webSocket = client.newWebSocket(request, listener)
     }
+
     fun stop() {
-        if (::webSocket.isInitialized) webSocket.close(1000, "종료")
+        if (::webSocket.isInitialized) {
+            webSocket.close(1000, "종료")
+        }
     }
-    fun setOnMessageReceivedListener(listener: (BaseResponseMessage) -> Unit) {
-        this.onMessageReceived = listener
-    }
-    fun setOnConnect(listener: () -> Unit) {
-        this.onConnect = listener
-    }
-    private fun handleErrorMessage(errorMessage: BaseResponseMessage.ErrorMessage) {
-        logE("WebSocket 에러 메시지: ${errorMessage.message}")
-    }
+
     fun send(message: String) {
         if (::webSocket.isInitialized) {
             webSocket.send(message)
@@ -63,5 +61,17 @@ class WebSocketManager(token: String, roomId: String) {
         } else {
             logE("WebSocket이 초기화되지 않았습니다.")
         }
+    }
+
+    fun setOnMessageReceivedListener(listener: (BaseResponseMessage) -> Unit) {
+        this.onMessageReceived = listener
+    }
+
+    fun setOnConnect(listener: () -> Unit) {
+        this.onConnect = listener
+    }
+
+    private fun handleErrorMessage(errorMessage: BaseResponseMessage.ErrorMessage) {
+        logE("WebSocket 에러 메시지: ${errorMessage.message}")
     }
 }

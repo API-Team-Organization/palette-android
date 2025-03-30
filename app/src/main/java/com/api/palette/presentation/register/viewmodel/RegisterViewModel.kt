@@ -1,9 +1,6 @@
 package com.api.palette.presentation.register.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.api.palette.data.auth.request.RegisterRequest
 import com.api.palette.domain.auth.usecase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,12 +24,12 @@ class RegisterViewModel @Inject constructor(
     private val _username = MutableLiveData<String>()
     val username: LiveData<String> get() = _username
 
-    fun setEmail(value: String) { _email.value = value }
-    fun setPassword(value: String) { _password.value = value }
-    fun setBirthdate(value: String) { _birthdate.value = value }
-    fun setUsername(value: String) { _username.value = value }
+    fun setEmail(value: String) = _email.postValue(value)
+    fun setPassword(value: String) = _password.postValue(value)
+    fun setBirthdate(value: String) = _birthdate.postValue(value)
+    fun setUsername(value: String) = _username.postValue(value)
 
-    fun toRegisterRequest(): RegisterRequest? {
+    private fun toRegisterRequest(): RegisterRequest? {
         val email = _email.value
         val password = _password.value
         val birthdate = _birthdate.value
@@ -40,24 +37,25 @@ class RegisterViewModel @Inject constructor(
 
         return if (email != null && password != null && birthdate != null && username != null) {
             RegisterRequest(email, password, birthdate, username)
-        } else null
+        } else {
+            null
+        }
     }
 
     fun register(onResult: (Result<String>) -> Unit) {
         val request = toRegisterRequest() ?: return
         viewModelScope.launch {
-            runCatching {
-                registerUseCase(request)
-            }.onSuccess { response ->
-                if (response.isSuccessful) {
-                    val token = response.headers()["X-AUTH-Token"] ?: ""
-                    onResult(Result.success(token))
-                } else {
-                    onResult(Result.failure(Exception("회원가입 실패: ${response.code()}")))
+            runCatching { registerUseCase(request) }
+                .onSuccess { response ->
+                    if (response.isSuccessful) {
+                        val token = response.headers()["X-AUTH-Token"] ?: ""
+                        onResult(Result.success(token))
+                    } else {
+                        onResult(Result.failure(Exception("회원가입 실패: ${response.code()}")))
+                    }
+                }.onFailure { e ->
+                    onResult(Result.failure(e))
                 }
-            }.onFailure { e ->
-                onResult(Result.failure(e))
-            }
         }
     }
 }

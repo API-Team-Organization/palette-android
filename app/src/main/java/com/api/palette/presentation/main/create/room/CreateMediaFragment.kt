@@ -2,7 +2,6 @@ package com.api.palette.presentation.main.create.room
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -21,6 +20,7 @@ import com.api.palette.presentation.util.changeFragment
 import com.api.palette.presentation.util.log
 import com.api.palette.presentation.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -42,9 +42,7 @@ class CreateMediaFragment : Fragment() {
         showSampleData(true)
         loadData()
 
-        binding.llStartNewWork.setOnClickListener {
-            createRoom()
-        }
+        binding.llStartNewWork.setOnClickListener { createRoom() }
         return binding.root
     }
 
@@ -54,11 +52,13 @@ class CreateMediaFragment : Fragment() {
             workRecyclerView.adapter = workAdapter
             workRecyclerView.layoutManager = LinearLayoutManager(context)
         }
+
         workAdapter.itemClickListener = object : CreateMediaAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 if (isDeleting) return
                 startChatting(itemList[position].id, itemList[position].title.toString())
             }
+
             override fun onItemLongClick(position: Int) {
                 if (isDeleting) return
                 deleteChatDialog(requireContext(), position)
@@ -75,67 +75,20 @@ class CreateMediaFragment : Fragment() {
                 log("CreateMediaFragment loadData 오류: ${it.message}")
             }
         }
+
         viewLifecycleOwner.lifecycleScope.launch {
-            kotlinx.coroutines.delay(300L)
+            delay(300L)
             val rooms = roomViewModel.roomList.value
             if (rooms.isNullOrEmpty()) {
                 binding.roomListEmptyText.visibility = View.VISIBLE
             } else {
                 binding.roomListEmptyText.visibility = View.GONE
-                val list = rooms.reversed()
                 itemList.clear()
-                itemList.addAll(list)
+                itemList.addAll(rooms.reversed())
                 initWorkAdapter()
                 workAdapter.notifyDataSetChanged()
             }
             showSampleData(false)
-        }
-    }
-
-    private fun startChatting(roomId: String, title: String, isFirst: Boolean = false) {
-        changeFragment(ChattingFragment(roomId = roomId, title = title, isFirst = isFirst))
-    }
-
-    private fun deleteChatDialog(context: Context, position: Int) {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_confirm, null)
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(context)
-            .setView(dialogView)
-            .create()
-
-        dialog.window?.apply {
-            setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
-            requestFeature(Window.FEATURE_NO_TITLE)
-            setLayout(
-                (context.resources.displayMetrics.widthPixels * 0.9).toInt(),
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
-
-        dialogView.findViewById<TextView>(R.id.confirmTextView).text =
-            "정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?"
-
-        dialogView.findViewById<TextView>(R.id.noTextView).setOnClickListener {
-            dialog.dismiss()
-        }
-        dialogView.findViewById<TextView>(R.id.yesTextView).setOnClickListener {
-            isDeleting = true
-            deleteRoom(position)
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
-
-    private fun showSampleData(isLoading: Boolean) {
-        with(binding) {
-            if (isLoading) {
-                sflSample.startShimmer()
-                sflSample.visibility = View.VISIBLE
-                workRecyclerView.visibility = View.GONE
-            } else {
-                sflSample.stopShimmer()
-                sflSample.visibility = View.GONE
-                workRecyclerView.visibility = View.VISIBLE
-            }
         }
     }
 
@@ -168,6 +121,54 @@ class CreateMediaFragment : Fragment() {
                     isDeleting = false
                 }
             )
+        }
+    }
+
+    private fun deleteChatDialog(context: Context, position: Int) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_confirm, null)
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(context)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.apply {
+            setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+            requestFeature(Window.FEATURE_NO_TITLE)
+            setLayout(
+                (context.resources.displayMetrics.widthPixels * 0.9).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        dialogView.findViewById<TextView>(R.id.confirmTextView).text =
+            "정말 \"${itemList[position].title}\"를(을) 삭제하시겠습니까?"
+
+        dialogView.findViewById<TextView>(R.id.noTextView).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialogView.findViewById<TextView>(R.id.yesTextView).setOnClickListener {
+            isDeleting = true
+            deleteRoom(position)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun startChatting(roomId: String, title: String, isFirst: Boolean = false) {
+        changeFragment(ChattingFragment(roomId = roomId, title = title, isFirst = isFirst))
+    }
+
+    private fun showSampleData(isLoading: Boolean) {
+        with(binding) {
+            if (isLoading) {
+                sflSample.startShimmer()
+                sflSample.visibility = View.VISIBLE
+                workRecyclerView.visibility = View.GONE
+            } else {
+                sflSample.stopShimmer()
+                sflSample.visibility = View.GONE
+                workRecyclerView.visibility = View.VISIBLE
+            }
         }
     }
 

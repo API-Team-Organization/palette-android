@@ -6,11 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.api.palette.data.room.data.RoomData
 import com.api.palette.data.room.data.TitleData
-import com.api.palette.domain.room.usecase.CreateRoomUseCase
-import com.api.palette.domain.room.usecase.DeleteRoomUseCase
-import com.api.palette.domain.room.usecase.GetRoomListUseCase
-import com.api.palette.domain.room.usecase.RegenRoomUseCase
-import com.api.palette.domain.room.usecase.SetRoomTitleUseCase
+import com.api.palette.domain.room.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -30,48 +26,43 @@ class RoomViewModel @Inject constructor(
 
     fun createRoom(token: String, onResult: (Result<RoomData>) -> Unit) {
         viewModelScope.launch {
-            runCatching {
-                createRoomUseCase(token)
-            }.onSuccess { response ->
-                if (response.isSuccessful) {
-                    response.body()?.data?.let {
-                        onResult(Result.success(it))
-                    } ?: onResult(Result.failure(Exception("Room data is null")))
-                } else {
-                    onResult(Result.failure(HttpException(response)))
+            runCatching { createRoomUseCase(token) }
+                .onSuccess { response ->
+                    if (response.isSuccessful) {
+                        response.body()?.data?.let {
+                            onResult(Result.success(it))
+                        } ?: onResult(Result.failure(Exception("Room data is null")))
+                    } else {
+                        onResult(Result.failure(HttpException(response)))
+                    }
                 }
-            }.onFailure {
-                onResult(Result.failure(it))
-            }
+                .onFailure { onResult(Result.failure(it)) }
         }
     }
 
     fun loadRoomList(token: String, onError: (Throwable) -> Unit) {
         viewModelScope.launch {
-            runCatching {
-                getRoomListUseCase(token)
-            }.onSuccess { response ->
-                _roomList.value = response.data
-            }.onFailure {
-                onError(it)
-            }
+            runCatching { getRoomListUseCase(token) }
+                .onSuccess { response -> _roomList.value = response.data }
+                .onFailure { onError(it) }
         }
     }
 
     fun deleteRoom(token: String, roomId: String, onResult: (Result<Unit>) -> Unit) {
-        handleUnitResult { deleteRoomUseCase(token, roomId) }.invoke(onResult)
+        handleUnitResponse { deleteRoomUseCase(token, roomId) }.invoke(onResult)
     }
 
     fun setRoomTitle(token: String, title: TitleData, roomId: String, onResult: (Result<Unit>) -> Unit) {
-        handleUnitResult { setRoomTitleUseCase(token, title, roomId) }.invoke(onResult)
+        handleUnitResponse { setRoomTitleUseCase(token, title, roomId) }.invoke(onResult)
     }
 
     fun regenRoom(token: String, roomId: String, onResult: (Result<Unit>) -> Unit) {
-        handleUnitResult { regenRoomUseCase(token, roomId) }.invoke(onResult)
+        handleUnitResponse { regenRoomUseCase(token, roomId) }.invoke(onResult)
     }
 
-    private fun handleUnitResult(request: suspend () -> retrofit2.Response<*>)
-            : (onResult: (Result<Unit>) -> Unit) -> Unit = { onResult ->
+    private fun handleUnitResponse(
+        request: suspend () -> retrofit2.Response<*>
+    ): (onResult: (Result<Unit>) -> Unit) -> Unit = { onResult ->
         viewModelScope.launch {
             runCatching { request() }
                 .onSuccess { response ->
@@ -81,9 +72,7 @@ class RoomViewModel @Inject constructor(
                         onResult(Result.failure(HttpException(response)))
                     }
                 }
-                .onFailure {
-                    onResult(Result.failure(it))
-                }
+                .onFailure { onResult(Result.failure(it)) }
         }
     }
 }

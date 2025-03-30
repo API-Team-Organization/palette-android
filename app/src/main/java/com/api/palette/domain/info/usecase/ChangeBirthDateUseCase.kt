@@ -8,5 +8,5 @@ class ChangeBirthDateUseCase @Inject constructor(
     private val infoRepository: InfoRepository
 ) {
     suspend operator fun invoke(token: String, request: ChangeInfoRequest) =
-        infoRepository.changeBirthDate(token, request)
+        infoRepository.changeBirthDate(token, request = request)
 }

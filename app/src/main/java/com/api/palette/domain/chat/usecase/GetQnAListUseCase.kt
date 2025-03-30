@@ -9,5 +9,5 @@ class GetQnAListUseCase @Inject constructor(
     suspend operator fun invoke(
         token: String,
         roomId: String
-    ) = chatRepository.getQnAList(token, roomId)
+    ) = chatRepository.getQnAList(token, roomId = roomId)
 }

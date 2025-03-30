@@ -1,4 +1,3 @@
-// data/ApiClient.kt
 package com.api.palette.data
 
 import com.api.palette.BuildConfig

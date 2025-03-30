@@ -10,9 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.api.palette.application.PaletteApplication
 import com.api.palette.databinding.FragmentWorkPosterBinding
-import com.api.palette.domain.chat.usecase.GetImageListUseCase
-import com.api.palette.presentation.main.create.chat.viewmodel.ChatViewModel
 import com.api.palette.presentation.main.work.adapter.ImageAdapter
+import com.api.palette.presentation.main.work.viewmodel.WorkViewModel
 import com.api.palette.presentation.util.ContextRetainer
 import com.api.palette.presentation.util.logE
 import com.api.palette.presentation.util.shortToast
@@ -20,8 +19,6 @@ import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class WorkPosterFragment : Fragment() {
@@ -38,7 +35,7 @@ class WorkPosterFragment : Fragment() {
     private val pageSize = 10
     private val totalImageList = mutableListOf<String>()
 
-    @Inject lateinit var getImageListUseCase: GetImageListUseCase
+    private val workViewModel: WorkViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentWorkPosterBinding.inflate(inflater, container, false)
@@ -118,43 +115,33 @@ class WorkPosterFragment : Fragment() {
             isLayoutSorting = true
             binding.swipeRefreshLayout.isRefreshing = true
 
-            try {
-                val response = withContext(Dispatchers.IO) {
-                    runCatching {
-                        getImageListUseCase(
-                            token = PaletteApplication.prefs.token,
-                            page = currentPage,
-                            size = pageSize
-                        )
-                    }.getOrThrow()
-                }
+            val result = workViewModel.fetchImages(
+                token = PaletteApplication.prefs.token,
+                page = currentPage,
+                size = pageSize
+            )
 
-                if (response.isSuccessful) {
-                    val body = response.body()?.data
-                    val images = body?.images.orEmpty()
-
-                    if (images.isEmpty()) {
-                        hasMoreImages = false
-                    } else {
-                        totalImageList.addAll(images)
-                        updateUI(images, isRefresh)
-                        currentPage++
-                    }
+            result.onSuccess { images ->
+                if (images.isEmpty()) {
+                    hasMoreImages = false
                 } else {
-                    shortToast("이미지 목록 로딩 실패: ${response.code()}")
+                    totalImageList.addAll(images)
+                    updateUI(images, isRefresh)
+                    currentPage++
                 }
-
-                binding.rvImageList.post {
-                    layoutManager.invalidateSpanAssignments()
-                    binding.rvImageList.requestLayout()
-                }
-            } catch (e: Exception) {
-                logE("Image Load Error: ${e.message}")
-            } finally {
-                isLoading = false
-                isLayoutSorting = false
-                binding.swipeRefreshLayout.isRefreshing = false
+            }.onFailure {
+                shortToast("이미지 목록 로딩 실패: ${it.message}")
+                logE("Image Load Error: ${it.message}")
             }
+
+            binding.rvImageList.post {
+                layoutManager.invalidateSpanAssignments()
+                binding.rvImageList.requestLayout()
+            }
+
+            isLoading = false
+            isLayoutSorting = false
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 

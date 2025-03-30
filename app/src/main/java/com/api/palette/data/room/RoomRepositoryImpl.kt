@@ -15,29 +15,34 @@ import javax.inject.Singleton
 class RoomRepositoryImpl @Inject constructor(
     private val roomService: RoomService
 ) : RoomRepository {
+
     override suspend fun createRoom(token: String): Response<DataResponse<RoomData>> {
         val response = roomService.createRoom(token)
-        if (!response.isSuccessful) ErrorHandler.handleError(response)
+        ErrorHandler.handleError(response)
         return response
     }
+
     override suspend fun getRoomList(token: String): DataResponse<List<RoomData>> {
         val response = roomService.getRoomList(token)
         if (response.code >= 400) ErrorHandler.handleErrorReturn(response)
         return response
     }
+
     override suspend fun deleteRoom(token: String, roomId: String): Response<VoidResponse> {
         val response = roomService.deleteRoom(token, roomId = roomId)
-        if (!response.isSuccessful) ErrorHandler.handleError(response)
+        ErrorHandler.handleError(response)
         return response
     }
+
     override suspend fun setRoomTitle(token: String, title: TitleData, roomId: String): Response<VoidResponse> {
         val response = roomService.setRoomTitle(token, roomId = roomId, title = title)
-        if (!response.isSuccessful) ErrorHandler.handleError(response)
+        ErrorHandler.handleError(response)
         return response
     }
+
     override suspend fun regenRoom(token: String, roomId: String): Response<VoidResponse> {
         val response = roomService.regenRoom(token, roomId = roomId)
-        if (!response.isSuccessful) ErrorHandler.handleError(response)
+        ErrorHandler.handleError(response)
         return response
     }
 }

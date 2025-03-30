@@ -8,7 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.api.palette.R
-import com.api.palette.data.auth.request.RegisterRequest
+import com.api.palette.application.PaletteApplication
 import com.api.palette.databinding.FragmentJoinNameBinding
 import com.api.palette.presentation.register.viewmodel.RegisterViewModel
 import com.api.palette.presentation.util.shortToast
@@ -22,7 +22,10 @@ class RegisterNameFragment : Fragment() {
     private val binding get() = _binding!!
     private val registerViewModel: RegisterViewModel by activityViewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentJoinNameBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -49,24 +52,21 @@ class RegisterNameFragment : Fragment() {
         }
     }
 
-    private fun showNameError(isFormatError: Boolean) {
-        binding.etJoinName.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
-        binding.etJoinName.requestFocus()
-        binding.etJoinName.selectAll()
+    private fun showNameError(isFormatError: Boolean) = with(binding) {
+        etJoinName.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
+        etJoinName.requestFocus()
+        etJoinName.selectAll()
 
-        binding.failedNameEmpty.visibility = if (isFormatError) View.GONE else View.VISIBLE
-        binding.failedNameFormat.visibility = if (isFormatError) View.VISIBLE else View.GONE
+        failedNameEmpty.visibility = if (isFormatError) View.GONE else View.VISIBLE
+        failedNameFormat.visibility = if (isFormatError) View.VISIBLE else View.GONE
     }
 
     private fun registerUser() {
-        val data = registerViewModel.toRegisterRequest() ?: return
-        val request = RegisterRequest(data.email, data.password, data.birthDate, data.username)
-
         viewLifecycleOwner.lifecycleScope.launch {
             registerViewModel.register { result ->
                 result.fold(
                     onSuccess = { token ->
-                        com.api.palette.application.PaletteApplication.prefs.token = token
+                        PaletteApplication.prefs.token = token
                         shortToast("이메일 인증을 진행해주세요.")
                         findNavController().navigate(R.id.action_joinNameFragment_to_joinCheckNumFragment)
                     },

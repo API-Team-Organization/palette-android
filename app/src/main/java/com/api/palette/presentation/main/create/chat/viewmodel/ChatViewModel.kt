@@ -1,9 +1,6 @@
 package com.api.palette.presentation.main.create.chat.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.api.palette.data.chat.data.ChatAnswer
 import com.api.palette.data.chat.data.PromptData
 import com.api.palette.data.socket.data.MessageResponse

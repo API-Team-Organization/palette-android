@@ -13,34 +13,50 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChangePasswordFragment : Fragment() {
+
     private lateinit var binding: FragmentChangePasswordBinding
     private val changePasswordViewModel: ChangePasswordViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
-        initView()
-        binding.ivArrowBack.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
-        }
+        setupFocusListeners()
+        setupBackButton()
+        setupSubmitButton()
         return binding.root
     }
 
-    private fun initView() {
-        binding.etBeforePassword.setOnFocusChangeListener { _, hasFocus ->
+    private fun setupFocusListeners() {
+        setFocusColor(binding.etBeforePassword)
+        setFocusColor(binding.etAfterPassword)
+    }
+
+    private fun setFocusColor(view: android.widget.EditText) {
+        view.setOnFocusChangeListener { _, hasFocus ->
             val color = if (hasFocus) R.color.blue else R.color.black
-            binding.etBeforePassword.backgroundTintList = ContextCompat.getColorStateList(requireContext(), color)
+            view.backgroundTintList = ContextCompat.getColorStateList(requireContext(), color)
         }
-        binding.etAfterPassword.setOnFocusChangeListener { _, hasFocus ->
-            val color = if (hasFocus) R.color.blue else R.color.black
-            binding.etAfterPassword.backgroundTintList = ContextCompat.getColorStateList(requireContext(), color)
+    }
+
+    private fun setupBackButton() {
+        binding.ivArrowBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+    }
+
+    private fun setupSubmitButton() {
         binding.changePasswordBtn.setOnClickListener {
             val beforePassword = binding.etBeforePassword.text.toString().trim()
             val afterPassword = binding.etAfterPassword.text.toString().trim()
+
             if (beforePassword.isEmpty() || afterPassword.isEmpty()) {
                 shortToast("이전 비밀번호와 변경할 비밀번호를 입력해주세요.")
                 return@setOnClickListener
             }
+
             changePasswordViewModel.changePassword(beforePassword, afterPassword) { result ->
                 if (result.isSuccess) {
                     shortToast("비밀번호가 성공적으로 변경되었습니다.")

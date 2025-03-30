@@ -1,6 +1,5 @@
 package com.api.palette.presentation.main.create.chat
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -16,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
 import com.api.palette.data.chat.data.ChatAnswer
@@ -61,11 +61,20 @@ class ChattingFragment(
     private val chatViewModel: ChatViewModel by viewModels()
     private val roomViewModel: RoomViewModel by viewModels()
 
-    @Inject lateinit var regenRoomUseCase: RegenRoomUseCase
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentChattingBinding.inflate(inflater, container, false)
 
+        setupBackPressedCallback()
+        setupWebSocket()
+
+        initView()
+        initEditText()
+        return binding.root
+    }
+
+    private fun setupBackPressedCallback() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
@@ -75,22 +84,24 @@ class ChattingFragment(
                 }
             }
         )
+    }
 
+    private fun setupWebSocket() {
         try {
             webSocketManager = WebSocketManager(PaletteApplication.prefs.token, roomId)
             if (isFirst) {
-                val connection = System.currentTimeMillis()
+                val connectionTime = System.currentTimeMillis()
                 webSocketManager.setOnConnect {
                     viewLifecycleOwner.lifecycleScope.launch {
-                        val m = async {
+                        val asyncTask = async {
                             while (isFirst && !firstMessageReceived() && chatList.isEmpty()) {
-                                if (System.currentTimeMillis() - connection > 2000) {
+                                if (System.currentTimeMillis() - connectionTime > 2000) {
                                     delay(500L)
                                     loadChatData()
                                 }
                             }
                         }
-                        m.await()
+                        asyncTask.await()
                         recyclerAdapter.setData(chatList)
                     }
                 }
@@ -130,10 +141,6 @@ class ChattingFragment(
         } catch (e: Exception) {
             logE("WebSocketManager 생성 중 오류 발생: ${e.localizedMessage}")
         }
-
-        initView()
-        initEditText()
-        return binding.root
     }
 
     private fun firstMessageReceived(): Boolean = chatList.isNotEmpty()
@@ -147,27 +154,26 @@ class ChattingFragment(
                 requireActivity().supportFragmentManager.popBackStack()
             }
         }
-        binding.chattingToolbar.setOnClickListener { showChangeTitleDialog() }
 
+        binding.chattingToolbar.setOnClickListener { showChangeTitleDialog() }
         binding.chattingSubmitButton.setOnClickListener { sendData() }
+
         binding.regenButton.setOnClickListener {
             handleRegenButtonVisible(false)
-            viewLifecycleOwner.lifecycleScope.launch {
-                runCatching {
-                    regenRoomUseCase(PaletteApplication.prefs.token, roomId)
-                }.onSuccess {
-                    shortToast("재생성 완료.")
-                }.onFailure {
-                    shortToast("재생성 실패: ${it.message}")
+            roomViewModel.regenRoom(PaletteApplication.prefs.token, roomId) { result ->
+                if (result.isSuccess) {
+                    shortToast("재생성 완료")
+                } else {
+                    shortToast("재생성 실패: ${result.exceptionOrNull()?.message}")
                 }
             }
         }
-        binding.chattingRecycler.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: androidx.recyclerview.widget.RecyclerView, newState: Int) {
+
+        binding.chattingRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (binding.chattingRecycler.canScrollVertically(-1)) return
-                if (isLoading) return
-                if (chatList.isEmpty()) return
+                if (isLoading || chatList.isEmpty()) return
                 isLoading = true
                 val firstMessageTime = chatList.first().datetime.toString()
                 loadMoreChats(firstMessageTime)
@@ -179,6 +185,83 @@ class ChattingFragment(
             layoutManager = LinearLayoutManager(context)
         }
         (requireActivity() as? BaseControllable)?.bottomVisible(false)
+    }
+
+    private fun initEditText() {
+        binding.chattingEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrBlank()) {
+                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_light_gray)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_action_send)
+                } else {
+                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_primary)
+                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_confirmed)
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private suspend fun loadChatData() {
+        chatViewModel.loadChatList(
+            token = PaletteApplication.prefs.token,
+            roomId = roomId,
+            before = null,
+            size = 10
+        ) { shortToast("채팅 목록 로딩 오류: ${it.message}") }
+        delay(300L)
+        chatList.clear()
+        chatViewModel.chatList.value?.let { chatList.addAll(it.reversed()) }
+    }
+
+    private fun loadQnaData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val qnaLoader = async {
+                chatViewModel.loadQnAList(
+                    token = PaletteApplication.prefs.token,
+                    roomId = roomId
+                ) { shortToast("QnA 로딩 오류: ${it.message}") }
+            }
+            val chatLoader = async { loadChatData() }
+            listOf(qnaLoader, chatLoader).awaitAll()
+
+            qnaList.clear()
+            qnaList.addAll(chatViewModel.qnaList.value.orEmpty())
+
+            recyclerAdapter.setQnAList(qnaList)
+            recyclerAdapter.setData(chatList)
+            binding.chattingRecycler.scrollToPosition(chatList.size)
+
+            val qna = if (chatList.isEmpty()) {
+                qnaList.firstOrNull()
+            } else {
+                qnaList.find { it.id == chatList.last().promptId } ?: qnaList.firstOrNull()
+            }
+            qna?.let { managementInputTool(it) }
+        }
+    }
+
+    private fun loadMoreChats(before: String) {
+        chatViewModel.loadChatList(
+            token = PaletteApplication.prefs.token,
+            roomId = roomId,
+            before = before,
+            size = 10
+        ) { shortToast("추가 채팅 로딩 오류: ${it.message}") }
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(300L)
+            val newChats = chatViewModel.chatList.value?.reversed()?.toMutableList() ?: mutableListOf()
+            if (newChats.isEmpty()) {
+                isLoading = false
+                return@launch
+            }
+            val firstExistingTime = chatList.first().datetime
+            val toAdd = newChats.filter { it.datetime < firstExistingTime }
+            chatList.addAll(0, toAdd)
+            recyclerAdapter.setData(chatList)
+            isLoading = false
+        }
     }
 
     private fun sendData() {
@@ -208,47 +291,19 @@ class ChattingFragment(
         }
     }
 
-    private suspend fun loadChatData() {
-        chatViewModel.loadChatList(
-            token = PaletteApplication.prefs.token,
-            roomId = roomId,
-            before = null,
-            size = 10
-        ) {
-            shortToast("채팅 목록 로딩 오류: ${it.message}")
-        }
-        delay(300L)
-        chatList.clear()
-        chatViewModel.chatList.value?.let { chatList.addAll(it.reversed()) }
-    }
+    private fun handleChatMessage() {
+        if (chatList.isEmpty()) return
+        val lastMessage = chatList.last()
 
-    private fun loadQnaData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val qnaLoader = async {
-                chatViewModel.loadQnAList(
-                    token = PaletteApplication.prefs.token,
-                    roomId = roomId
-                ) {
-                    shortToast("QnA 로딩 오류: ${it.message}")
-                }
-            }
-            val chatLoader = async { loadChatData() }
-            listOf(qnaLoader, chatLoader).awaitAll()
-
-            qnaList.clear()
-            qnaList.addAll(chatViewModel.qnaList.value.orEmpty())
-
-            recyclerAdapter.setQnAList(qnaList)
-            recyclerAdapter.setData(chatList)
-            binding.chattingRecycler.scrollToPosition(chatList.size)
-
-            val qna = if (chatList.isEmpty()) {
-                qnaList.firstOrNull()
-            } else {
-                qnaList.find { it.id == chatList.last().promptId } ?: qnaList.firstOrNull()
-            }
+        if (lastMessage.promptId != null) {
+            val qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList.firstOrNull()
+            handleCurrentPositionVisible(false)
             qna?.let { managementInputTool(it) }
+        } else if (lastMessage.regenScope) {
+            handleCurrentPositionVisible(false, "")
+            handleRegenButtonVisible(true)
         }
+        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount)
     }
 
     private fun managementInputTool(qna: PromptData) {
@@ -271,61 +326,6 @@ class ChattingFragment(
                 binding.chattingSelectLayout.visibility = View.GONE
             }
         }
-    }
-
-    private fun loadMoreChats(before: String) {
-        chatViewModel.loadChatList(
-            token = PaletteApplication.prefs.token,
-            roomId = roomId,
-            before = before,
-            size = 10
-        ) {
-            shortToast("추가 채팅 로딩 오류: ${it.message}")
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(300L)
-            val newChats = chatViewModel.chatList.value?.reversed()?.toMutableList() ?: mutableListOf()
-            if (newChats.isEmpty()) {
-                isLoading = false
-                return@launch
-            }
-            val firstExistingTime = chatList.first().datetime
-            val toAdd = newChats.filter { it.datetime < firstExistingTime }
-            chatList.addAll(0, toAdd)
-            recyclerAdapter.setData(chatList)
-            isLoading = false
-        }
-    }
-
-    private fun initEditText() {
-        binding.chattingEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrBlank()) {
-                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_light_gray)
-                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_action_send)
-                } else {
-                    binding.chattingSubmitButton.setBackgroundResource(R.drawable.bac_circle_primary)
-                    binding.chattingSubmitButton.setImageResource(R.drawable.ic_send_confirmed)
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-    }
-
-    private fun handleChatMessage() {
-        if (chatList.isEmpty()) return
-        val lastMessage = chatList.last()
-
-        if (lastMessage.promptId != null) {
-            val qna = qnaList.find { it.id == lastMessage.promptId } ?: qnaList.firstOrNull()
-            handleCurrentPositionVisible(false)
-            qna?.let { managementInputTool(it) }
-        } else if (lastMessage.regenScope) {
-            handleCurrentPositionVisible(false, "")
-            handleRegenButtonVisible(true)
-        }
-        binding.chattingRecycler.smoothScrollToPosition(recyclerAdapter.itemCount)
     }
 
     private fun handleCurrentPositionVisible(visibleState: Boolean, position: String = "") {
@@ -381,6 +381,7 @@ class ChattingFragment(
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply { setMargins(32, 0, 32, 16) }
         }
+
         val cardInnerLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -390,6 +391,7 @@ class ChattingFragment(
             )
             setPadding(64, 64, 64, 64)
         }
+
         val pickerLayout = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -398,6 +400,7 @@ class ChattingFragment(
             )
             setPadding(16, 16, 16, 16)
         }
+
         val preViewLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -406,6 +409,7 @@ class ChattingFragment(
                 LinearLayout.LayoutParams.MATCH_PARENT
             ).apply { setMargins(0, 0, 32, 0) }
         }
+
         val numberPicker = NumberPicker(context).apply {
             wrapSelectorWheel = true
             descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
@@ -426,10 +430,12 @@ class ChattingFragment(
                 }
             }
         }
+
         pickerLayout.apply {
             addView(preViewLayout)
             addView(numberPicker)
         }
+
         val instructionText = TextView(context).apply {
             text = "선택지 중 한가지를 선택해주세요."
             textSize = 18f
@@ -441,6 +447,7 @@ class ChattingFragment(
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
         }
+
         val submitButton = Button(context).apply {
             text = "선택하기"
             textSize = 16f
@@ -464,6 +471,7 @@ class ChattingFragment(
                 sendData()
             }
         }
+
         cardInnerLayout.apply {
             addView(instructionText)
             addView(pickerLayout)
@@ -506,7 +514,7 @@ class ChattingFragment(
 
     private fun updateGridUI(qna: PromptData.Grid) {
         val gridQuestion = qna.question
-        val maxCount: Int = gridQuestion.maxCount
+        val maxCount = gridQuestion.maxCount
         hideKeyboard()
         binding.chattingSelectLayout.removeAllViews()
 
@@ -517,10 +525,9 @@ class ChattingFragment(
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(32, 16, 16, 32)
-            }
+            ).apply { setMargins(32, 16, 16, 32) }
         }
+
         val cardInnerLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -530,6 +537,7 @@ class ChattingFragment(
             )
             setPadding(64, 64, 64, 64)
         }
+
         val instructionText = TextView(context).apply {
             text = "원하는 제목의 위치를 선택해주세요"
             textSize = 18f
@@ -541,6 +549,7 @@ class ChattingFragment(
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
         }
+
         val maxCountText = TextView(context).apply {
             text = "최대 선택 개수: $maxCount"
             textSize = 14f
@@ -552,6 +561,7 @@ class ChattingFragment(
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply { setMargins(0, 16, 0, 0) }
         }
+
         val gridLayout = GridLayout(context).apply {
             rowCount = gridQuestion.ySize
             columnCount = gridQuestion.xSize
@@ -563,6 +573,7 @@ class ChattingFragment(
                 gravity = Gravity.CENTER
             }
         }
+
         val selectedPositions = mutableListOf<Int>()
         val buttonSize = resources.getDimensionPixelSize(R.dimen.grid_button_size)
 
@@ -593,6 +604,7 @@ class ChattingFragment(
                 gridLayout.addView(button)
             }
         }
+
         val submitButton = Button(context).apply {
             text = "선택하기"
             textSize = 16f
@@ -621,11 +633,12 @@ class ChattingFragment(
             }
         }
 
-        cardInnerLayout.addView(instructionText)
-        cardInnerLayout.addView(maxCountText)
-        cardInnerLayout.addView(gridLayout)
-        cardInnerLayout.addView(submitButton)
-
+        cardInnerLayout.apply {
+            addView(instructionText)
+            addView(maxCountText)
+            addView(gridLayout)
+            addView(submitButton)
+        }
         cardView.addView(cardInnerLayout)
         binding.chattingSelectLayout.addView(cardView)
     }
@@ -679,7 +692,6 @@ class ChattingFragment(
         dialog.show()
     }
 
-    @SuppressLint("ServiceCast")
     private fun hideKeyboard() {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.chattingEditText.windowToken, 0)
