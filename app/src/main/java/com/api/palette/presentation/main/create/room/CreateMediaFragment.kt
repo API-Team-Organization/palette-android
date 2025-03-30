@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
-import com.api.palette.data.room.data.RoomData
+import com.api.palette.domain.room.model.RoomData
 import com.api.palette.databinding.FragmentCreateMediaBinding
 import com.api.palette.presentation.base.BaseControllable
 import com.api.palette.presentation.main.create.chat.ChattingFragment

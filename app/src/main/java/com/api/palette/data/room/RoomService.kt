@@ -2,7 +2,7 @@ package com.api.palette.data.room
 
 import com.api.palette.data.base.DataResponse
 import com.api.palette.data.base.VoidResponse
-import com.api.palette.data.room.data.RoomData
+import com.api.palette.domain.room.model.RoomData
 import com.api.palette.data.room.data.TitleData
 import retrofit2.Response
 import retrofit2.http.*

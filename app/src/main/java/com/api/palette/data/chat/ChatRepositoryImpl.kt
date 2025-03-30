@@ -4,8 +4,10 @@ import com.api.palette.data.base.DataResponse
 import com.api.palette.data.base.VoidResponse
 import com.api.palette.data.chat.data.*
 import com.api.palette.data.error.ErrorHandler
-import com.api.palette.data.socket.data.MessageResponse
+import com.api.palette.domain.socket.model.MessageResponse
 import com.api.palette.domain.chat.ChatRepository
+import com.api.palette.domain.chat.model.ChatAnswer
+import com.api.palette.domain.chat.model.PromptData
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton

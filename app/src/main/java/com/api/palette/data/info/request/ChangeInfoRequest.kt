@@ -1,4 +1,4 @@
-package com.api.palette.data.info.data
+package com.api.palette.data.info.request
 
 import kotlinx.serialization.Serializable
 

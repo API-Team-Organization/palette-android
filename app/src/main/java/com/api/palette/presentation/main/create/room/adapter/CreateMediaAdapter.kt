@@ -11,7 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.api.palette.R
-import com.api.palette.data.room.data.RoomData
+import com.api.palette.domain.room.model.RoomData
 
 class CreateMediaAdapter(
     private val itemList: ArrayList<RoomData>

@@ -2,8 +2,8 @@ package com.api.palette.domain.info
 
 import com.api.palette.data.base.DataResponse
 import com.api.palette.data.base.VoidResponse
-import com.api.palette.data.info.data.ChangeInfoRequest
-import com.api.palette.data.info.data.ProfileData
+import com.api.palette.data.info.request.ChangeInfoRequest
+import com.api.palette.domain.info.model.ProfileData
 import retrofit2.Response
 
 interface InfoRepository {

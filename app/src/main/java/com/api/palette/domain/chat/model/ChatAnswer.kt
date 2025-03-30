@@ -1,4 +1,4 @@
-package com.api.palette.data.chat.data
+package com.api.palette.domain.chat.model
 
 import com.api.palette.data.chat.serializer.ChatAnswerSerializer
 import kotlinx.serialization.Serializable

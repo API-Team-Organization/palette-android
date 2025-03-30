@@ -1,6 +1,6 @@
 package com.api.palette.domain.chat.usecase
 
-import com.api.palette.data.chat.data.ChatAnswer
+import com.api.palette.domain.chat.model.ChatAnswer
 import com.api.palette.domain.chat.ChatRepository
 import javax.inject.Inject
 

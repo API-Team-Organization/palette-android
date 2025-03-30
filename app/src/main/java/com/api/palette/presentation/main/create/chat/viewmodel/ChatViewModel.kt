@@ -1,9 +1,9 @@
 package com.api.palette.presentation.main.create.chat.viewmodel
 
 import androidx.lifecycle.*
-import com.api.palette.data.chat.data.ChatAnswer
-import com.api.palette.data.chat.data.PromptData
-import com.api.palette.data.socket.data.MessageResponse
+import com.api.palette.domain.chat.model.ChatAnswer
+import com.api.palette.domain.chat.model.PromptData
+import com.api.palette.domain.socket.model.MessageResponse
 import com.api.palette.domain.chat.usecase.CreateChatUseCase
 import com.api.palette.domain.chat.usecase.GetChatListUseCase
 import com.api.palette.domain.chat.usecase.GetQnAListUseCase

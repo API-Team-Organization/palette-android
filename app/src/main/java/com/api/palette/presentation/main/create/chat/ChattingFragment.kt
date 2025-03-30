@@ -18,12 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.api.palette.R
 import com.api.palette.application.PaletteApplication
-import com.api.palette.data.chat.data.ChatAnswer
-import com.api.palette.data.chat.data.ChatQuestion
-import com.api.palette.data.chat.data.PromptData
+import com.api.palette.domain.chat.model.ChatAnswer
+import com.api.palette.domain.chat.model.ChatQuestion
+import com.api.palette.domain.chat.model.PromptData
 import com.api.palette.data.socket.WebSocketManager
 import com.api.palette.data.socket.data.BaseResponseMessage
-import com.api.palette.data.socket.data.MessageResponse
+import com.api.palette.domain.socket.model.MessageResponse
 import com.api.palette.databinding.FragmentChattingBinding
 import com.api.palette.presentation.base.BaseControllable
 import com.api.palette.presentation.main.create.chat.adapter.ChattingRecyclerAdapter

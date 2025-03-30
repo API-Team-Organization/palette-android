@@ -1,6 +1,6 @@
 package com.api.palette.data.chat.serializer
 
-import com.api.palette.data.chat.data.ChatAnswer
+import com.api.palette.domain.chat.model.ChatAnswer
 import com.api.palette.data.socket.data.PromptType
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationException

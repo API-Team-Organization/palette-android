@@ -3,7 +3,7 @@ package com.api.palette.presentation.main.settings.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.api.palette.data.base.VoidResponse
-import com.api.palette.data.info.data.ProfileData
+import com.api.palette.domain.info.model.ProfileData
 import com.api.palette.domain.auth.usecase.LogoutUseCase
 import com.api.palette.domain.auth.usecase.ResignUseCase
 import com.api.palette.domain.info.usecase.GetProfileInfoUseCase

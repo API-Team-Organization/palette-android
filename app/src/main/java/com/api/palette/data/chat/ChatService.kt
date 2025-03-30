@@ -3,9 +3,9 @@ package com.api.palette.data.chat
 import com.api.palette.data.base.DataResponse
 import com.api.palette.data.base.VoidResponse
 import com.api.palette.data.chat.data.ImageListResponse
-import com.api.palette.data.chat.data.PromptData
+import com.api.palette.domain.chat.model.PromptData
 import com.api.palette.data.chat.data.QnABody
-import com.api.palette.data.socket.data.MessageResponse
+import com.api.palette.domain.socket.model.MessageResponse
 import retrofit2.Response
 import retrofit2.http.*
 

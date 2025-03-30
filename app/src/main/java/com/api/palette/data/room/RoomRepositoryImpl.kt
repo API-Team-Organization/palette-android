@@ -4,7 +4,7 @@ import com.api.palette.data.base.DataResponse
 import com.api.palette.data.base.VoidResponse
 import com.api.palette.data.error.ErrorHandler
 import com.api.palette.data.error.handleErrorReturn
-import com.api.palette.data.room.data.RoomData
+import com.api.palette.domain.room.model.RoomData
 import com.api.palette.data.room.data.TitleData
 import com.api.palette.domain.room.RoomRepository
 import retrofit2.Response

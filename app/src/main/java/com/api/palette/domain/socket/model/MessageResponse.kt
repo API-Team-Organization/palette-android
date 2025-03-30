@@ -1,5 +1,6 @@
-package com.api.palette.data.socket.data
+package com.api.palette.domain.socket.model
 
+import com.api.palette.data.socket.data.ChatResource
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 

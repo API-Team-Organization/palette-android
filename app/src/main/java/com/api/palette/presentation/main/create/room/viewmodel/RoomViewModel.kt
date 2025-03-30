@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.api.palette.data.room.data.RoomData
+import com.api.palette.domain.room.model.RoomData
 import com.api.palette.data.room.data.TitleData
 import com.api.palette.domain.room.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel

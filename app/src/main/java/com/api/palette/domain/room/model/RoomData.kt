@@ -1,4 +1,4 @@
-package com.api.palette.data.room.data
+package com.api.palette.domain.room.model
 
 import kotlinx.serialization.Serializable
 

@@ -3,8 +3,8 @@ package com.api.palette.presentation.main.create.chat.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.api.palette.data.chat.data.PromptData
-import com.api.palette.data.socket.data.MessageResponse
+import com.api.palette.domain.chat.model.PromptData
+import com.api.palette.domain.socket.model.MessageResponse
 import com.api.palette.databinding.ItemChattingMeBoxBinding
 import com.api.palette.databinding.ItemChattingPaletteBoxBinding
 

@@ -1,5 +1,6 @@
 package com.api.palette.data.chat.data
 
+import com.api.palette.domain.chat.model.ChatAnswer
 import kotlinx.serialization.Serializable
 
 @Serializable

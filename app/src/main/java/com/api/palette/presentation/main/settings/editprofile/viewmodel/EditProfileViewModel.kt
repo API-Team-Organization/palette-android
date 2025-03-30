@@ -3,7 +3,7 @@ package com.api.palette.presentation.main.settings.editprofile.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.api.palette.application.PaletteApplication
-import com.api.palette.data.info.data.ChangeInfoRequest
+import com.api.palette.data.info.request.ChangeInfoRequest
 import com.api.palette.domain.info.usecase.ChangeBirthDateUseCase
 import com.api.palette.domain.info.usecase.ChangeNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
