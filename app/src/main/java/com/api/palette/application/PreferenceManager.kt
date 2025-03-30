@@ -2,8 +2,14 @@ package com.api.palette.application
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PreferenceManager(context: Context) {
+@Singleton
+class PreferenceManager @Inject constructor(
+    @ApplicationContext context: Context
+) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PALETTE_APP, Context.MODE_PRIVATE)
 
@@ -33,18 +39,18 @@ class PreferenceManager(context: Context) {
     ) {
         operator fun getValue(thisRef: Any?, property: Any?): T {
             return when (defaultValue) {
-                is String -> prefs.getString(key, defaultValue as String) as T
-                is Boolean -> prefs.getBoolean(key, defaultValue as Boolean) as T
-                is Int -> prefs.getInt(key, defaultValue as Int) as T
+                is String -> prefs.getString(key, defaultValue) as T
+                is Boolean -> prefs.getBoolean(key, defaultValue) as T
+                is Int -> prefs.getInt(key, defaultValue) as T
                 else -> throw IllegalArgumentException("Unsupported preference type")
             }
         }
 
         operator fun setValue(thisRef: Any?, property: Any?, value: T) {
             when (value) {
-                is String -> prefs.edit().putString(key, value as String).apply()
-                is Boolean -> prefs.edit().putBoolean(key, value as Boolean).apply()
-                is Int -> prefs.edit().putInt(key, value as Int).apply()
+                is String -> prefs.edit().putString(key, value).apply()
+                is Boolean -> prefs.edit().putBoolean(key, value).apply()
+                is Int -> prefs.edit().putInt(key, value).apply()
                 else -> throw IllegalArgumentException("Unsupported preference type")
             }
         }

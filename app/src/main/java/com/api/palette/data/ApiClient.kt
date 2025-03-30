@@ -9,9 +9,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private val BASE_URL: String by lazy {
-        BuildConfig.BASE_URL
-    }
+    private val BASE_URL: String by lazy { BuildConfig.BASE_URL }
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()

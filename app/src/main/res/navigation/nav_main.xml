@@ -7,16 +7,12 @@
 
     <fragment
         android:id="@+id/createMediaFragment"
-        tools:layout="@layout/fragment_create_media"
+        android:name="com.api.palette.presentation.main.create.room.CreateMediaFragment"
         android:label="createMediaFragment"
-        android:name="com.api.palette.ui.main.create.room.CreateMediaFragment">
-    </fragment>
-
+        tools:layout="@layout/fragment_create_media"/>
     <fragment
         android:id="@+id/settingFragment"
-        tools:layout="@layout/fragment_setting"
+        android:name="com.api.palette.presentation.main.settings.SettingFragment"
         android:label="settingFragment"
-        android:name="com.api.palette.ui.main.settings.SettingFragment">
-    </fragment>
-
+        tools:layout="@layout/fragment_setting"/>
 </navigation>

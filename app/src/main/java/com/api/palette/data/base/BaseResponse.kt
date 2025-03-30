@@ -12,7 +12,7 @@ sealed interface BaseResponse {
 data class DataResponse<T>(
     override val code: Int,
     override val message: String,
-    val data: T,
+    val data: T
 ) : BaseResponse
 
 @Serializable
@@ -25,5 +25,5 @@ data class VoidResponse(
 data class ErrorResponse(
     override val code: Int,
     override val message: String,
-    val kind: String,
+    val kind: String
 ) : BaseResponse
